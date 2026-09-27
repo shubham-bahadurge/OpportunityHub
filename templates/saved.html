@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Saved Opportunities | OpportunityHub</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="opportunities-page">
+
+<nav class="dashboard-navbar">
+
+    <div class="logo">
+        🚀 OpportunityHub
+    </div>
+
+    <div class="dashboard-nav">
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+        <a href="/opportunities">
+            Opportunities
+        </a>
+
+        <a href="/saved"
+           class="active">
+            Saved
+        </a>
+
+        <a href="/profile">
+            Profile
+        </a>
+
+        <div class="user-avatar">
+            S
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="opportunities-container">
+
+    <section class="opportunities-header">
+
+        <p class="panel-label">
+            YOUR COLLECTION
+        </p>
+
+        <h1>
+            Saved Opportunities 🔖
+        </h1>
+
+        <p>
+            Opportunities you saved for later.
+        </p>
+
+    </section>
+
+
+    <section
+        id="savedGrid"
+        class="opportunities-grid">
+
+        <div class="loading-message">
+            Loading saved opportunities...
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+function loadSavedOpportunities() {
+
+    const saved =
+        JSON.parse(
+            localStorage.getItem("savedOpportunities") || "[]"
+        );
+
+    const grid =
+        document.getElementById("savedGrid");
+
+    grid.innerHTML = "";
+
+
+    if (saved.length === 0) {
+
+        grid.innerHTML = `
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    🔖
+                </div>
+
+                <h3>
+                    No saved opportunities
+                </h3>
+
+                <p>
+                    Explore opportunities and save
+                    the ones you like.
+                </p>
+
+                <br>
+
+                <a href="/opportunities"
+                   class="view-details-btn">
+
+                    Explore Opportunities →
+
+                </a>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    saved.forEach(function(opportunity) {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "explore-card";
+
+
+        card.innerHTML = `
+
+            <div class="explore-card-top">
+
+                <div class="explore-icon">
+                    🔖
+                </div>
+
+                <button
+                    class="bookmark-btn"
+                    onclick="removeSaved(${opportunity.id})">
+
+                    🗑️
+
+                </button>
+
+            </div>
+
+
+            <div class="explore-badges">
+
+                <span class="category-badge">
+
+                    ${opportunity.category}
+
+                </span>
+
+            </div>
+
+
+            <h3>
+
+                ${opportunity.title}
+
+            </h3>
+
+
+            <p class="organization">
+
+                ${opportunity.organization}
+
+            </p>
+
+
+            <div class="explore-info">
+
+                <span>
+                    📅 ${opportunity.deadline}
+                </span>
+
+                <span>
+                    🌐 ${opportunity.mode}
+                </span>
+
+            </div>
+
+
+            <a
+                href="/opportunity/${opportunity.id}"
+                class="view-details-btn">
+
+                View Details →
+
+            </a>
+
+        `;
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+
+function removeSaved(id) {
+
+    let saved =
+        JSON.parse(
+            localStorage.getItem("savedOpportunities") || "[]"
+        );
+
+
+    saved =
+        saved.filter(
+            item => item.id !== id
+        );
+
+
+    localStorage.setItem(
+        "savedOpportunities",
+        JSON.stringify(saved)
+    );
+
+
+    loadSavedOpportunities();
+
+}
+
+
+loadSavedOpportunities();
+
+</script>
+
+</body>
+
+</html>

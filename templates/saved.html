@@ -81,6 +81,28 @@
 
 <script>
 
+function getDeadlineStatus(deadlineStr) {
+    if (!deadlineStr) return { label: "Open", className: "open", days: 0 };
+    const deadlineDate = new Date(deadlineStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    deadlineDate.setHours(0, 0, 0, 0);
+    const diffTime = deadlineDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+        return { label: "Expired", className: "closed", days: diffDays };
+    } else if (diffDays === 0) {
+        return { label: "Closing Today", className: "urgent", days: diffDays };
+    } else if (diffDays <= 3) {
+        return { label: `Closing Soon (${diffDays}d)`, className: "urgent", days: diffDays };
+    } else if (diffDays <= 7) {
+        return { label: `Upcoming (${diffDays}d)`, className: "soon", days: diffDays };
+    } else {
+        return { label: `Open (${diffDays}d)`, className: "open", days: diffDays };
+    }
+}
+
 function loadSavedOpportunities() {
 
     const saved =
@@ -130,6 +152,8 @@ function loadSavedOpportunities() {
 
     saved.forEach(function(opportunity) {
 
+        const deadline = getDeadlineStatus(opportunity.deadline);
+
         const card =
             document.createElement("div");
 
@@ -162,6 +186,12 @@ function loadSavedOpportunities() {
                 <span class="category-badge">
 
                     ${opportunity.category}
+
+                </span>
+
+                <span class="deadline-badge ${deadline.className}">
+
+                    📅 ${deadline.label}
 
                 </span>
 

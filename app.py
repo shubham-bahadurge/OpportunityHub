@@ -49,6 +49,10 @@ def opportunity_details(opportunity_id):
 def recommendations():
 
     student = request.get_json(silent=True) or {}
+    student_skills = [
+        s.lower() for s in (student.get("skills") or [])
+        if isinstance(s, str)
+    ]
 
     results = []
 
@@ -63,9 +67,27 @@ def recommendations():
 
         opportunity_copy["score"] = match.get("score", 0)
 
-        opportunity_copy["matched_skills"] = match.get("matched_skills", [])
+        opp_skills_map = {s.lower(): s for s in (opportunity.get("skills") or []) if isinstance(s, str)}
+        opp_interests_map = {i.lower(): i for i in (opportunity.get("interests") or []) if isinstance(i, str)}
 
-        opportunity_copy["matched_interests"] = match.get("matched_interests", [])
+        opportunity_copy["matched_skills"] = [
+            opp_skills_map.get(s.lower(), s.title())
+            for s in match.get("matched_skills", [])
+        ]
+
+        opportunity_copy["matched_interests"] = [
+            opp_interests_map.get(i.lower(), i.title())
+            for i in match.get("matched_interests", [])
+        ]
+
+        opportunity_copy["category_match"] = match.get("category_match", False)
+
+        opportunity_copy["education_match"] = match.get("education_match", False)
+
+        # Skill gap analysis
+        opp_skills = [s for s in (opportunity.get("skills") or []) if isinstance(s, str)]
+        missing_skills = [s for s in opp_skills if s.lower() not in student_skills]
+        opportunity_copy["missing_skills"] = missing_skills
 
         results.append(opportunity_copy)
 

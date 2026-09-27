@@ -2139,6 +2139,11 @@ footer p {
     color: #111827;
 }
 
+.match-item.missing span {
+    background: #fef3c7;
+    color: #b45309;
+}
+
 
 /* TRUST */
 
@@ -2232,4 +2237,100 @@ footer p {
     background: #4f46e5;
 
     color: white;
+}
+
+/* DEADLINE BADGES */
+.deadline-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 5px 8px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.deadline-badge.urgent {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.deadline-badge.soon {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.deadline-badge.open {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.deadline-badge.closed {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* MATCH REASONS & SKILL GAP */
+.match-reasons-summary {
+    font-size: 12px;
+    color: #047857;
+    background: #ecfdf5;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.skill-gap-alert {
+    font-size: 12px;
+    color: #4b5563;
+    background: #f8fafc;
+    border-left: 3px solid #6366f1;
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin: 6px 0 10px 0;
+}
+
+.skill-gap-alert strong {
+    color: #4f46e5;
+}
+
+.skill-gap-alert.complete {
+    border-left-color: #10b981;
+    color: #047857;
+    background: #ecfdf5;
+}
+
+/* TOP PICKS */
+.top-pick-card {
+    background: #ffffff;
+    border: 2px solid #e0e7ff;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.05);
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.top-pick-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.12);
+    border-color: #c7d2fe;
+}
+
+.top-pick-ribbon {
+    position: absolute;
+    top: 14px;
+    right: 50px;
+    background: #4f46e5;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }

@@ -117,7 +117,7 @@
         </div>
 
 
-        <div class="dashboard-stat">
+        <div class="dashboard-stat" onclick="window.location.href='/opportunities'" style="cursor: pointer;">
 
             <div class="stat-icon blue">
                 💼
@@ -125,30 +125,30 @@
 
             <div>
 
-                <h3 id="internshipCount">
+                <h3 id="totalCount">
                     0
                 </h3>
 
-                <p>Internships</p>
+                <p>Total Opportunities</p>
 
             </div>
 
         </div>
 
 
-        <div class="dashboard-stat">
+        <div class="dashboard-stat" onclick="window.location.href='/opportunities'" style="cursor: pointer;">
 
             <div class="stat-icon orange">
-                🏆
+                📁
             </div>
 
             <div>
 
-                <h3 id="hackathonCount">
+                <h3 id="categoriesCount">
                     0
                 </h3>
 
-                <p>Hackathons</p>
+                <p>Categories Available</p>
 
             </div>
 
@@ -192,11 +192,11 @@
                 <div>
 
                     <p class="panel-label">
-                        PERSONALIZED FOR YOU
+                        TOP RECOMMENDATIONS
                     </p>
 
                     <h2>
-                        Recommended Opportunities 🎯
+                        🎯 Top Picks For You
                     </h2>
 
                 </div>
@@ -204,6 +204,34 @@
                 <a href="/opportunities">
                     View All →
                 </a>
+
+            </div>
+
+
+            <!-- TOP 3 PICKS -->
+
+            <div id="topPicksContainer">
+
+                <p>
+                    Loading your top personalized picks...
+                </p>
+
+            </div>
+
+
+            <div class="panel-header" style="margin-top: 35px; padding-top: 20px; border-top: 1px solid #eeeeee;">
+
+                <div>
+
+                    <p class="panel-label">
+                        EXPLORE MORE
+                    </p>
+
+                    <h2>
+                        More Recommended Opportunities 🚀
+                    </h2>
+
+                </div>
 
             </div>
 
@@ -400,23 +428,52 @@ if (!savedProfile) {
     });
 }
 
+function getDeadlineStatus(deadlineStr) {
+    if (!deadlineStr) return { label: "Open", className: "open", days: 0 };
+    const deadlineDate = new Date(deadlineStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    deadlineDate.setHours(0, 0, 0, 0);
+    const diffTime = deadlineDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+        return { label: "Expired", className: "closed", days: diffDays };
+    } else if (diffDays === 0) {
+        return { label: "Closing Today", className: "urgent", days: diffDays };
+    } else if (diffDays <= 3) {
+        return { label: `Closing Soon (${diffDays}d)`, className: "urgent", days: diffDays };
+    } else if (diffDays <= 7) {
+        return { label: `Upcoming (${diffDays}d)`, className: "soon", days: diffDays };
+    } else {
+        return { label: `Open (${diffDays}d)`, className: "open", days: diffDays };
+    }
+}
+
 function displayRecommendations(opportunities) {
-    const container = document.getElementById("recommendations");
-    container.innerHTML = "";
+    const topContainer = document.getElementById("topPicksContainer");
+    const moreContainer = document.getElementById("recommendations");
+    topContainer.innerHTML = "";
+    moreContainer.innerHTML = "";
 
     if (!opportunities || opportunities.length === 0) {
-        container.innerHTML = `
-            <p>No matching opportunities found.</p>
+        topContainer.innerHTML = `
+            <div style="padding: 30px; text-align: center; background: white; border-radius: 12px; border: 1px dashed #d1d5db;">
+                <p style="font-size: 24px; margin-bottom: 8px;">🎯</p>
+                <h3 style="font-size: 16px; margin-bottom: 6px;">No recommendations found</h3>
+                <p style="color: #6b7280; font-size: 13px;">Add your skills and interests in your profile to view personalized matches.</p>
+                <br>
+                <a href="/profile" class="primary-btn" style="padding: 8px 18px; font-size: 13px; text-decoration: none; display: inline-block;">Update Profile →</a>
+            </div>
         `;
+        moreContainer.innerHTML = `<p style="color: #6b7280; font-size: 13px;">No additional opportunities available.</p>`;
         return;
     }
 
-    const internships = opportunities.filter(item => item.category === "Internship").length;
-    const hackathons = opportunities.filter(item => item.category === "Hackathon").length;
-
-    document.getElementById("recommendedCount").textContent = opportunities.length;
-    document.getElementById("internshipCount").textContent = internships;
-    document.getElementById("hackathonCount").textContent = hackathons;
+    // Dynamic stats without fake numbers
+    document.getElementById("totalCount").textContent = opportunities.length;
+    document.getElementById("recommendedCount").textContent = opportunities.filter(item => (item.score || 0) > 0).length || opportunities.length;
+    document.getElementById("categoriesCount").textContent = new Set(opportunities.map(item => item.category)).size;
 
     if (opportunities.length > 0) {
         document.getElementById("profileScore").textContent = (opportunities[0].score || 0) + "%";
@@ -425,63 +482,169 @@ function displayRecommendations(opportunities) {
     const saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
     const savedIds = new Set(saved.map(item => item.id));
 
-    opportunities.slice(0, 5).forEach(function(opportunity) {
+    // TOP 3 PICKS
+    const top3 = opportunities.slice(0, 3);
+    top3.forEach(function(opportunity, idx) {
         const isSaved = savedIds.has(opportunity.id);
+        const deadline = getDeadlineStatus(opportunity.deadline);
+
         const card = document.createElement("div");
-        card.className = "opportunity-card";
+        card.className = "top-pick-card";
+
+        const matchedTags = [
+            ...(opportunity.matched_skills || []),
+            ...(opportunity.matched_interests || [])
+        ];
 
         card.innerHTML = `
-            <div class="opportunity-icon">
-                ${opportunity.icon}
+            <span class="top-pick-ribbon">#${idx + 1} Top Pick</span>
+
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+                <div class="opportunity-icon" style="background: #eef2ff;">
+                    ${opportunity.icon}
+                </div>
+
+                <div style="flex: 1;">
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;">
+                        <span class="category-badge">${opportunity.category}</span>
+                        <span class="match-badge">${opportunity.score}% Match</span>
+                        <span class="deadline-badge ${deadline.className}">📅 ${deadline.label}</span>
+                    </div>
+
+                    <h3 style="font-size: 18px; margin-bottom: 6px;">
+                        <a href="/opportunity/${opportunity.id}" style="color: inherit; text-decoration: none;">
+                            ${opportunity.title}
+                        </a>
+                    </h3>
+
+                    <p style="font-size: 13px; color: #4b5563; margin-bottom: 8px;">
+                        🏢 ${opportunity.organization} • 🌐 ${opportunity.mode} • 📍 ${opportunity.location}
+                    </p>
+
+                    ${matchedTags.length > 0 ? `
+                        <div class="match-reasons-summary">
+                            <span>✓</span> Matches: ${matchedTags.join(", ")}
+                        </div>
+                    ` : ""}
+
+                    ${opportunity.missing_skills && opportunity.missing_skills.length > 0 ? `
+                        <div class="skill-gap-alert">
+                            💡 <strong>Skill Gap:</strong> Learn ${opportunity.missing_skills.join(", ")}
+                        </div>
+                    ` : `
+                        <div class="skill-gap-alert complete">
+                            ✓ You have all required skills!
+                        </div>
+                    `}
+
+                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 14px;">
+                        <a href="/opportunity/${opportunity.id}" class="view-details-btn" style="display: inline-block; width: auto; padding: 9px 20px; font-size: 13px;">
+                            View Details →
+                        </a>
+                        <button
+                            class="bookmark-btn ${isSaved ? 'saved' : ''}"
+                            type="button"
+                            title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
+                            onclick="toggleSaveOpportunity(${opportunity.id})">
+                            ${isSaved ? '❤️ Saved' : '🔖 Save'}
+                        </button>
+                    </div>
+                </div>
             </div>
-
-            <div class="opportunity-content">
-                <div class="opportunity-top">
-                    <span class="category-badge">
-                        ${opportunity.category}
-                    </span>
-                    <span class="match-badge">
-                        ${opportunity.score}% Match
-                    </span>
-                </div>
-
-                <h3>
-                    <a href="/opportunity/${opportunity.id}" style="color: inherit; text-decoration: none;">
-                        ${opportunity.title}
-                    </a>
-                </h3>
-
-                <p>
-                    ${opportunity.description}
-                </p>
-
-                <div class="opportunity-tags">
-                    ${(opportunity.skills || []).map(skill => `<span>${skill}</span>`).join("")}
-                </div>
-
-                <div class="opportunity-bottom">
-                    <span>📅 ${opportunity.deadline}</span>
-                    <span>🌐 ${opportunity.mode}</span>
-                </div>
-
-                <div style="margin-top: 14px;">
-                    <a href="/opportunity/${opportunity.id}" class="view-details-btn" style="display: inline-block; width: auto; padding: 7px 16px; font-size: 13px;">
-                        View Details →
-                    </a>
-                </div>
-            </div>
-
-            <button
-                class="bookmark-btn ${isSaved ? 'saved' : ''}"
-                type="button"
-                title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
-                onclick="toggleSaveOpportunity(${opportunity.id})">
-                ${isSaved ? '❤️' : '🔖'}
-            </button>
         `;
 
-        container.appendChild(card);
+        topContainer.appendChild(card);
     });
+
+    // MORE RECOMMENDATIONS (Next 4 items)
+    const moreOpps = opportunities.slice(3, 8);
+    if (moreOpps.length === 0) {
+        moreContainer.innerHTML = `<p style="color: #6b7280; font-size: 13px;">All available recommendations are shown in Top Picks.</p>`;
+    } else {
+        moreOpps.forEach(function(opportunity) {
+            const isSaved = savedIds.has(opportunity.id);
+            const deadline = getDeadlineStatus(opportunity.deadline);
+            const card = document.createElement("div");
+            card.className = "opportunity-card";
+
+            const matchedTags = [
+                ...(opportunity.matched_skills || []),
+                ...(opportunity.matched_interests || [])
+            ];
+
+            card.innerHTML = `
+                <div class="opportunity-icon">
+                    ${opportunity.icon}
+                </div>
+
+                <div class="opportunity-content">
+                    <div class="opportunity-top">
+                        <span class="category-badge">
+                            ${opportunity.category}
+                        </span>
+                        <span class="match-badge">
+                            ${opportunity.score}% Match
+                        </span>
+                        <span class="deadline-badge ${deadline.className}">
+                            📅 ${deadline.label}
+                        </span>
+                    </div>
+
+                    <h3>
+                        <a href="/opportunity/${opportunity.id}" style="color: inherit; text-decoration: none;">
+                            ${opportunity.title}
+                        </a>
+                    </h3>
+
+                    <p>
+                        ${opportunity.description}
+                    </p>
+
+                    <div class="opportunity-tags">
+                        ${(opportunity.skills || []).map(skill => `<span>${skill}</span>`).join("")}
+                    </div>
+
+                    ${matchedTags.length > 0 ? `
+                        <div class="match-reasons-summary">
+                            <span>✓</span> Matches: ${matchedTags.join(", ")}
+                        </div>
+                    ` : ""}
+
+                    ${opportunity.missing_skills && opportunity.missing_skills.length > 0 ? `
+                        <div class="skill-gap-alert">
+                            💡 <strong>Skill Gap:</strong> Learn ${opportunity.missing_skills.join(", ")}
+                        </div>
+                    ` : `
+                        <div class="skill-gap-alert complete">
+                            ✓ You have all required skills!
+                        </div>
+                    `}
+
+                    <div class="opportunity-bottom">
+                        <span>📅 ${opportunity.deadline}</span>
+                        <span>🌐 ${opportunity.mode}</span>
+                        <span>📍 ${opportunity.location}</span>
+                    </div>
+
+                    <div style="margin-top: 14px;">
+                        <a href="/opportunity/${opportunity.id}" class="view-details-btn" style="display: inline-block; width: auto; padding: 7px 16px; font-size: 13px;">
+                            View Details →
+                        </a>
+                    </div>
+                </div>
+
+                <button
+                    class="bookmark-btn ${isSaved ? 'saved' : ''}"
+                    type="button"
+                    title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
+                    onclick="toggleSaveOpportunity(${opportunity.id})">
+                    ${isSaved ? '❤️' : '🔖'}
+                </button>
+            `;
+
+            moreContainer.appendChild(card);
+        });
+    }
 }
 </script>
 

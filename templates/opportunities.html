@@ -468,6 +468,42 @@ fetch(
 
 
 
+function getDeadlineStatus(deadlineStr) {
+    if (!deadlineStr) return { label: "Open", className: "open", days: 0 };
+    const deadlineDate = new Date(deadlineStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    deadlineDate.setHours(0, 0, 0, 0);
+    const diffTime = deadlineDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+        return { label: "Expired", className: "closed", days: diffDays };
+    } else if (diffDays === 0) {
+        return { label: "Closing Today", className: "urgent", days: diffDays };
+    } else if (diffDays <= 3) {
+        return { label: `Closing Soon (${diffDays}d)`, className: "urgent", days: diffDays };
+    } else if (diffDays <= 7) {
+        return { label: `Upcoming (${diffDays}d)`, className: "soon", days: diffDays };
+    } else {
+        return { label: `Open (${diffDays}d)`, className: "open", days: diffDays };
+    }
+}
+
+function resetFilters() {
+    selectedCategory = "All";
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) searchInput.value = "";
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        if (btn.dataset.category === "All") {
+            btn.classList.add("active");
+        } else {
+            btn.classList.remove("active");
+        }
+    });
+    renderOpportunities();
+}
+
 /* ==========================================
    RENDER OPPORTUNITIES
 ========================================== */
@@ -649,8 +685,12 @@ function renderOpportunities() {
                 </h3>
 
                 <p>
-                    Try another search or category.
+                    Try adjusting your search keywords or switching category filters.
                 </p>
+
+                <button class="filter-btn active" style="margin-top: 14px; cursor: pointer; display: inline-block;" onclick="resetFilters()">
+                    Clear Filters
+                </button>
 
             </div>
 
@@ -673,6 +713,12 @@ function renderOpportunities() {
         function(opportunity) {
 
             const isSaved = savedIds.has(opportunity.id);
+            const deadline = getDeadlineStatus(opportunity.deadline);
+
+            const matchedTags = [
+                ...(opportunity.matched_skills || []),
+                ...(opportunity.matched_interests || [])
+            ];
 
             const card =
                 document.createElement(
@@ -733,6 +779,11 @@ function renderOpportunities() {
 
                     </span>
 
+                    <span class="deadline-badge ${deadline.className}">
+
+                        📅 ${deadline.label}
+
+                    </span>
 
                 </div>
 
@@ -760,7 +811,21 @@ function renderOpportunities() {
 
                 </p>
 
+                ${matchedTags.length > 0 ? `
+                    <div class="match-reasons-summary">
+                        <span>✓</span> Matches: ${matchedTags.join(", ")}
+                    </div>
+                ` : ""}
 
+                ${opportunity.missing_skills && opportunity.missing_skills.length > 0 ? `
+                    <div class="skill-gap-alert">
+                        💡 <strong>Skill Gap:</strong> Learn ${opportunity.missing_skills.join(", ")}
+                    </div>
+                ` : (profile.skills && profile.skills.length > 0 ? `
+                    <div class="skill-gap-alert complete">
+                        ✓ You have all required skills!
+                    </div>
+                ` : "")}
 
                 <div class="opportunity-tags">
 

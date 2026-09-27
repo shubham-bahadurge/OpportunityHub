@@ -74,8 +74,12 @@
                         {{ opportunity.category }}
                     </span>
 
-                    <span class="match-badge">
+                    <span class="match-badge" id="detailsMatchBadge">
                         Opportunity
+                    </span>
+
+                    <span class="deadline-badge open" id="detailsDeadlineBadge">
+                        📅 Deadline
                     </span>
 
                 </div>
@@ -211,6 +215,8 @@
                                 {{ opportunity.deadline }}
                             </strong>
 
+                            <span id="detailsDeadlineCountdown" style="font-size: 11px; font-weight: 600; display: block; margin-top: 2px;"></span>
+
                         </div>
 
 
@@ -292,6 +298,20 @@
                 </div>
 
 
+                <!-- WHY THIS MATCHES YOU -->
+                <div class="details-card match-card" id="whyMatchesCard">
+
+                    <h2>🎯 Why This Matches You</h2>
+
+                    <div id="matchCardContent">
+                        <div class="loading-message" style="font-size: 13px; color: #6b7280; padding: 6px 0;">
+                            Checking profile match...
+                        </div>
+                    </div>
+
+                </div>
+
+
                 <!-- INFO -->
                 <div class="details-card trust-card">
 
@@ -318,11 +338,48 @@
     <script>
         const currentOpportunity = {{ opportunity | tojson }};
 
-        // User avatar initialization
+        // Deadline status helper
+        function getDeadlineStatus(deadlineStr) {
+            if (!deadlineStr) return { label: "Open", className: "open", days: 0 };
+            const deadlineDate = new Date(deadlineStr);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            deadlineDate.setHours(0, 0, 0, 0);
+            const diffTime = deadlineDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) {
+                return { label: "Expired", className: "closed", days: diffDays };
+            } else if (diffDays === 0) {
+                return { label: "Closing Today", className: "urgent", days: diffDays };
+            } else if (diffDays <= 3) {
+                return { label: `Closing Soon (${diffDays}d)`, className: "urgent", days: diffDays };
+            } else if (diffDays <= 7) {
+                return { label: `Upcoming (${diffDays}d)`, className: "soon", days: diffDays };
+            } else {
+                return { label: `Open (${diffDays}d)`, className: "open", days: diffDays };
+            }
+        }
+
+        // Apply deadline status
+        const deadline = getDeadlineStatus(currentOpportunity.deadline);
+        const deadlineBadge = document.getElementById("detailsDeadlineBadge");
+        if (deadlineBadge) {
+            deadlineBadge.className = `deadline-badge ${deadline.className}`;
+            deadlineBadge.textContent = `📅 ${deadline.label}`;
+        }
+        const deadlineCountdown = document.getElementById("detailsDeadlineCountdown");
+        if (deadlineCountdown) {
+            deadlineCountdown.textContent = deadline.label;
+            deadlineCountdown.style.color = deadline.className === "urgent" ? "#b91c1c" : (deadline.className === "soon" ? "#b45309" : "#047857");
+        }
+
+        // User avatar initialization & profile matching
         const savedProfile = localStorage.getItem("studentProfile");
+        let profile = null;
         if (savedProfile) {
             try {
-                const profile = JSON.parse(savedProfile);
+                profile = JSON.parse(savedProfile);
                 if (profile.name) {
                     const avatarElem = document.getElementById("userAvatar");
                     if (avatarElem) {
@@ -332,6 +389,128 @@
             } catch (e) {
                 console.error(e);
             }
+        }
+
+        const matchContent = document.getElementById("matchCardContent");
+        const matchBadge = document.getElementById("detailsMatchBadge");
+
+        if (!profile || (!profile.skills?.length && !profile.interests?.length && !profile.education)) {
+            if (matchContent) {
+                matchContent.innerHTML = `
+                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px; line-height: 1.5;">
+                        Set up your profile to see personalized match insights, skill gaps, and tailored recommendations.
+                    </p>
+                    <a href="/profile" class="primary-btn" style="display: inline-block; padding: 7px 16px; font-size: 12px; text-decoration: none;">
+                        Set Up Profile →
+                    </a>
+                `;
+            }
+        } else {
+            fetch("/api/recommendations", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(profile)
+            })
+            .then(res => res.json())
+            .then(recommendations => {
+                const oppMatch = recommendations.find(o => o.id === currentOpportunity.id);
+                renderWhyMatches(oppMatch, profile);
+            })
+            .catch(err => {
+                console.error("Match error:", err);
+                renderWhyMatches(null, profile);
+            });
+        }
+
+        function renderWhyMatches(oppMatch, prof) {
+            if (!matchContent) return;
+
+            const userSkills = (prof.skills || []).map(s => s.toLowerCase());
+            const userInterests = (prof.interests || []).map(i => i.toLowerCase());
+            const userEducation = (prof.education || "").toLowerCase();
+
+            const matchedSkills = oppMatch ? (oppMatch.matched_skills || []) :
+                currentOpportunity.skills.filter(s => userSkills.includes(s.toLowerCase()));
+
+            const missingSkills = oppMatch ? (oppMatch.missing_skills || []) :
+                currentOpportunity.skills.filter(s => !userSkills.includes(s.toLowerCase()));
+
+            const matchedInterests = oppMatch ? (oppMatch.matched_interests || []) :
+                currentOpportunity.interests.filter(i => userInterests.includes(i.toLowerCase()));
+
+            const eduMatch = oppMatch ? oppMatch.education_match :
+                currentOpportunity.education.some(e => e.toLowerCase() === userEducation || e.toLowerCase() === "all");
+
+            const catMatch = oppMatch ? oppMatch.category_match :
+                (prof.categories || []).some(c => c.toLowerCase() === currentOpportunity.category.toLowerCase());
+
+            const score = oppMatch ? oppMatch.score :
+                Math.min(100, Math.round((matchedSkills.length * 25) + (matchedInterests.length * 15) + (eduMatch ? 20 : 0) + (catMatch ? 15 : 0)));
+
+            if (matchBadge) {
+                matchBadge.textContent = `${score}% Match`;
+            }
+
+            let html = `
+                <div style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 12px;">
+                    🎯 ${score}% Match for Your Profile
+                </div>
+            `;
+
+            if (matchedSkills.length > 0) {
+                html += `
+                    <div class="match-item">
+                        <span>✓</span>
+                        <p><strong>Skills:</strong> Matches your skills in <strong>${matchedSkills.join(", ")}</strong></p>
+                    </div>
+                `;
+            }
+
+            if (matchedInterests.length > 0) {
+                html += `
+                    <div class="match-item">
+                        <span>✓</span>
+                        <p><strong>Interests:</strong> Matches your interest in <strong>${matchedInterests.join(", ")}</strong></p>
+                    </div>
+                `;
+            }
+
+            if (eduMatch) {
+                html += `
+                    <div class="match-item">
+                        <span>✓</span>
+                        <p><strong>Education:</strong> Your education (<strong>${prof.education}</strong>) meets eligibility</p>
+                    </div>
+                `;
+            }
+
+            if (catMatch) {
+                html += `
+                    <div class="match-item">
+                        <span>✓</span>
+                        <p><strong>Category:</strong> Matches your preferred category (<strong>${currentOpportunity.category}</strong>)</p>
+                    </div>
+                `;
+            }
+
+            // Skill Gap
+            if (missingSkills.length > 0) {
+                html += `
+                    <div class="match-item missing" style="margin-top: 4px;">
+                        <span>!</span>
+                        <p><strong style="color: #b45309;">Skill Gap:</strong> Opportunity requires <strong>${missingSkills.join(", ")}</strong></p>
+                    </div>
+                `;
+            } else if (currentOpportunity.skills.length > 0 && userSkills.length > 0) {
+                html += `
+                    <div class="match-item" style="margin-top: 4px;">
+                        <span>✓</span>
+                        <p><strong>Skills Complete:</strong> You have all required skills for this opportunity!</p>
+                    </div>
+                `;
+            }
+
+            matchContent.innerHTML = html;
         }
 
         // Update button state on load

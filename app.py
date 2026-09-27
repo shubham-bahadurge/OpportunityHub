@@ -1,32 +1,139 @@
-from flask import Flask, render_template, request, jsonify
+from functools import wraps
+import os
+from flask import (
+    Flask,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 
-from opportunities import opportunities
 from matching import calculate_match
-
+from opportunities import opportunities
 
 app = Flask(__name__)
+app.secret_key = os.environ.get(
+    "SECRET_KEY", "opportunityhub-hackathon-secret-key-2026"
+)
 
+# Demo accounts for Hackathon MVP Prototype
+DEMO_USERS = {
+    "admin@opportunityhub.com": {
+        "password": "admin123",
+        "role": "admin",
+        "name": "Administrator",
+    },
+    "student@opportunityhub.com": {
+        "password": "student123",
+        "role": "student",
+        "name": "Student",
+    },
+}
+
+USER_ALIASES = {
+    "admin": "admin@opportunityhub.com",
+    "student": "student@opportunityhub.com",
+}
+
+
+def login_required(role=None):
+    """Route decorator to enforce session authentication and role access."""
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            user = session.get("user")
+            if not user:
+                return redirect(url_for("login", next=request.path))
+            if role and user.get("role") != role:
+                if user.get("role") == "student" and role == "admin":
+                    # Student attempting to access admin portal
+                    return redirect(url_for("dashboard"))
+                return redirect(url_for("login"))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+
+@app.context_processor
+def inject_user():
+    return {"current_user": session.get("user")}
+
+
+# =====================================================================
+# AUTHENTICATION ROUTES
+# =====================================================================
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        data = request.get_json(silent=True) or request.form
+        raw_user = (data.get("email") or data.get("username") or "").strip().lower()
+        raw_password = (data.get("password") or "").strip()
+        remember = data.get("remember")
+
+        email = USER_ALIASES.get(raw_user, raw_user)
+        user_record = DEMO_USERS.get(email)
+
+        if user_record and user_record["password"] == raw_password:
+            session["user"] = {
+                "email": email,
+                "role": user_record["role"],
+                "name": user_record["name"],
+            }
+            if remember:
+                session.permanent = True
+
+            next_url = request.args.get("next")
+            if not next_url or not next_url.startswith("/") or next_url.startswith("//"):
+                next_url = url_for("admin_panel") if user_record["role"] == "admin" else url_for("dashboard")
+            else:
+                if user_record["role"] == "student" and next_url.startswith("/admin"):
+                    next_url = url_for("dashboard")
+
+            if request.is_json:
+                return jsonify({"success": True, "redirect": next_url, "user": session["user"]})
+            return redirect(next_url)
+
+        error_msg = "Invalid email or password. Please verify demo credentials."
+        if request.is_json:
+            return jsonify({"success": False, "error": error_msg}), 401
+        return render_template("login.html", error=error_msg), 401
+
+    # GET request
+    user = session.get("user")
+    if user:
+        if user.get("role") == "admin":
+            return redirect(url_for("admin_panel"))
+        return redirect(url_for("dashboard"))
+
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
+# =====================================================================
+# PUBLIC OPPORTUNITY ROUTES
+# =====================================================================
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
-@app.route("/profile")
-def profile():
-    return render_template("profile.html")
-
-
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
 @app.route("/opportunities")
-
 def opportunities_page():
     return render_template("opportunities.html")
+
+
 @app.route("/opportunity/<int:opportunity_id>")
 def opportunity_details(opportunity_id):
-
     opportunity = next(
         (
             item
@@ -45,9 +152,50 @@ def opportunity_details(opportunity_id):
     )
 
 
+# =====================================================================
+# PROTECTED STUDENT ROUTES
+# =====================================================================
+
+@app.route("/dashboard")
+@login_required()
+def dashboard():
+    return render_template("dashboard.html", opportunities=opportunities)
+
+
+@app.route("/applications")
+@login_required()
+def applications_page():
+    return render_template("applications.html", opportunities=opportunities)
+
+
+@app.route("/saved")
+@login_required()
+def saved():
+    return render_template("saved.html")
+
+
+@app.route("/profile")
+@login_required()
+def profile():
+    return render_template("profile.html")
+
+
+# =====================================================================
+# PROTECTED ADMIN ROUTE
+# =====================================================================
+
+@app.route("/admin")
+@login_required(role="admin")
+def admin_panel():
+    return render_template("admin.html", opportunities=opportunities)
+
+
+# =====================================================================
+# RECOMMENDATION API
+# =====================================================================
+
 @app.route("/api/recommendations", methods=["POST"])
 def recommendations():
-
     student = request.get_json(silent=True) or {}
     student_skills = [
         s.lower() for s in (student.get("skills") or [])
@@ -57,14 +205,12 @@ def recommendations():
     results = []
 
     for opportunity in opportunities:
-
         match = calculate_match(
             student,
             opportunity
         )
 
         opportunity_copy = opportunity.copy()
-
         opportunity_copy["score"] = match.get("score", 0)
 
         opp_skills_map = {s.lower(): s for s in (opportunity.get("skills") or []) if isinstance(s, str)}
@@ -81,7 +227,6 @@ def recommendations():
         ]
 
         opportunity_copy["category_match"] = match.get("category_match", False)
-
         opportunity_copy["education_match"] = match.get("education_match", False)
 
         # Skill gap analysis
@@ -91,21 +236,15 @@ def recommendations():
 
         results.append(opportunity_copy)
 
-
     # Sort highest match first
-
     results.sort(
         key=lambda item: item["score"],
         reverse=True
     )
 
-
     return jsonify(results)
-@app.route("/saved")
-def saved():
-    return render_template("saved.html")
+
 
 if __name__ == "__main__":
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)

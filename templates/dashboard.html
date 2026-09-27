@@ -30,9 +30,11 @@
                 <a href="/">Home</a>
                 <a href="/opportunities">Opportunities</a>
                 <a href="/dashboard" class="active">Dashboard</a>
+                <a href="/applications">Applications</a>
                 <a href="/saved">Saved</a>
                 <a href="/profile">Profile</a>
                 <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
+                <a href="/logout" class="nav-logout-btn" title="Sign out of OpportunityHub">Logout</a>
             </div>
         </div>
     </nav>
@@ -126,6 +128,205 @@
         </section>
 
 
+        <!-- APPLICATION ANALYTICS SECTION -->
+        <section class="analytics-section" id="applicationAnalyticsSection" aria-label="Application Analytics">
+            <div class="analytics-header">
+                <div>
+                    <div class="dash-panel-eyebrow">RECRUITMENT INTELLIGENCE</div>
+                    <h2 class="analytics-title">
+                        📊 Application Analytics
+                    </h2>
+                    <p class="analytics-subtitle">
+                        Real-time analytics and tracking insights across your recruitment pipeline.
+                    </p>
+                </div>
+                <a href="/applications" class="dash-panel-link" style="font-weight: 700; font-size: 14px;">
+                    Open Full Tracker →
+                </a>
+            </div>
+
+            <!-- Empty State (Shown when 0 applications are tracked) -->
+            <div class="analytics-empty-card" id="analyticsEmptyState" style="display: none;">
+                <div class="analytics-empty-icon">📊</div>
+                <h3 class="analytics-empty-title">No Tracked Applications Yet</h3>
+                <p class="analytics-empty-text">
+                    Start applying to opportunities or save them to your tracker. As you track your applications, deep recruitment pipeline progression, upcoming deadlines, and skill gap insights will automatically appear here.
+                </p>
+                <a href="/opportunities" class="primary-btn" style="display: inline-flex; align-items: center; gap: 8px;">
+                    Explore Opportunities →
+                </a>
+            </div>
+
+            <!-- Active Data Container (Shown when >= 1 application is tracked) -->
+            <div id="analyticsDataContainer">
+
+                <!-- 1. APPLICATION OVERVIEW KPI CARDS -->
+                <div class="analytics-kpi-grid">
+                    <a href="/applications" class="analytics-kpi-card" title="View all tracked applications">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Total Applications</span>
+                            <span class="analytics-kpi-icon" style="background: #eef2ff; color: #4338ca;">📋</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="analyticsTotalCount">0</div>
+                        <div class="analytics-kpi-sub">In pipeline</div>
+                    </a>
+
+                    <a href="/applications?filter=Applied" class="analytics-kpi-card" title="View applied opportunities">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Applied</span>
+                            <span class="analytics-kpi-icon" style="background: #e0f2fe; color: #0369a1;">📨</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountApplied">0</div>
+                        <div class="analytics-kpi-sub">Submitted</div>
+                    </a>
+
+                    <a href="/applications?filter=Shortlisted" class="analytics-kpi-card" title="View shortlisted opportunities">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Shortlisted</span>
+                            <span class="analytics-kpi-icon" style="background: #fef3c7; color: #b45309;">🌟</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountShortlisted">0</div>
+                        <div class="analytics-kpi-sub">Under review</div>
+                    </a>
+
+                    <a href="/applications?filter=Interview" class="analytics-kpi-card" title="View scheduled interviews">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Interviews</span>
+                            <span class="analytics-kpi-icon" style="background: #ede9fe; color: #6d28d9;">🎙️</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountInterview">0</div>
+                        <div class="analytics-kpi-sub">In progress</div>
+                    </a>
+
+                    <a href="/applications?filter=Selected" class="analytics-kpi-card" title="View selected offers">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Selected</span>
+                            <span class="analytics-kpi-icon" style="background: #ecfdf5; color: #047857;">🎉</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountSelected">0</div>
+                        <div class="analytics-kpi-sub">Offers received</div>
+                    </a>
+
+                    <a href="/applications?filter=Rejected" class="analytics-kpi-card" title="View archived applications">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Rejected</span>
+                            <span class="analytics-kpi-icon" style="background: #ffe4e6; color: #be123c;">⛔</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountRejected">0</div>
+                        <div class="analytics-kpi-sub">Archived</div>
+                    </a>
+                </div>
+
+                <!-- Hidden element for backward compatibility with Saved count if referenced -->
+                <span id="dashCountSaved" style="display: none;">0</span>
+
+                <!-- 2. APPLICATION PIPELINE PROGRESS -->
+                <div class="analytics-card" style="margin-bottom: 24px;">
+                    <div class="analytics-card-header">
+                        <div>
+                            <div class="dash-panel-eyebrow">CONVERSION FUNNEL</div>
+                            <h3 class="analytics-card-title">Recruitment Pipeline Progress</h3>
+                            <p class="analytics-card-subtitle">Saved → Applied → Shortlisted → Interview → Selected</p>
+                        </div>
+                        <span class="analytics-pill-badge" id="pipelineActiveSummary">0 Active in Pipeline</span>
+                    </div>
+
+                    <div class="analytics-pipeline-container">
+                        <div class="analytics-pipeline-steps" id="analyticsPipelineSteps">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                        <div class="analytics-pipeline-bar-wrapper">
+                            <div class="analytics-pipeline-bar-fill" id="analyticsPipelineBarFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 & 4. 2-COLUMN: STATUS BREAKDOWN + TOP MATCHED APPLICATIONS -->
+                <div class="analytics-grid-2col" style="margin-bottom: 24px;">
+                    <!-- 3. Status Breakdown -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <div>
+                                <div class="dash-panel-eyebrow">STAGE DISTRIBUTION</div>
+                                <h3 class="analytics-card-title">Application Status Breakdown</h3>
+                                <p class="analytics-card-subtitle">Active distribution across recruitment stages</p>
+                            </div>
+                        </div>
+                        <div class="analytics-segmented-bar" id="analyticsStatusBar">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                        <div class="analytics-status-list" id="analyticsStatusList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- 4. Top Matched Applications -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <div>
+                                <div class="dash-panel-eyebrow">PERSONAL COMPATIBILITY</div>
+                                <h3 class="analytics-card-title">Top Matched Applications</h3>
+                                <p class="analytics-card-subtitle">Tracked opportunities sorted by match score</p>
+                            </div>
+                        </div>
+                        <div class="analytics-list-container" id="analyticsTopMatchesList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5 & 6. 2-COLUMN: UPCOMING DEADLINES + SKILLS TO IMPROVE -->
+                <div class="analytics-grid-2col" style="margin-bottom: 24px;">
+                    <!-- 5. Upcoming Deadlines -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <div>
+                                <div class="dash-panel-eyebrow">TIMELINES &amp; DEADLINES</div>
+                                <h3 class="analytics-card-title">Upcoming Deadlines</h3>
+                                <p class="analytics-card-subtitle">Tracked applications sorted by nearest closing date</p>
+                            </div>
+                            <span class="analytics-pill-badge" id="upcomingDeadlinesCount">0 Upcoming</span>
+                        </div>
+                        <div class="analytics-list-container" id="analyticsDeadlinesList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- 6. Skills To Improve -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <div>
+                                <div class="dash-panel-eyebrow">SKILL GAP ANALYSIS</div>
+                                <h3 class="analytics-card-title">Skills To Improve</h3>
+                                <p class="analytics-card-subtitle">Most frequently missing skills across tracked roles</p>
+                            </div>
+                            <span class="analytics-pill-badge" id="skillGapsSummaryCount">0 Skills</span>
+                        </div>
+                        <div class="analytics-list-container" id="analyticsSkillGapList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. RECENT APPLICATION ACTIVITY -->
+                <div class="analytics-card" style="margin-bottom: 28px;">
+                    <div class="analytics-card-header">
+                        <div>
+                            <div class="dash-panel-eyebrow">AUDIT LOG</div>
+                            <h3 class="analytics-card-title">Recent Application Activity</h3>
+                            <p class="analytics-card-subtitle">Timeline of actual tracker events and status transitions</p>
+                        </div>
+                        <span class="analytics-pill-badge" id="recentActivityCount">0 Events</span>
+                    </div>
+                    <div class="analytics-timeline" id="analyticsTimelineList">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
         <!-- MAIN 2-COLUMN LAYOUT -->
         <div class="dashboard-main-layout">
 
@@ -134,21 +335,33 @@
                  ========================================================= -->
             <div class="dashboard-main-col">
 
-                <!-- TOP 3 RECOMMENDED OPPORTUNITIES -->
-                <section class="dash-panel" aria-labelledby="headingRecommendations">
+                <!-- SMART RECOMMENDATIONS: RECOMMENDED FOR YOU -->
+                <section class="dash-panel" id="smartRecommendationsSection" aria-labelledby="headingRecommendations">
                     <div class="dash-panel-header">
                         <div>
-                            <div class="dash-panel-eyebrow">TOP PERSONALIZED PICKS</div>
+                            <div class="dash-panel-eyebrow">SMART RECOMMENDATIONS</div>
                             <h2 class="dash-panel-title" id="headingRecommendations">
-                                🎯 Recommended Opportunities
+                                🎯 Recommended For You
                             </h2>
                             <p class="dash-panel-sub">
-                                Top picks aligned with your skills, interests, and degree.
+                                Top picks aligned with your skills, interests, and education.
                             </p>
                         </div>
                         <a href="/opportunities" class="dash-panel-link">
                             View All Opportunities →
                         </a>
+                    </div>
+
+                    <!-- Recommendation Filter Bar ("Recommended for me") -->
+                    <div class="recommendations-filter-bar">
+                        <span class="rec-filter-label">Recommended for me:</span>
+                        <div class="rec-filter-pills" role="tablist" aria-label="Recommendation Filters">
+                            <button type="button" class="rec-filter-btn active" data-filter="all" onclick="setRecommendationFilter('all')">All</button>
+                            <button type="button" class="rec-filter-btn" data-filter="best" onclick="setRecommendationFilter('best')">Best Match</button>
+                            <button type="button" class="rec-filter-btn" data-filter="skills" onclick="setRecommendationFilter('skills')">Skills</button>
+                            <button type="button" class="rec-filter-btn" data-filter="interests" onclick="setRecommendationFilter('interests')">Interests</button>
+                            <button type="button" class="rec-filter-btn" data-filter="category" onclick="setRecommendationFilter('category')">Category</button>
+                        </div>
                     </div>
 
                     <!-- Recommended Cards Container -->
@@ -266,6 +479,14 @@
                             </span>
                             <span class="dash-action-arrow">→</span>
                         </a>
+
+                        <a href="/applications" class="dash-action-btn">
+                            <span class="dash-action-left">
+                                <span>📋</span>
+                                <span>Track Career Applications</span>
+                            </span>
+                            <span class="dash-action-arrow">→</span>
+                        </a>
                     </div>
                 </section>
 
@@ -298,6 +519,7 @@
                         <li><a href="/">Home</a></li>
                         <li><a href="/opportunities">Opportunities</a></li>
                         <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/applications">Application Tracker</a></li>
                         <li><a href="/saved">Saved Opportunities</a></li>
                         <li><a href="/profile">Student Profile</a></li>
                     </ul>
@@ -342,6 +564,7 @@
         /* -------------------------------------------------------------
            1. Global State
            ------------------------------------------------------------- */
+        let catalogOpportunities = {{ opportunities | tojson if opportunities is defined else '[]' }};
         let currentOpportunities = [];
         let currentStudentProfile = null;
 
@@ -445,7 +668,492 @@
         }
 
         /* -------------------------------------------------------------
-           6. Update KPI Cards
+           6. Application Tracker Data & Pipeline Helper
+           ------------------------------------------------------------- */
+        function getTrackerData() {
+            try {
+                const raw = localStorage.getItem("applicationTracker");
+                const tracker = raw ? JSON.parse(raw) : {};
+
+                // Auto-sync with savedOpportunities
+                const saved = getSavedList();
+                saved.forEach(item => {
+                    const id = String(typeof item === 'object' ? item.id : item);
+                    if (id && !tracker[id]) {
+                        tracker[id] = {
+                            opportunityId: Number(id),
+                            status: "Saved",
+                            appliedDate: "",
+                            notes: "",
+                            updatedAt: new Date().toISOString()
+                        };
+                    }
+                });
+
+                return tracker;
+            } catch (e) {
+                console.error("Error reading applicationTracker", e);
+                return {};
+            }
+        }
+
+        function saveTrackerData(data) {
+            try {
+                localStorage.setItem("applicationTracker", JSON.stringify(data));
+            } catch (e) {
+                console.error("Error saving applicationTracker", e);
+            }
+        }
+
+        function formatRelativeTime(isoStr) {
+            if (!isoStr) return "Recently";
+            try {
+                const date = new Date(isoStr);
+                if (isNaN(date.getTime())) return "Recently";
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                if (diffMins < 1) return "Just now";
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffHours < 24) return `${diffHours}h ago`;
+                if (diffDays === 1) return "Yesterday";
+                if (diffDays < 7) return `${diffDays}d ago`;
+                return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            } catch (e) {
+                return "Recently";
+            }
+        }
+
+        function getOppById(oppId) {
+            const idNum = Number(oppId);
+            let found = catalogOpportunities.find(o => Number(o.id) === idNum);
+            if (!found && Array.isArray(currentOpportunities)) {
+                found = currentOpportunities.find(o => Number(o.id) === idNum);
+            }
+            if (found) return found;
+            return {
+                id: idNum,
+                title: `Opportunity #${idNum}`,
+                organization: "OpportunityHub Partner",
+                category: "Opportunity",
+                deadline: "",
+                skills: [],
+                missing_skills: [],
+                score: 80
+            };
+        }
+
+        const STATUS_CONFIG = {
+            Saved: { label: "Saved", icon: "🔖", color: "#6366f1", bg: "#eef2ff", border: "#c7d2fe" },
+            Applied: { label: "Applied", icon: "📨", color: "#0284c7", bg: "#e0f2fe", border: "#bae6fd" },
+            Shortlisted: { label: "Shortlisted", icon: "🌟", color: "#d97706", bg: "#fef3c7", border: "#fde68a" },
+            Interview: { label: "Interview", icon: "🎙️", color: "#7c3aed", bg: "#ede9fe", border: "#ddd6fe" },
+            Selected: { label: "Selected", icon: "🎉", color: "#059669", bg: "#ecfdf5", border: "#a7f3d0" },
+            Rejected: { label: "Rejected", icon: "⛔", color: "#e11d48", bg: "#ffe4e6", border: "#fecdd3" }
+        };
+
+        function updateDashboardAnalytics() {
+            const tracker = getTrackerData();
+            const trackedEntries = Object.entries(tracker);
+            const totalCount = trackedEntries.length;
+
+            const emptyState = document.getElementById("analyticsEmptyState");
+            const dataContainer = document.getElementById("analyticsDataContainer");
+
+            // Empty state check (do not render fake zero-filled charts)
+            if (totalCount === 0) {
+                if (emptyState) emptyState.style.display = "block";
+                if (dataContainer) dataContainer.style.display = "none";
+                return;
+            }
+
+            if (emptyState) emptyState.style.display = "none";
+            if (dataContainer) dataContainer.style.display = "block";
+
+            // Stage counts
+            const counts = {
+                Saved: 0,
+                Applied: 0,
+                Shortlisted: 0,
+                Interview: 0,
+                Selected: 0,
+                Rejected: 0
+            };
+
+            trackedEntries.forEach(([id, item]) => {
+                const st = item.status;
+                if (counts[st] !== undefined) {
+                    counts[st]++;
+                }
+            });
+
+            // 1. OVERVIEW KPI CARDS
+            const elTotal = document.getElementById("analyticsTotalCount");
+            const elApplied = document.getElementById("dashCountApplied");
+            const elShortlisted = document.getElementById("dashCountShortlisted");
+            const elInterview = document.getElementById("dashCountInterview");
+            const elSelected = document.getElementById("dashCountSelected");
+            const elRejected = document.getElementById("dashCountRejected");
+            const elSaved = document.getElementById("dashCountSaved");
+
+            if (elTotal) elTotal.textContent = totalCount;
+            if (elApplied) elApplied.textContent = counts.Applied;
+            if (elShortlisted) elShortlisted.textContent = counts.Shortlisted;
+            if (elInterview) elInterview.textContent = counts.Interview;
+            if (elSelected) elSelected.textContent = counts.Selected;
+            if (elRejected) elRejected.textContent = counts.Rejected;
+            if (elSaved) elSaved.textContent = counts.Saved;
+
+            // 2. RECRUITMENT PIPELINE PROGRESS
+            const pipelineStages = ["Saved", "Applied", "Shortlisted", "Interview", "Selected"];
+            const pipelineStepsElem = document.getElementById("analyticsPipelineSteps");
+            const pipelineBarFill = document.getElementById("analyticsPipelineBarFill");
+            const pipelineSummary = document.getElementById("pipelineActiveSummary");
+
+            // Weighted conversion funnel progress
+            const weights = { Saved: 20, Applied: 40, Shortlisted: 60, Interview: 80, Selected: 100 };
+            const activeCount = counts.Saved + counts.Applied + counts.Shortlisted + counts.Interview + counts.Selected;
+
+            let overallProgress = 0;
+            if (activeCount > 0) {
+                const totalScore = (counts.Saved * weights.Saved) +
+                                   (counts.Applied * weights.Applied) +
+                                   (counts.Shortlisted * weights.Shortlisted) +
+                                   (counts.Interview * weights.Interview) +
+                                   (counts.Selected * weights.Selected);
+                overallProgress = Math.min(100, Math.round(totalScore / activeCount));
+            }
+
+            if (pipelineSummary) {
+                pipelineSummary.textContent = `${activeCount} Active in Pipeline (${overallProgress}% Progress)`;
+            }
+
+            if (pipelineBarFill) {
+                pipelineBarFill.style.width = `${overallProgress}%`;
+            }
+
+            if (pipelineStepsElem) {
+                pipelineStepsElem.innerHTML = pipelineStages.map((stage, idx) => {
+                    const cfg = STATUS_CONFIG[stage] || { icon: '📋' };
+                    const stageCount = counts[stage];
+                    const pct = totalCount > 0 ? Math.round((stageCount / totalCount) * 100) : 0;
+                    const isActive = stageCount > 0;
+
+                    return `
+                        <div class="analytics-pipeline-step ${isActive ? 'active' : ''}">
+                            <div class="analytics-step-circle">${idx + 1}</div>
+                            <div class="analytics-step-label">${cfg.icon} ${stage}</div>
+                            <div class="analytics-step-count">${stageCount}</div>
+                            <div class="analytics-step-pct">${pct}% of total</div>
+                        </div>
+                    `;
+                }).join("");
+            }
+
+            // Build tracked opportunities details list
+            const studentSkills = ((currentStudentProfile && currentStudentProfile.skills) || []).map(s => String(s).toLowerCase().trim());
+
+            const trackedOpps = trackedEntries.map(([id, item]) => {
+                const opp = getOppById(id);
+
+                // Calculate match score
+                let score = 80;
+                if (typeof opp.score === 'number') {
+                    score = opp.score;
+                } else if (opp.skills && opp.skills.length > 0 && studentSkills.length > 0) {
+                    const matched = opp.skills.filter(s => studentSkills.includes(s.toLowerCase().trim()));
+                    score = Math.min(100, Math.max(50, Math.round((matched.length / opp.skills.length) * 50) + 50));
+                }
+
+                // Resolve missing skills
+                let missing = [];
+                if (Array.isArray(opp.missing_skills) && opp.missing_skills.length > 0) {
+                    missing = opp.missing_skills;
+                } else if (Array.isArray(opp.skills) && studentSkills.length > 0) {
+                    missing = opp.skills.filter(s => !studentSkills.includes(s.toLowerCase().trim()));
+                }
+
+                return {
+                    id: Number(id),
+                    title: opp.title || `Opportunity #${id}`,
+                    organization: opp.organization || "OpportunityHub Partner",
+                    category: opp.category || "General",
+                    deadline: opp.deadline || "",
+                    score: score,
+                    missing_skills: missing,
+                    status: item.status || "Saved",
+                    appliedDate: item.appliedDate || "",
+                    notes: item.notes || "",
+                    updatedAt: item.updatedAt || ""
+                };
+            });
+
+            // 3. APPLICATION STATUS BREAKDOWN (Only include statuses that exist in user's data)
+            const statusBar = document.getElementById("analyticsStatusBar");
+            const statusList = document.getElementById("analyticsStatusList");
+            const activeStatuses = Object.keys(counts).filter(st => counts[st] > 0);
+
+            if (statusBar) {
+                if (activeStatuses.length === 0) {
+                    statusBar.innerHTML = `<div class="analytics-status-segment" style="width: 100%; background: #e2e8f0;"></div>`;
+                } else {
+                    statusBar.innerHTML = activeStatuses.map(st => {
+                        const pct = ((counts[st] / totalCount) * 100).toFixed(1);
+                        const cfg = STATUS_CONFIG[st] || { color: '#64748b' };
+                        return `<div class="analytics-status-segment" style="width: ${pct}%; background-color: ${cfg.color};" title="${st}: ${counts[st]} (${pct}%)"></div>`;
+                    }).join("");
+                }
+            }
+
+            if (statusList) {
+                if (activeStatuses.length === 0) {
+                    statusList.innerHTML = `<div class="analytics-mini-empty">No active statuses recorded.</div>`;
+                } else {
+                    statusList.innerHTML = activeStatuses.map(st => {
+                        const count = counts[st];
+                        const pct = Math.round((count / totalCount) * 100);
+                        const cfg = STATUS_CONFIG[st] || { icon: '📋', color: '#64748b', bg: '#f1f5f9', border: '#e2e8f0' };
+                        return `
+                            <div class="analytics-status-item">
+                                <div class="analytics-status-left">
+                                    <span class="analytics-status-dot" style="background-color: ${cfg.color};"></span>
+                                    <span>${cfg.icon} ${st}</span>
+                                </div>
+                                <div class="analytics-status-right">
+                                    <span class="analytics-status-count">${count} ${count === 1 ? 'role' : 'roles'}</span>
+                                    <span class="analytics-status-pct" style="background: ${cfg.bg}; color: ${cfg.color}; border: 1px solid ${cfg.border};">${pct}%</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+
+            // 4. TOP MATCHED APPLICATIONS (Sorted by match score descending, top 3-5)
+            const topMatchesContainer = document.getElementById("analyticsTopMatchesList");
+            if (topMatchesContainer) {
+                const sortedByMatch = [...trackedOpps].sort((a, b) => b.score - a.score);
+                const topPicks = sortedByMatch.slice(0, 5);
+
+                if (topPicks.length === 0) {
+                    topMatchesContainer.innerHTML = `<div class="analytics-mini-empty">No tracked applications yet.</div>`;
+                } else {
+                    topMatchesContainer.innerHTML = topPicks.map(app => {
+                        const cfg = STATUS_CONFIG[app.status] || { icon: '📋', color: '#475569', bg: '#f1f5f9', border: '#e2e8f0' };
+                        return `
+                            <a href="/opportunity/${app.id}" class="analytics-top-item" title="View details for ${app.title}">
+                                <div style="min-width: 0;">
+                                    <div class="analytics-top-title">${app.title}</div>
+                                    <div class="analytics-top-org">🏢 ${app.organization} • <span style="color: #4f46e5; font-weight: 600;">${app.category}</span></div>
+                                </div>
+                                <div class="analytics-top-badges">
+                                    <span class="match-badge" style="font-size: 11px; padding: 3px 8px;">${app.score}% Match</span>
+                                    <span class="status-badge" style="background: ${cfg.bg}; color: ${cfg.color}; border: 1px solid ${cfg.border}; font-size: 11px; padding: 3px 8px;">
+                                        ${cfg.icon} ${app.status}
+                                    </span>
+                                </div>
+                            </a>
+                        `;
+                    }).join("");
+                }
+            }
+
+            // 5. UPCOMING DEADLINES (Tracked, non-expired, sorted nearest first)
+            const deadlinesContainer = document.getElementById("analyticsDeadlinesList");
+            const deadlinesBadge = document.getElementById("upcomingDeadlinesCount");
+
+            const upcomingList = trackedOpps
+                .map(app => {
+                    const statusInfo = getDeadlineStatus(app.deadline);
+                    return { ...app, deadlineInfo: statusInfo };
+                })
+                .filter(app => app.deadline && app.deadlineInfo.days >= 0);
+
+            upcomingList.sort((a, b) => a.deadlineInfo.days - b.deadlineInfo.days);
+
+            if (deadlinesBadge) {
+                deadlinesBadge.textContent = `${upcomingList.length} Upcoming`;
+            }
+
+            if (deadlinesContainer) {
+                if (upcomingList.length === 0) {
+                    deadlinesContainer.innerHTML = `<div class="analytics-mini-empty">🎉 No upcoming deadlines for your tracked applications.</div>`;
+                } else {
+                    deadlinesContainer.innerHTML = upcomingList.slice(0, 5).map(app => {
+                        let badgeType = "open";
+                        if (app.deadlineInfo.days <= 3) badgeType = "urgent";
+                        else if (app.deadlineInfo.days <= 7) badgeType = "soon";
+
+                        const cfg = STATUS_CONFIG[app.status] || { icon: '📋', color: '#475569', bg: '#f1f5f9', border: '#e2e8f0' };
+
+                        return `
+                            <div class="analytics-deadline-item">
+                                <div class="analytics-deadline-left" style="min-width: 0;">
+                                    <div class="analytics-deadline-title">
+                                        <a href="/opportunity/${app.id}">${app.title}</a>
+                                    </div>
+                                    <div class="analytics-deadline-org">
+                                        🏢 ${app.organization} • 📅 ${app.deadline}
+                                    </div>
+                                </div>
+                                <div class="analytics-deadline-right">
+                                    <span class="analytics-days-badge ${badgeType}">${app.deadlineInfo.label}</span>
+                                    <span class="status-badge" style="background: ${cfg.bg}; color: ${cfg.color}; border: 1px solid ${cfg.border}; font-size: 11px; padding: 2px 7px;">
+                                        ${cfg.icon} ${app.status}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+
+            // 6. SKILL GAP ANALYTICS (Frequency of missing skills across tracked roles)
+            const skillGapContainer = document.getElementById("analyticsSkillGapList");
+            const skillGapBadge = document.getElementById("skillGapsSummaryCount");
+
+            const skillFrequency = {};
+            trackedOpps.forEach(app => {
+                if (Array.isArray(app.missing_skills)) {
+                    app.missing_skills.forEach(s => {
+                        if (typeof s === 'string' && s.trim().length > 0) {
+                            const trimmed = s.trim();
+                            skillFrequency[trimmed] = (skillFrequency[trimmed] || 0) + 1;
+                        }
+                    });
+                }
+            });
+
+            const sortedSkills = Object.entries(skillFrequency).sort((a, b) => b[1] - a[1]);
+
+            if (skillGapBadge) {
+                skillGapBadge.textContent = `${sortedSkills.length} Skills`;
+            }
+
+            if (skillGapContainer) {
+                if (sortedSkills.length === 0) {
+                    skillGapContainer.innerHTML = `
+                        <div class="analytics-mini-empty">
+                            ✨ You possess all key skills for your tracked opportunities, or complete your profile skills to see gaps.
+                        </div>
+                    `;
+                } else {
+                    const maxFreq = sortedSkills[0][1];
+                    skillGapContainer.innerHTML = sortedSkills.slice(0, 5).map(([skill, count]) => {
+                        const pct = Math.max(15, Math.round((count / maxFreq) * 100));
+                        return `
+                            <div class="analytics-skill-item">
+                                <div class="analytics-skill-header">
+                                    <span class="analytics-skill-name">
+                                        <span>💡</span> ${skill}
+                                    </span>
+                                    <span class="analytics-skill-count">Needed in ${count} ${count === 1 ? 'role' : 'roles'}</span>
+                                </div>
+                                <div class="analytics-skill-bar-track">
+                                    <div class="analytics-skill-bar-fill" style="width: ${pct}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+
+            // 7. RECENT APPLICATION ACTIVITY TIMELINE
+            const timelineContainer = document.getElementById("analyticsTimelineList");
+            const timelineBadge = document.getElementById("recentActivityCount");
+
+            const events = [];
+            trackedOpps.forEach(app => {
+                const updatedDate = app.updatedAt ? new Date(app.updatedAt) : new Date(0);
+
+                // Applied Event
+                if (app.appliedDate) {
+                    const appliedDateObj = new Date(app.appliedDate);
+                    events.push({
+                        time: isNaN(appliedDateObj.getTime()) ? updatedDate : appliedDateObj,
+                        icon: "📨",
+                        iconBg: "#e0f2fe",
+                        actionText: `Submitted application for <a href="/opportunity/${app.id}">${app.title}</a>`,
+                        meta: `Status: Applied`
+                    });
+                }
+
+                // Stage Progression Event
+                if (["Shortlisted", "Interview", "Selected", "Rejected"].includes(app.status)) {
+                    const cfg = STATUS_CONFIG[app.status] || { icon: '📋', bg: '#f1f5f9' };
+                    events.push({
+                        time: updatedDate,
+                        icon: cfg.icon,
+                        iconBg: cfg.bg,
+                        actionText: `Progressed to <strong>${app.status}</strong> for <a href="/opportunity/${app.id}">${app.title}</a>`,
+                        meta: `Recruitment milestone`
+                    });
+                } else if (app.status === "Saved" && !app.appliedDate) {
+                    events.push({
+                        time: updatedDate,
+                        icon: "🔖",
+                        iconBg: "#eef2ff",
+                        actionText: `Bookmarked <a href="/opportunity/${app.id}">${app.title}</a> to application tracker`,
+                        meta: `Saved opportunity`
+                    });
+                }
+
+                // Notes Event
+                if (app.notes && app.notes.trim().length > 0) {
+                    events.push({
+                        time: updatedDate,
+                        icon: "📝",
+                        iconBg: "#fef3c7",
+                        actionText: `Updated private notes for <a href="/opportunity/${app.id}">${app.title}</a>`,
+                        meta: `Personal notes logged`
+                    });
+                }
+            });
+
+            // Sort newest events first
+            events.sort((a, b) => b.time - a.time);
+
+            if (timelineBadge) {
+                timelineBadge.textContent = `${events.length} Events`;
+            }
+
+            if (timelineContainer) {
+                if (events.length === 0) {
+                    timelineContainer.innerHTML = `<div class="analytics-mini-empty">No activity recorded yet. Start applying or bookmarking opportunities!</div>`;
+                } else {
+                    timelineContainer.innerHTML = events.slice(0, 6).map(evt => {
+                        const isoStr = evt.time instanceof Date && !isNaN(evt.time.getTime()) ? evt.time.toISOString() : "";
+                        return `
+                            <div class="analytics-timeline-item">
+                                <div class="analytics-timeline-icon" style="background: ${evt.iconBg};">
+                                    ${evt.icon}
+                                </div>
+                                <div class="analytics-timeline-body">
+                                    <div class="analytics-timeline-text">
+                                        ${evt.actionText}
+                                    </div>
+                                    <div class="analytics-timeline-meta">
+                                        <span>🕒 ${formatRelativeTime(isoStr)}</span>
+                                        <span>•</span>
+                                        <span>${evt.meta}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+        }
+
+        function updateTrackerPipelineUI() {
+            updateDashboardAnalytics();
+        }
+
+        /* -------------------------------------------------------------
+           6b. Update KPI Cards
            ------------------------------------------------------------- */
         function updateKPIs() {
             // 1. Recommended Count
@@ -475,6 +1183,9 @@
             const progressFillElem = document.getElementById("kpiProgressFill");
             if (completionElem) completionElem.textContent = `${completionPct}%`;
             if (progressFillElem) progressFillElem.style.width = `${completionPct}%`;
+
+            // 5. Update Application Tracker Pipeline & Analytics
+            updateDashboardAnalytics();
         }
 
         /* -------------------------------------------------------------
@@ -484,17 +1195,36 @@
             const idNum = Number(oppId);
             let saved = getSavedList();
             const index = saved.findIndex(item => (typeof item === 'object' ? Number(item.id) === idNum : Number(item) === idNum));
+            const tracker = getTrackerData();
+            const idStr = String(idNum);
 
+            let isNowSaved = false;
             if (index >= 0) {
                 saved.splice(index, 1);
+                if (tracker[idStr] && tracker[idStr].status === "Saved") {
+                    tracker[idStr].status = "Not Applied";
+                    tracker[idStr].updatedAt = new Date().toISOString();
+                    saveTrackerData(tracker);
+                }
+                isNowSaved = false;
             } else {
-                // Find in current recommendations or construct minimal object
                 let opp = currentOpportunities.find(item => Number(item.id) === idNum);
                 if (opp) {
                     saved.push(opp);
                 } else {
                     saved.push({ id: idNum });
                 }
+                if (!tracker[idStr] || tracker[idStr].status === "Not Applied") {
+                    tracker[idStr] = {
+                        opportunityId: idNum,
+                        status: "Saved",
+                        appliedDate: "",
+                        notes: tracker[idStr] ? tracker[idStr].notes : "",
+                        updatedAt: new Date().toISOString()
+                    };
+                    saveTrackerData(tracker);
+                }
+                isNowSaved = true;
             }
 
             try {
@@ -504,8 +1234,12 @@
             }
 
             updateKPIs();
+            updateDashboardAnalytics();
             renderRecommendedCards(currentOpportunities);
             renderSavedPreview();
+            if (typeof showToast === "function") {
+                showToast(isNowSaved ? "Opportunity saved to bookmarks! 🔖" : "Removed from saved opportunities.");
+            }
         }
 
         /* -------------------------------------------------------------
@@ -590,46 +1324,261 @@
         }
 
         /* -------------------------------------------------------------
-           9. Render Top 3 Recommended Opportunities
+           9. Smart Recommendations: Filter, Explanation, Quality, Apply, & Top 5 Render
            ------------------------------------------------------------- */
+        let currentRecFilter = 'all';
+
+        function showToast(msg) {
+            let toast = document.getElementById("dashToast");
+            if (!toast) {
+                toast = document.createElement("div");
+                toast.id = "dashToast";
+                toast.className = "toast-notification";
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.classList.add("visible");
+            setTimeout(() => {
+                toast.classList.remove("visible");
+            }, 3000);
+        }
+
+        function getMatchQuality(score) {
+            const val = Number(score) || 0;
+            if (val >= 80) {
+                return { label: "Excellent Match", className: "quality-excellent" };
+            } else if (val >= 60) {
+                return { label: "Strong Match", className: "quality-strong" };
+            } else if (val >= 40) {
+                return { label: "Moderate Match", className: "quality-moderate" };
+            } else {
+                return { label: "Low Match", className: "quality-low" };
+            }
+        }
+
+        function getRecommendationExplanation(opp) {
+            const matchedSkills = opp.matched_skills || [];
+            const matchedInterests = opp.matched_interests || [];
+            const educationMatch = !!opp.education_match;
+            const categoryMatch = !!opp.category_match;
+            const score = Number(opp.score) || 0;
+
+            const reasons = [];
+
+            // 1. Skill Match Explanation (supported by actual matched skills data)
+            const totalOppSkills = (opp.skills || []).length || 1;
+            if (matchedSkills.length >= 2 || (matchedSkills.length >= 1 && (matchedSkills.length / totalOppSkills) >= 0.5)) {
+                reasons.push(`Strong skill match (${matchedSkills.slice(0, 2).join(", ")})`);
+            } else if (matchedSkills.length === 1) {
+                reasons.push(`Skill match (${matchedSkills[0]})`);
+            }
+
+            // 2. Interests Match Explanation (supported by actual matched interests data)
+            if (matchedInterests.length > 0) {
+                reasons.push(`Matches your interests (${matchedInterests.slice(0, 2).join(", ")})`);
+            }
+
+            // 3. Education Match Explanation (supported by actual education match data)
+            if (educationMatch) {
+                reasons.push("Matches your education");
+            }
+
+            // 4. Category Match Explanation (supported by actual category match data)
+            if (categoryMatch) {
+                reasons.push(`Matches your target category (${opp.category})`);
+            }
+
+            // 5. Fallback for overall profile compatibility
+            if (reasons.length === 0) {
+                if (score >= 60) {
+                    reasons.push("Good overall profile match");
+                } else if (score >= 40) {
+                    reasons.push("Moderate profile alignment");
+                } else {
+                    reasons.push("Explore to expand your skills");
+                }
+            }
+
+            return reasons.join(" • ");
+        }
+
+        function setRecommendationFilter(filterName) {
+            currentRecFilter = filterName;
+            document.querySelectorAll(".rec-filter-btn").forEach(btn => {
+                btn.classList.toggle("active", btn.dataset.filter === filterName);
+            });
+            renderRecommendedCards(currentOpportunities);
+        }
+
+        function filterRecommendations(oppList, filterType) {
+            if (!Array.isArray(oppList)) return [];
+
+            let filtered = [...oppList];
+
+            if (filterType === 'best') {
+                const highScored = filtered.filter(o => (o.score || 0) >= 50);
+                filtered = highScored.length > 0 ? highScored : filtered;
+                filtered.sort((a, b) => (b.score || 0) - (a.score || 0));
+            } else if (filterType === 'skills') {
+                const skillMatched = filtered.filter(o => (o.matched_skills && o.matched_skills.length > 0));
+                filtered = skillMatched.length > 0 ? skillMatched : filtered;
+                filtered.sort((a, b) => {
+                    const countA = (a.matched_skills || []).length;
+                    const countB = (b.matched_skills || []).length;
+                    if (countB !== countA) return countB - countA;
+                    return (b.score || 0) - (a.score || 0);
+                });
+            } else if (filterType === 'interests') {
+                const interestMatched = filtered.filter(o => (o.matched_interests && o.matched_interests.length > 0));
+                filtered = interestMatched.length > 0 ? interestMatched : filtered;
+                filtered.sort((a, b) => {
+                    const countA = (a.matched_interests || []).length;
+                    const countB = (b.matched_interests || []).length;
+                    if (countB !== countA) return countB - countA;
+                    return (b.score || 0) - (a.score || 0);
+                });
+            } else if (filterType === 'category') {
+                const catMatched = filtered.filter(o => o.category_match === true);
+                filtered = catMatched.length > 0 ? catMatched : filtered;
+                filtered.sort((a, b) => (b.score || 0) - (a.score || 0));
+            } else {
+                // 'all': sorted strictly by match score descending
+                filtered.sort((a, b) => (b.score || 0) - (a.score || 0));
+            }
+
+            return filtered;
+        }
+
+        function handleDashboardApply(oppId) {
+            const idNum = Number(oppId);
+            const idStr = String(idNum);
+            const tracker = getTrackerData();
+            const existing = tracker[idStr];
+            const isAlreadyApplied = existing && ["Applied", "Shortlisted", "Interview", "Selected"].includes(existing.status);
+
+            if (!existing) {
+                tracker[idStr] = {
+                    opportunityId: idNum,
+                    status: "Applied",
+                    appliedDate: new Date().toISOString().split("T")[0],
+                    notes: "",
+                    updatedAt: new Date().toISOString()
+                };
+            } else if (!isAlreadyApplied) {
+                tracker[idStr].status = "Applied";
+                if (!tracker[idStr].appliedDate) {
+                    tracker[idStr].appliedDate = new Date().toISOString().split("T")[0];
+                }
+                tracker[idStr].updatedAt = new Date().toISOString();
+            }
+
+            saveTrackerData(tracker);
+            updateKPIs();
+            updateDashboardAnalytics();
+            renderRecommendedCards(currentOpportunities);
+            renderSavedPreview();
+            showToast(isAlreadyApplied ? "Application already in your pipeline." : "Application added to pipeline as Applied! 🚀");
+        }
+
         function renderRecommendedCards(opportunities) {
             const container = document.getElementById("recommendedContainer");
             if (!container) return;
 
-            if (!opportunities || opportunities.length === 0) {
+            // 1. Check if profile is complete enough for useful recommendations
+            const hasSkills = currentStudentProfile && Array.isArray(currentStudentProfile.skills) && currentStudentProfile.skills.length > 0;
+            const hasInterests = currentStudentProfile && Array.isArray(currentStudentProfile.interests) && currentStudentProfile.interests.length > 0;
+
+            if (!currentStudentProfile || (!hasSkills && !hasInterests)) {
                 container.innerHTML = `
                     <div class="dash-empty-box">
-                        <div class="dash-empty-icon">🎯</div>
-                        <h3 class="dash-empty-title">No recommendations found</h3>
-                        <p class="dash-empty-text">Complete your student profile to discover matching opportunities.</p>
-                        <a href="/profile" class="primary-btn" style="padding: 9px 18px; font-size: 13px;">Update Profile →</a>
+                        <div class="dash-empty-icon">👤</div>
+                        <h3 class="dash-empty-title">Complete your profile to get personalized recommendations.</h3>
+                        <p class="dash-empty-text">Add your skills, interests, and education so OpportunityHub can find matches tailored to your career goals.</p>
+                        <a href="/profile" class="primary-btn" style="padding: 10px 20px; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                            <span>👤 Complete Profile</span>
+                            <span>→</span>
+                        </a>
                     </div>
                 `;
                 return;
             }
 
-            const top3 = opportunities.slice(0, 3);
-            const studentSkills = ((currentStudentProfile && currentStudentProfile.skills) || []).map(s => s.toLowerCase());
+            // 2. Check if opportunities exist in catalog
+            if (!opportunities || opportunities.length === 0) {
+                container.innerHTML = `
+                    <div class="dash-empty-box">
+                        <div class="dash-empty-icon">🔎</div>
+                        <h3 class="dash-empty-title">No opportunities found</h3>
+                        <p class="dash-empty-text">There are currently no matching opportunities available in the catalog.</p>
+                        <a href="/opportunities" class="primary-btn" style="padding: 10px 20px; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                            <span>🔎 Explore Opportunities</span>
+                            <span>→</span>
+                        </a>
+                    </div>
+                `;
+                return;
+            }
 
-            container.innerHTML = top3.map((opp, idx) => {
-                const isSaved = isOpportunitySaved(opp.id);
+            // 3. Deduplicate opportunities by ID to prevent duplicate recommendations
+            const seen = new Set();
+            const uniqueOpps = [];
+            for (const opp of opportunities) {
+                const id = Number(opp.id);
+                if (!seen.has(id)) {
+                    seen.add(id);
+                    uniqueOpps.push(opp);
+                }
+            }
+
+            // 4. Apply recommendation filter
+            const filteredOpps = filterRecommendations(uniqueOpps, currentRecFilter);
+
+            if (filteredOpps.length === 0) {
+                container.innerHTML = `
+                    <div class="dash-empty-box">
+                        <div class="dash-empty-icon">🎯</div>
+                        <h3 class="dash-empty-title">No opportunities found for "${currentRecFilter}"</h3>
+                        <p class="dash-empty-text">Try selecting a different filter or reset to All recommendations.</p>
+                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px;">
+                            <button type="button" class="secondary-btn" onclick="setRecommendationFilter('all')" style="padding: 8px 16px; font-size: 13px;">
+                                Show All Recommendations
+                            </button>
+                            <a href="/opportunities" class="primary-btn" style="padding: 8px 16px; font-size: 13px; text-decoration: none;">
+                                Explore Opportunities →
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 5. Display the top 5 recommendations
+            const top5 = filteredOpps.slice(0, 5);
+            const studentSkills = ((currentStudentProfile && currentStudentProfile.skills) || []).map(s => s.toLowerCase());
+            const tracker = getTrackerData();
+
+            container.innerHTML = top5.map((opp, idx) => {
+                const idStr = String(opp.id);
+                const trackerItem = tracker[idStr];
+                const isApplied = trackerItem && ["Applied", "Shortlisted", "Interview", "Selected"].includes(trackerItem.status);
+                const isSaved = isOpportunitySaved(opp.id) || (trackerItem && trackerItem.status === "Saved");
+                const appliedStatusLabel = trackerItem ? trackerItem.status : "Applied";
+
                 const deadline = getDeadlineStatus(opp.deadline);
                 const score = opp.score || 0;
+                const quality = getMatchQuality(score);
+                const explanation = getRecommendationExplanation(opp);
 
-                // Match reasons
-                const matchedTags = [
-                    ...(opp.matched_skills || []),
-                    ...(opp.matched_interests || [])
-                ];
+                // Skill gap: Matched and Missing skills
+                const oppSkills = opp.skills || [];
+                const matchedSkills = oppSkills.filter(s => studentSkills.includes(s.toLowerCase()));
+                const missingSkills = oppSkills.filter(s => !studentSkills.includes(s.toLowerCase()));
 
-                const skillsList = (opp.skills || []).map(skill => {
-                    const isMatched = studentSkills.includes(skill.toLowerCase());
-                    return `<span class="dash-skill-pill ${isMatched ? 'matched' : ''}">${isMatched ? '✓ ' : ''}${skill}</span>`;
-                }).join("");
+                const educationStr = Array.isArray(opp.education) ? opp.education.join(", ") : (opp.education || "All Degrees");
 
                 return `
                     <article class="dash-opp-card" data-id="${opp.id}">
-                        <div class="dash-opp-card-rank">#${idx + 1} Top Match</div>
+                        <div class="dash-opp-card-rank">#${idx + 1} Best Match</div>
 
                         <div class="dash-opp-top">
                             <div class="dash-opp-left-header">
@@ -654,28 +1603,45 @@
                         <div class="dash-opp-badges">
                             <span class="category-badge">${opp.category}</span>
                             <span class="match-badge">${score}% Match</span>
+                            <span class="match-quality-badge ${quality.className}">${quality.label}</span>
                             <span class="status-badge ${deadline.className}">📅 ${deadline.label}</span>
+                            ${isApplied ? `<span class="app-status-pill applied">✓ Already Applied</span>` : (isSaved ? `<span class="app-status-pill saved">🔖 Saved</span>` : '')}
                         </div>
 
                         <p class="dash-opp-desc">
                             ${opp.description}
                         </p>
 
-                        <div class="dash-skills-pills">
-                            ${skillsList}
+                        <!-- Personalized Explanation -->
+                        <div class="dash-rec-explanation">
+                            <span class="rec-exp-icon">💡</span>
+                            <div><strong>Why it matches:</strong> ${explanation}</div>
                         </div>
 
-                        ${matchedTags.length > 0 ? `
-                            <div class="dash-match-summary-box">
-                                <span>🎯</span>
-                                <span><strong>Why it matches:</strong> Aligned with ${matchedTags.slice(0, 3).join(", ")}${matchedTags.length > 3 ? ` +${matchedTags.length - 3} more` : ''}</span>
+                        <!-- Skill Gap Breakdown: Matched & Missing Skills -->
+                        <div class="dash-skill-gap-row">
+                            <div class="dash-skill-group">
+                                <span class="dash-skill-group-title matched-title">✓ Matched Skills (${matchedSkills.length})</span>
+                                <div class="dash-skills-pills">
+                                    ${matchedSkills.length > 0
+                                        ? matchedSkills.map(s => `<span class="dash-skill-pill matched">✓ ${s}</span>`).join("")
+                                        : `<span class="dash-skill-empty">None matched yet</span>`}
+                                </div>
                             </div>
-                        ` : ''}
+                            <div class="dash-skill-group">
+                                <span class="dash-skill-group-title missing-title">+ Missing Skills (${missingSkills.length})</span>
+                                <div class="dash-skills-pills">
+                                    ${missingSkills.length > 0
+                                        ? missingSkills.map(s => `<span class="dash-skill-pill missing">+ ${s}</span>`).join("")
+                                        : `<span class="dash-skill-empty matched-all">🎉 All skills matched!</span>`}
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="dash-opp-footer">
                             <div class="dash-opp-meta">
                                 <span>📍 ${opp.location}</span>
-                                <span>🎓 ${Array.isArray(opp.education) ? opp.education.join(", ") : (opp.education || "All")}</span>
+                                <span>🎓 ${educationStr}</span>
                             </div>
 
                             <div class="dash-opp-actions">
@@ -686,6 +1652,17 @@
                                     title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}">
                                     ${isSaved ? '❤️ Saved' : '🔖 Save'}
                                 </button>
+
+                                ${isApplied ? `
+                                    <button type="button" class="btn-apply-dash applied" disabled title="Already in application pipeline (${appliedStatusLabel})">
+                                        ✓ Already Applied
+                                    </button>
+                                ` : `
+                                    <button type="button" class="btn-apply-dash" onclick="handleDashboardApply(${opp.id})" title="Submit application to pipeline">
+                                        Apply Now →
+                                    </button>
+                                `}
+
                                 <a href="/opportunity/${opp.id}"
                                    class="btn-view-dash"
                                    onclick="markOpportunityViewed(${opp.id})">
@@ -935,7 +1912,18 @@
                 const data = await response.json();
                 currentOpportunities = Array.isArray(data) ? data : [];
 
+                // Merge scored recommendation data into catalogOpportunities
+                currentOpportunities.forEach(rec => {
+                    const existing = catalogOpportunities.find(o => Number(o.id) === Number(rec.id));
+                    if (existing) {
+                        Object.assign(existing, rec);
+                    } else {
+                        catalogOpportunities.push(rec);
+                    }
+                });
+
                 updateKPIs();
+                updateDashboardAnalytics();
                 renderRecommendedCards(currentOpportunities);
                 renderSavedPreview();
 

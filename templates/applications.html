@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Tracker | OpportunityHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="applications-page">
+
+    <!-- =================================================================
+         1. NAVBAR (Consistent with OpportunityHub design system)
+         ================================================================= -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
+            </a>
+
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/opportunities">Opportunities</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/applications" class="active">Applications</a>
+                <a href="/saved">Saved</a>
+                <a href="/profile">Profile</a>
+                <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
+                <a href="/logout" class="nav-logout-btn" title="Sign out of OpportunityHub">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- =================================================================
+         2. PAGE HERO / HEADER
+         ================================================================= -->
+    <header class="applications-hero">
+        <div class="container">
+            <div class="saved-hero-content">
+                <div class="saved-hero-text">
+                    <span class="saved-hero-badge" style="background: #eef2ff; color: #4338ca; border-color: #c7d2fe;">
+                        💼 CAREER PIPELINE
+                    </span>
+                    <h1>Application Tracker</h1>
+                    <p class="subtitle">
+                        Manage, track, and advance your student opportunities through every stage.
+                    </p>
+                </div>
+
+                <div class="dashboard-hero-actions">
+                    <div style="background: #ffffff; padding: 10px 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 20px;">📊</span>
+                        <div>
+                            <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Total In Pipeline</div>
+                            <div style="font-size: 16px; font-weight: 800; color: #4f46e5;" id="totalTrackedCount">0 Applications</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- =================================================================
+         3. MAIN CONTAINER
+         ================================================================= -->
+    <main class="applications-container">
+
+        <!-- 6-STAGE STATS METRICS ROW -->
+        <section class="tracker-stats-grid" id="statsGrid" aria-label="Application Status Metrics">
+            <div class="tracker-stat-card" data-status="Saved" onclick="setFilter('Saved')">
+                <div class="tracker-stat-icon">🔖</div>
+                <div class="tracker-stat-val" id="statSaved">0</div>
+                <div class="tracker-stat-label">Saved</div>
+            </div>
+
+            <div class="tracker-stat-card" data-status="Applied" onclick="setFilter('Applied')">
+                <div class="tracker-stat-icon">📨</div>
+                <div class="tracker-stat-val" id="statApplied">0</div>
+                <div class="tracker-stat-label">Applied</div>
+            </div>
+
+            <div class="tracker-stat-card" data-status="Shortlisted" onclick="setFilter('Shortlisted')">
+                <div class="tracker-stat-icon">🌟</div>
+                <div class="tracker-stat-val" id="statShortlisted">0</div>
+                <div class="tracker-stat-label">Shortlisted</div>
+            </div>
+
+            <div class="tracker-stat-card" data-status="Interview" onclick="setFilter('Interview')">
+                <div class="tracker-stat-icon">🎙️</div>
+                <div class="tracker-stat-val" id="statInterview">0</div>
+                <div class="tracker-stat-label">Interview</div>
+            </div>
+
+            <div class="tracker-stat-card" data-status="Selected" onclick="setFilter('Selected')">
+                <div class="tracker-stat-icon">🎉</div>
+                <div class="tracker-stat-val" id="statSelected">0</div>
+                <div class="tracker-stat-label">Selected</div>
+            </div>
+
+            <div class="tracker-stat-card" data-status="Rejected" onclick="setFilter('Rejected')">
+                <div class="tracker-stat-icon">⛔</div>
+                <div class="tracker-stat-val" id="statRejected">0</div>
+                <div class="tracker-stat-label">Rejected</div>
+            </div>
+        </section>
+
+
+        <!-- STATUS FILTER BAR & DYNAMIC COUNT -->
+        <section class="tracker-filter-bar">
+            <div class="tracker-pills-row" id="filterTabs">
+                <button type="button" class="tracker-filter-btn active" data-filter="All" onclick="setFilter('All')">
+                    <span>All</span>
+                    <span class="tracker-filter-count" id="countAll">0</span>
+                </button>
+                <button type="button" class="tracker-filter-btn" data-filter="Saved" onclick="setFilter('Saved')">
+                    <span>🔖 Saved</span>
+                    <span class="tracker-filter-count" id="countSaved">0</span>
+                </button>
+                <button type="button" class="tracker-filter-btn" data-filter="Applied" onclick="setFilter('Applied')">
+                    <span>📨 Applied</span>
+                    <span class="tracker-filter-count" id="countApplied">0</span>
+                </button>
+                <button type="button" class="tracker-filter-btn" data-filter="Shortlisted" onclick="setFilter('Shortlisted')">
+                    <span>🌟 Shortlisted</span>
+                    <span class="tracker-filter-count" id="countShortlisted">0</span>
+                </button>
+                <button type="button" class="tracker-filter-btn" data-filter="Interview" onclick="setFilter('Interview')">
+                    <span>🎙️ Interview</span>
+                    <span class="tracker-filter-count" id="countInterview">0</span>
+                </button>
+                <button type="button" class="tracker-filter-btn" data-filter="Selected" onclick="setFilter('Selected')">
+                    <span>🎉 Selected</span>
+                    <span class="tracker-filter-count" id="countSelected">0</span>
+                </button>
+                <button type="button" class="tracker-filter-btn" data-filter="Rejected" onclick="setFilter('Rejected')">
+                    <span>⛔ Rejected</span>
+                    <span class="tracker-filter-count" id="countRejected">0</span>
+                </button>
+            </div>
+
+            <span class="saved-count-pill" id="showingCountPill">Showing 0 applications</span>
+        </section>
+
+
+        <!-- APPLICATIONS GRID -->
+        <section class="opportunities-grid" id="applicationsGrid" aria-label="Tracked Applications Grid">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #64748b;">
+                Loading your application tracker...
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- =================================================================
+         4. PROFESSIONAL FOOTER (Matching OpportunityHub design system)
+         ================================================================= -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-logo">
+                        🚀 OpportunityHub
+                    </a>
+                    <p class="footer-desc">
+                        One Platform. Every Opportunity. Dedicated to helping students discover, match, and apply for high-value career opportunities.
+                    </p>
+                    <span class="footer-badge">Hackathon 2026 Finalist</span>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/opportunities">Opportunities</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/applications">Application Tracker</a></li>
+                        <li><a href="/saved">Saved Opportunities</a></li>
+                        <li><a href="/profile">Student Profile</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Categories</h4>
+                    <ul class="footer-links">
+                        <li><a href="/opportunities?category=Internship">Internships</a></li>
+                        <li><a href="/opportunities?category=Hackathon">Hackathons</a></li>
+                        <li><a href="/opportunities?category=Scholarship">Scholarships</a></li>
+                        <li><a href="/opportunities?category=Certification">Certifications</a></li>
+                        <li><a href="/opportunities?category=Competition">Competitions</a></li>
+                        <li><a href="/opportunities?category=Workshop">Workshops</a></li>
+                        <li><a href="/opportunities?category=Course">Courses</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Project Information</h4>
+                    <div class="footer-team-box">
+                        <div class="footer-team-name">Team Godlike</div>
+                        <p class="footer-team-desc">
+                            Built for Hackathon 2026 using Python Flask, lightweight local persistence, and smart matching algorithms.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2026 OpportunityHub. Designed and built with ❤️ by Team Godlike.</span>
+                <span>All opportunities curated for student success.</span>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- =================================================================
+         5. JAVASCRIPT FUNCTIONALITY
+         ================================================================= -->
+    <script>
+        let currentFilter = "All";
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filterParam = urlParams.get("filter");
+            if (filterParam && ["Saved", "Applied", "Shortlisted", "Interview", "Selected", "Rejected"].includes(filterParam)) {
+                currentFilter = filterParam;
+            }
+        } catch (e) {
+            console.error("Error reading filter parameter", e);
+        }
+        let catalogOpportunities = {{ opportunities | tojson if opportunities is defined else '[]' }};
+        let studentProfile = null;
+
+        // Load profile safely
+        try {
+            const rawProfile = localStorage.getItem("studentProfile");
+            if (rawProfile) studentProfile = JSON.parse(rawProfile);
+        } catch (e) {
+            console.error("Error reading studentProfile", e);
+        }
+
+        // Update nav profile button
+        const navProfileBtn = document.getElementById("navProfileBtn");
+        if (navProfileBtn && studentProfile && studentProfile.name) {
+            navProfileBtn.textContent = studentProfile.name.split(" ")[0];
+        }
+
+        // Mobile Nav Toggle
+        const mobileToggle = document.getElementById("mobileToggle");
+        const navLinks = document.getElementById("navLinks");
+        if (mobileToggle && navLinks) {
+            mobileToggle.addEventListener("click", () => {
+                navLinks.classList.toggle("active");
+                mobileToggle.classList.toggle("open");
+            });
+        }
+
+        /* -------------------------------------------------------------
+           1. Application Tracker LocalStorage Helpers
+           ------------------------------------------------------------- */
+        function getTrackerData() {
+            try {
+                const raw = localStorage.getItem("applicationTracker");
+                const tracker = raw ? JSON.parse(raw) : {};
+
+                // Auto-sync with savedOpportunities: If something is bookmarked, ensure it has a tracker entry
+                const rawSaved = localStorage.getItem("savedOpportunities");
+                if (rawSaved) {
+                    const savedList = JSON.parse(rawSaved);
+                    if (Array.isArray(savedList)) {
+                        savedList.forEach(item => {
+                            const id = String(typeof item === 'object' ? item.id : item);
+                            if (id && !tracker[id]) {
+                                tracker[id] = {
+                                    opportunityId: Number(id),
+                                    status: "Saved",
+                                    appliedDate: "",
+                                    notes: "",
+                                    updatedAt: new Date().toISOString()
+                                };
+                            }
+                        });
+                    }
+                }
+
+                return tracker;
+            } catch (e) {
+                console.error("Error reading applicationTracker", e);
+                return {};
+            }
+        }
+
+        function saveTrackerData(data) {
+            try {
+                localStorage.setItem("applicationTracker", JSON.stringify(data));
+            } catch (e) {
+                console.error("Error saving applicationTracker", e);
+            }
+        }
+
+        function updateApplicationStatus(oppId, newStatus) {
+            const idStr = String(oppId);
+            const tracker = getTrackerData();
+
+            if (!tracker[idStr]) {
+                tracker[idStr] = {
+                    opportunityId: Number(oppId),
+                    status: newStatus,
+                    appliedDate: newStatus === "Applied" ? new Date().toISOString().split("T")[0] : "",
+                    notes: "",
+                    updatedAt: new Date().toISOString()
+                };
+            } else {
+                tracker[idStr].status = newStatus;
+                tracker[idStr].updatedAt = new Date().toISOString();
+                if (newStatus === "Applied" && !tracker[idStr].appliedDate) {
+                    tracker[idStr].appliedDate = new Date().toISOString().split("T")[0];
+                }
+            }
+
+            saveTrackerData(tracker);
+            renderTrackerView();
+        }
+
+        function saveNote(oppId) {
+            const idStr = String(oppId);
+            const textarea = document.getElementById(`notesInput_${oppId}`);
+            if (!textarea) return;
+
+            const notes = textarea.value.trim();
+            const tracker = getTrackerData();
+
+            if (tracker[idStr]) {
+                tracker[idStr].notes = notes;
+                tracker[idStr].updatedAt = new Date().toISOString();
+                saveTrackerData(tracker);
+            }
+
+            // Show feedback
+            const feedback = document.getElementById(`noteSavedFeedback_${oppId}`);
+            if (feedback) {
+                feedback.style.display = "inline";
+                setTimeout(() => { feedback.style.display = "none"; }, 2000);
+            }
+        }
+
+        function toggleNotesDrawer(oppId) {
+            const drawer = document.getElementById(`notesDrawer_${oppId}`);
+            if (drawer) {
+                drawer.classList.toggle("open");
+            }
+        }
+
+        function setFilter(status) {
+            currentFilter = status;
+            renderTrackerView();
+        }
+
+        /* -------------------------------------------------------------
+           2. Render Application Tracker Grid & Metrics
+           ------------------------------------------------------------- */
+        function getStatusBadgeClass(status) {
+            switch ((status || "").toLowerCase()) {
+                case "saved": return "status-saved";
+                case "applied": return "status-applied";
+                case "shortlisted": return "status-shortlisted";
+                case "interview": return "status-interview";
+                case "selected": return "status-selected";
+                case "rejected": return "status-rejected";
+                default: return "status-not-applied";
+            }
+        }
+
+        function getStatusIcon(status) {
+            switch ((status || "").toLowerCase()) {
+                case "saved": return "🔖";
+                case "applied": return "📨";
+                case "shortlisted": return "🌟";
+                case "interview": return "🎙️";
+                case "selected": return "🎉";
+                case "rejected": return "⛔";
+                default: return "📋";
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "Not recorded";
+            try {
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return dateStr;
+                return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
+        function formatRelativeTime(isoStr) {
+            if (!isoStr) return "Recently";
+            try {
+                const date = new Date(isoStr);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                if (diffMins < 1) return "Just now";
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffHours < 24) return `${diffHours}h ago`;
+                if (diffDays === 1) return "Yesterday";
+                if (diffDays < 7) return `${diffDays}d ago`;
+                return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            } catch (e) {
+                return "Recently";
+            }
+        }
+
+        function renderTrackerView() {
+            const tracker = getTrackerData();
+            const trackedIds = Object.keys(tracker);
+            const totalCount = trackedIds.length;
+
+            // Calculate stage counts
+            const counts = {
+                Saved: 0,
+                Applied: 0,
+                Shortlisted: 0,
+                Interview: 0,
+                Selected: 0,
+                Rejected: 0
+            };
+
+            trackedIds.forEach(id => {
+                const st = tracker[id].status;
+                if (counts[st] !== undefined) {
+                    counts[st]++;
+                }
+            });
+
+            // Update Header & Metrics Row
+            const totalHeader = document.getElementById("totalTrackedCount");
+            if (totalHeader) totalHeader.textContent = `${totalCount} Application${totalCount === 1 ? '' : 's'}`;
+
+            document.getElementById("statSaved").textContent = counts.Saved;
+            document.getElementById("statApplied").textContent = counts.Applied;
+            document.getElementById("statShortlisted").textContent = counts.Shortlisted;
+            document.getElementById("statInterview").textContent = counts.Interview;
+            document.getElementById("statSelected").textContent = counts.Selected;
+            document.getElementById("statRejected").textContent = counts.Rejected;
+
+            // Update Filter Tab Badges
+            document.getElementById("countAll").textContent = totalCount;
+            document.getElementById("countSaved").textContent = counts.Saved;
+            document.getElementById("countApplied").textContent = counts.Applied;
+            document.getElementById("countShortlisted").textContent = counts.Shortlisted;
+            document.getElementById("countInterview").textContent = counts.Interview;
+            document.getElementById("countSelected").textContent = counts.Selected;
+            document.getElementById("countRejected").textContent = counts.Rejected;
+
+            // Highlight Active Filter Button & Metric Card
+            document.querySelectorAll(".tracker-filter-btn").forEach(btn => {
+                btn.classList.toggle("active", btn.dataset.filter === currentFilter);
+            });
+            document.querySelectorAll(".tracker-stat-card").forEach(card => {
+                card.classList.toggle("active", card.dataset.status === currentFilter);
+            });
+
+            const grid = document.getElementById("applicationsGrid");
+            if (!grid) return;
+
+            // Empty state if nothing tracked at all
+            if (totalCount === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1;">
+                        <div class="saved-empty-card">
+                            <span class="saved-empty-icon">💼</span>
+                            <h2 class="saved-empty-title">Your application journey starts here.</h2>
+                            <p class="saved-empty-subtitle">
+                                Bookmark opportunities or mark them as applied to track interview stages, deadlines, and private notes.
+                            </p>
+                            <a href="/opportunities" class="primary-btn" style="padding: 12px 28px; font-size: 15px;">
+                                Explore Opportunities →
+                            </a>
+                        </div>
+                    </div>
+                `;
+                document.getElementById("showingCountPill").textContent = "Showing 0 applications";
+                return;
+            }
+
+            // Filter items by status
+            const filteredEntries = trackedIds.filter(id => {
+                if (currentFilter === "All") return true;
+                return tracker[id].status === currentFilter;
+            });
+
+            document.getElementById("showingCountPill").textContent = `Showing ${filteredEntries.length} of ${totalCount} applications`;
+
+            // Filter returned 0 items
+            if (filteredEntries.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1;">
+                        <div class="saved-empty-card" style="padding: 45px 20px;">
+                            <span class="saved-empty-icon">${getStatusIcon(currentFilter)}</span>
+                            <h2 class="saved-empty-title">No applications in ${currentFilter} stage</h2>
+                            <p class="saved-empty-subtitle">
+                                You don't have any opportunities currently tracked under <strong>${currentFilter}</strong>.
+                            </p>
+                            <button type="button" class="secondary-btn" onclick="setFilter('All')">
+                                View All Applications
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by most recently updated
+            filteredEntries.sort((a, b) => {
+                const dateA = new Date(tracker[a].updatedAt || 0);
+                const dateB = new Date(tracker[b].updatedAt || 0);
+                return dateB - dateA;
+            });
+
+            // Render Application Cards
+            grid.innerHTML = filteredEntries.map(id => {
+                const item = tracker[id];
+                const oppId = Number(id);
+                const opp = catalogOpportunities.find(o => Number(o.id) === oppId) || {
+                    id: oppId,
+                    title: `Opportunity #${oppId}`,
+                    organization: "Organization",
+                    category: "Opportunity",
+                    score: 85
+                };
+
+                const statusBadgeClass = getStatusBadgeClass(item.status);
+                const statusIcon = getStatusIcon(item.status);
+                const matchScore = opp.score !== undefined ? opp.score : 85;
+
+                return `
+                    <article class="app-card" data-opp-id="${oppId}">
+                        <div>
+                            <div class="app-card-top">
+                                <span class="category-badge">${opp.category || 'Opportunity'}</span>
+                                <span class="app-status-badge ${statusBadgeClass}">
+                                    ${statusIcon} ${item.status}
+                                </span>
+                            </div>
+
+                            <div class="app-card-title" style="margin-top: 10px;">
+                                <h3>
+                                    <a href="/opportunity/${opp.id}">
+                                        ${opp.title}
+                                    </a>
+                                </h3>
+                                <div class="app-card-org">🏢 ${opp.organization || ''}</div>
+                            </div>
+
+                            <div style="display: flex; gap: 8px; align-items: center; margin-top: 10px;">
+                                <span class="match-badge" style="font-size: 11px;">${matchScore}% Match</span>
+                                <span style="font-size: 11px; color: #64748b;">ID #${opp.id}</span>
+                            </div>
+
+                            <div class="app-card-dates" style="margin-top: 12px;">
+                                <div class="app-card-dates-row">
+                                    <span>Applied Date:</span>
+                                    <strong style="color: #0f172a;">${item.appliedDate ? formatDate(item.appliedDate) : 'Not marked'}</strong>
+                                </div>
+                                <div class="app-card-dates-row" style="margin-top: 4px;">
+                                    <span>Last Activity:</span>
+                                    <span style="color: #475569;">${formatRelativeTime(item.updatedAt)}</span>
+                                </div>
+                            </div>
+
+                            <!-- Expandable Notes Section -->
+                            <div class="app-notes-drawer ${item.notes ? 'open' : ''}" id="notesDrawer_${opp.id}">
+                                <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px;">
+                                    Private Notes:
+                                </label>
+                                <textarea
+                                    class="app-notes-textarea"
+                                    id="notesInput_${opp.id}"
+                                    placeholder="Add interview dates, key questions, or recruiter contacts...">${item.notes || ''}</textarea>
+                                <div class="app-notes-footer">
+                                    <span id="noteSavedFeedback_${opp.id}" style="display: none; font-size: 11px; color: #059669; font-weight: 600; align-self: center;">
+                                        ✓ Saved!
+                                    </span>
+                                    <button type="button" class="btn-save-note" onclick="saveNote(${opp.id})">
+                                        Save Note
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Action Bar -->
+                        <div class="app-card-actions">
+                            <div class="app-status-select-wrap">
+                                <select class="app-status-select" onchange="updateApplicationStatus(${opp.id}, this.value)">
+                                    <option value="Saved" ${item.status === 'Saved' ? 'selected' : ''}>🔖 Stage: Saved</option>
+                                    <option value="Applied" ${item.status === 'Applied' ? 'selected' : ''}>📨 Stage: Applied</option>
+                                    <option value="Shortlisted" ${item.status === 'Shortlisted' ? 'selected' : ''}>🌟 Stage: Shortlisted</option>
+                                    <option value="Interview" ${item.status === 'Interview' ? 'selected' : ''}>🎙️ Stage: Interview</option>
+                                    <option value="Selected" ${item.status === 'Selected' ? 'selected' : ''}>🎉 Stage: Selected</option>
+                                    <option value="Rejected" ${item.status === 'Rejected' ? 'selected' : ''}>⛔ Stage: Rejected</option>
+                                </select>
+                            </div>
+
+                            <button type="button" class="btn-app-note" onclick="toggleNotesDrawer(${opp.id})" title="Toggle private notes">
+                                📝 Notes
+                            </button>
+
+                            <a href="/opportunity/${opp.id}" class="view-details-btn" style="width: auto; padding: 7px 12px; font-size: 12px;">
+                                View →
+                            </a>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        /* -------------------------------------------------------------
+           3. Initialization & Catalog Fetch
+           ------------------------------------------------------------- */
+        document.addEventListener("DOMContentLoaded", () => {
+            renderTrackerView();
+
+            // Fetch live catalogue from /api/recommendations to enrich titles & categories
+            fetch("/api/recommendations", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(studentProfile || {})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    catalogOpportunities = data;
+                    renderTrackerView();
+                }
+            })
+            .catch(err => {
+                console.error("Could not fetch recommendations", err);
+            });
+        });
+    </script>
+
+</body>
+
+</html>

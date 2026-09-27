@@ -256,14 +256,27 @@
 
 
                     <!-- APPLY -->
-                    <a href="{{ opportunity.apply_url }}"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       class="apply-now-btn">
+                    {% if opportunity.apply_url and opportunity.apply_url.strip() %}
+                        {% set apply_href = opportunity.apply_url if opportunity.apply_url.startswith('http') else 'https://' ~ opportunity.apply_url %}
+                        <a href="{{ apply_href }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="apply-now-btn"
+                           id="applyNowBtn">
 
-                        🔗 Apply Now
+                            🔗 Apply Now
 
-                    </a>
+                        </a>
+                    {% else %}
+                        <button type="button"
+                                class="apply-now-btn"
+                                disabled
+                                style="opacity: 0.6; cursor: not-allowed;">
+
+                            🔒 Applications Closed
+
+                        </button>
+                    {% endif %}
 
 
                     <!-- SAVE -->

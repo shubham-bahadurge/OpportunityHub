@@ -12,7 +12,7 @@ opportunities = [
         "mode": "Remote",
         "location": "Remote",
         "deadline": "2026-10-10",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/ai-ml-internship",
         "icon": "🤖"
     },
 
@@ -29,7 +29,7 @@ opportunities = [
         "mode": "Online",
         "location": "Online",
         "deadline": "2026-10-15",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/ai-innovation-hackathon-2026",
         "icon": "🏆"
     },
 
@@ -46,7 +46,7 @@ opportunities = [
         "mode": "Online",
         "location": "Online",
         "deadline": "2026-10-20",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/machine-learning-certification",
         "icon": "📜"
     },
 
@@ -63,7 +63,7 @@ opportunities = [
         "mode": "Hybrid",
         "location": "Pune",
         "deadline": "2026-10-12",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/python-developer-internship",
         "icon": "🐍"
     },
 
@@ -80,7 +80,7 @@ opportunities = [
         "mode": "Online",
         "location": "Online",
         "deadline": "2026-10-18",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/web-development-challenge",
         "icon": "🌐"
     },
 
@@ -97,7 +97,7 @@ opportunities = [
         "mode": "Hybrid",
         "location": "India",
         "deadline": "2026-10-25",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/data-science-fellowship",
         "icon": "💰"
     },
 
@@ -114,7 +114,7 @@ opportunities = [
         "mode": "Online",
         "location": "Online",
         "deadline": "2026-11-01",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/cloud-computing-course",
         "icon": "☁️"
     },
 
@@ -131,7 +131,7 @@ opportunities = [
         "mode": "Online",
         "location": "Online",
         "deadline": "2026-10-30",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/cybersecurity-student-challenge",
         "icon": "🔐"
     },
 
@@ -148,7 +148,7 @@ opportunities = [
         "mode": "Remote",
         "location": "Remote",
         "deadline": "2026-10-22",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/frontend-development-internship",
         "icon": "💻"
     },
 
@@ -165,7 +165,7 @@ opportunities = [
         "mode": "Online",
         "location": "Online",
         "deadline": "2026-11-05",
-        "apply_url": "https://example.com",
+        "apply_url": "https://example.com/apply/entrepreneurship-bootcamp",
         "icon": "🚀"
     }
 

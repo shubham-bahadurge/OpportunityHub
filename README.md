@@ -31,7 +31,7 @@ OpportunityHub bridges the gap between ambitious students and career-launching o
 - **Deadline Urgency:** Dynamic visual badges indicating countdown and urgency (Closing Soon, Upcoming, Open, or Expired).
 - **Search & Filtering:** Keyword search, multi-category filters, and flexible sorting (Best Match, Deadline, Alphabetical).
 - **Save Opportunities:** Persistent bookmarking system to save and review opportunities anytime.
-- **Direct Application Links:** Verified external links taking students straight to official application portals in a new tab.
+- **Direct Application Links:** External application links are supported by the platform. The current hackathon demo uses sample application URLs; production would connect these to verified official opportunity sources.
 
 ---
 
@@ -41,7 +41,7 @@ OpportunityHub bridges the gap between ambitious students and career-launching o
 |---|---|
 | **🎯 Personalized Opportunity Matching** | Evaluates student profile attributes against opportunity prerequisites to deliver ranked recommendations. |
 | **📊 Match Percentage** | Dynamic score badge showing the alignment between the student's background and each opportunity. |
-| **🔍 "Why This Matches You"** | Detailed breakdown on opportunity detail pages showcasing verified skill matches, interest overlap, education eligibility, and category preference. |
+| **🔍 "Why This Matches You"** | Detailed breakdown on opportunity detail pages showcasing matched skills, interest overlap, education eligibility, and category preference. |
 | **💡 Skill Gap Analysis** | Compares required skills against student skills—alerts students if skills are missing (*"Learn Docker, Kubernetes"*) or confirms full readiness (*"You have all required skills!"*). |
 | **⏳ Deadline Urgency** | Real-time date calculations displaying dynamic badges: *Closing Soon*, *Upcoming*, *Open*, or *Expired*. |
 | **🔎 Smart Search** | Instant multi-field filtering across titles, descriptions, organizations, skills, and categories. |
@@ -50,7 +50,7 @@ OpportunityHub bridges the gap between ambitious students and career-launching o
 | **🔖 Save / Unsave Opportunities** | Client-side persistent bookmarking powered by browser `localStorage` with instant status updates across all views. |
 | **📂 Saved Opportunities Hub** | Dedicated `/saved` page to review, manage, and access bookmarked opportunities. |
 | **📄 Detailed Opportunity Pages** | Full breakdown of opportunity scope, eligibility criteria, mode (Remote/Hybrid/In-person), location, and organization details. |
-| **🔗 Apply Now** | Direct, secure external redirection opening official application portals in a separate browser tab. |
+| **🔗 Apply Now** | External application links are supported by the platform. The current hackathon demo uses sample application URLs; production would connect these to verified official opportunity sources. |
 | **📈 Personalized Dashboard** | Overview displaying real-time platform statistics, dynamic top recommendation picks, and current skill sets. |
 | **📱 Responsive UI** | Clean, modern user interface optimized across desktop, tablet, and mobile displays. |
 
@@ -197,7 +197,7 @@ The platform has been validated through automated verification and manual flow t
 - **Higher Relevance:** Prevents information overload by highlighting opportunities that directly align with a student's degree, skills, and passions.
 - **Targeted Upskilling:** Clarifies skill gaps so students know precisely which technologies or concepts to focus on before applying.
 - **Increased Application Rates:** Transparent eligibility and direct application links remove friction and encourage students to submit applications before deadlines pass.
-- **Leveling the Playing Field:** Provides equal access to verified student programs regardless of geographic location or institutional network.
+- **Leveling the Playing Field:** Provides equal access to student opportunity programs regardless of geographic location or institutional network.
 
 ---
 
@@ -218,7 +218,7 @@ The following enhancements represent future development milestones beyond the in
 
 ## ⚠️ Current Demo Limitation
 
-The current demonstration version uses a curated opportunity dataset defined in [`opportunities.py`](opportunities.py) with sample application URLs (`https://example.com/apply/...`). In a full production deployment, these records would be populated dynamically from live external APIs and verified employer partner portals.
+The current demonstration version uses a curated opportunity dataset defined in [`opportunities.py`](opportunities.py) with sample application URLs (`https://example.com/apply/...`). External application links are supported by the platform. The current hackathon demo uses sample application URLs; production would connect these to verified official opportunity sources.
 
 ---
 

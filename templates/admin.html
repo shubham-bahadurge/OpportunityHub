@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control Center - OpportunityHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+
+    <!-- ADMIN SHELL LAYOUT -->
+    <div class="admin-shell">
+
+        <!-- =============================================================
+             1. ADMIN SIDEBAR NAVIGATION
+             ============================================================= -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-sidebar-header">
+                <a href="/" class="admin-brand">
+                    <span class="logo-icon">🚀</span>
+                    <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
+                </a>
+                <div class="admin-portal-badge">ADMIN PORTAL</div>
+            </div>
+
+            <nav class="admin-sidebar-nav">
+                <div class="admin-nav-group-label">Core Management</div>
+
+                <button type="button" class="admin-nav-link active" data-tab="overviewTab" onclick="switchAdminTab('overviewTab')">
+                    <span class="admin-nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </button>
+
+                <button type="button" class="admin-nav-link" data-tab="opportunitiesTab" onclick="switchAdminTab('opportunitiesTab')">
+                    <span class="admin-nav-icon">💼</span>
+                    <span>Opportunities</span>
+                    <span class="admin-nav-count" id="sidebarOppCount">0</span>
+                </button>
+
+                <button type="button" class="admin-nav-link" data-tab="studentsTab" onclick="switchAdminTab('studentsTab')">
+                    <span class="admin-nav-icon">👥</span>
+                    <span>Student Overview</span>
+                </button>
+
+                <button type="button" class="admin-nav-link" data-tab="applicationsTab" onclick="switchAdminTab('applicationsTab')">
+                    <span class="admin-nav-icon">📝</span>
+                    <span>Applications</span>
+                    <span class="admin-nav-count" id="sidebarAppCount">0</span>
+                </button>
+
+                <div class="admin-nav-group-label" style="margin-top: 20px;">System &amp; Links</div>
+
+                <button type="button" class="admin-nav-link" data-tab="settingsTab" onclick="switchAdminTab('settingsTab')">
+                    <span class="admin-nav-icon">⚙️</span>
+                    <span>System Settings</span>
+                </button>
+
+                <a href="/dashboard" class="admin-nav-link" target="_blank" rel="noopener">
+                    <span class="admin-nav-icon">🎓</span>
+                    <span>Student View ↗</span>
+                </a>
+
+                <a href="/logout" class="admin-nav-link admin-nav-logout">
+                    <span class="admin-nav-icon">🚪</span>
+                    <span>Sign Out</span>
+                </a>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <div class="admin-user-meta">
+                        <div class="admin-user-name">{{ current_user.name if current_user else 'Administrator' }}</div>
+                        <div class="admin-user-email">{{ current_user.email if current_user else 'admin@opportunityhub.com' }}</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- =============================================================
+             2. MAIN ADMIN CONTENT CONTAINER
+             ============================================================= -->
+        <div class="admin-main">
+
+            <!-- Top Header -->
+            <header class="admin-topbar">
+                <div class="admin-topbar-left">
+                    <button type="button" class="admin-mobile-toggle" id="adminSidebarToggle" onclick="toggleAdminSidebar()" aria-label="Toggle Navigation">
+                        ☰
+                    </button>
+                    <div>
+                        <h1 class="admin-page-title" id="adminSectionTitle">Administrative Dashboard</h1>
+                        <p class="admin-page-subtitle">Real-time catalog control, student session inspection, and application tracking.</p>
+                    </div>
+                </div>
+
+                <div class="admin-topbar-right">
+                    <button type="button" class="primary-btn" onclick="openAddModal()" style="padding: 9px 18px; font-size: 13px;">
+                        <span>➕ Add Opportunity</span>
+                    </button>
+                    <a href="/logout" class="admin-logout-btn" title="Sign out of Admin Portal">
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Prototype Notice Banner -->
+            <div class="admin-banner-notice">
+                <span class="banner-icon">ℹ️</span>
+                <div class="banner-text">
+                    <strong>Hackathon MVP Prototype:</strong> Opportunity catalog changes persist in browser memory and local overrides without mutating static server source files. Student and application sections inspect the active browser session.
+                </div>
+            </div>
+
+            <!-- TAB 1: DASHBOARD OVERVIEW -->
+            <section class="admin-tab-content active" id="overviewTab">
+
+                <!-- 4 KPI Cards -->
+                <div class="admin-kpi-grid">
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-header">
+                            <span class="admin-kpi-label">Active Opportunities</span>
+                            <span class="admin-kpi-icon" style="background: #eef2ff; color: #4338ca;">💼</span>
+                        </div>
+                        <div class="admin-kpi-value" id="kpiTotalOpps">0</div>
+                        <div class="admin-kpi-sub">Curated across all categories</div>
+                    </div>
+
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-header">
+                            <span class="admin-kpi-label">Total Categories</span>
+                            <span class="admin-kpi-icon" style="background: #f0fdf4; color: #15803d;">📁</span>
+                        </div>
+                        <div class="admin-kpi-value" id="kpiTotalCats">0</div>
+                        <div class="admin-kpi-sub">Internships, Hackathons, etc.</div>
+                    </div>
+
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-header">
+                            <span class="admin-kpi-label">Current Demo Student</span>
+                            <span class="admin-kpi-icon" style="background: #fef3c7; color: #b45309;">👤</span>
+                        </div>
+                        <div class="admin-kpi-value" id="kpiStudentName" style="font-size: 18px; line-height: 1.3;">Demo Student</div>
+                        <div class="admin-kpi-sub" id="kpiStudentStatus">Active in browser session</div>
+                    </div>
+
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-header">
+                            <span class="admin-kpi-label">Tracked Applications</span>
+                            <span class="admin-kpi-icon" style="background: #e0f2fe; color: #0369a1;">📨</span>
+                        </div>
+                        <div class="admin-kpi-value" id="kpiTotalApps">0</div>
+                        <div class="admin-kpi-sub" id="kpiAppsSub">In browser pipeline</div>
+                    </div>
+                </div>
+
+                <!-- 2-Column Overview Layout -->
+                <div class="admin-grid-2col">
+
+                    <!-- Left: Catalog Quick Snapshot -->
+                    <div class="admin-panel-card">
+                        <div class="admin-panel-header">
+                            <div>
+                                <h2 class="admin-panel-title">Opportunity Catalog Snapshot</h2>
+                                <p class="admin-panel-sub">Recent opportunities currently live in the catalog</p>
+                            </div>
+                            <button type="button" class="secondary-btn" onclick="switchAdminTab('opportunitiesTab')" style="padding: 6px 12px; font-size: 12px;">
+                                Manage All →
+                            </button>
+                        </div>
+                        <div id="overviewOppsSnapshotList" class="admin-snapshot-list">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Recent Admin Activity Audit Log -->
+                    <div class="admin-panel-card">
+                        <div class="admin-panel-header">
+                            <div>
+                                <h2 class="admin-panel-title">Recent Admin Activity</h2>
+                                <p class="admin-panel-sub">Real actions logged in this browser session</p>
+                            </div>
+                            <button type="button" class="admin-clear-log-btn" onclick="clearAdminActivityLog()">
+                                Clear Log
+                            </button>
+                        </div>
+                        <div class="admin-activity-timeline" id="adminActivityList">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- TAB 2: OPPORTUNITIES MANAGEMENT -->
+            <section class="admin-tab-content" id="opportunitiesTab">
+                
+                <div class="admin-panel-card">
+                    <!-- Controls Bar -->
+                    <div class="admin-controls-bar">
+                        <div class="admin-search-wrapper">
+                            <span class="admin-search-icon">🔍</span>
+                            <input
+                                type="text"
+                                id="adminSearchInput"
+                                class="admin-search-input"
+                                placeholder="Search by title, organization, or category..."
+                                oninput="filterAdminOpportunities()"
+                            >
+                        </div>
+
+                        <div class="admin-filter-group">
+                            <select id="adminCategoryFilter" class="admin-select" onchange="filterAdminOpportunities()">
+                                <option value="All">All Categories</option>
+                                <option value="Internship">Internships</option>
+                                <option value="Hackathon">Hackathons</option>
+                                <option value="Certification">Certifications</option>
+                                <option value="Course">Courses</option>
+                                <option value="Fellowship">Fellowships</option>
+                                <option value="Challenge">Challenges</option>
+                                <option value="Bootcamp">Bootcamps</option>
+                            </select>
+
+                            <button type="button" class="primary-btn" onclick="openAddModal()" style="white-space: nowrap; padding: 10px 18px; font-size: 13px;">
+                                ➕ New Opportunity
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">ID</th>
+                                    <th>Opportunity</th>
+                                    <th>Category</th>
+                                    <th>Organization</th>
+                                    <th>Location / Mode</th>
+                                    <th>Deadline</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminOppTableBody">
+                                <!-- Populated dynamically via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Table Summary Footer -->
+                    <div class="admin-table-footer">
+                        <span id="adminTableCountLabel">Showing 0 opportunities</span>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- TAB 3: STUDENT OVERVIEW -->
+            <section class="admin-tab-content" id="studentsTab">
+
+                <div class="admin-panel-card">
+                    <div class="admin-panel-header">
+                        <div>
+                            <h2 class="admin-panel-title">Current Demo Student Profile</h2>
+                            <p class="admin-panel-sub">
+                                Data detected from active browser session (<code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">localStorage.studentProfile</code>).
+                            </p>
+                        </div>
+                        <span class="role-badge role-student" style="font-size: 12px; padding: 4px 10px;">Browser Local Session</span>
+                    </div>
+
+                    <div id="studentOverviewContainer">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- TAB 4: APPLICATIONS OVERVIEW -->
+            <section class="admin-tab-content" id="applicationsTab">
+
+                <div class="admin-panel-card">
+                    <div class="admin-panel-header">
+                        <div>
+                            <h2 class="admin-panel-title">Application Pipeline Overview</h2>
+                            <p class="admin-panel-sub">
+                                Applications recorded in the current browser session (<code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">localStorage.applicationTracker</code>).
+                            </p>
+                        </div>
+                        <span class="role-badge role-admin" style="font-size: 12px; padding: 4px 10px;">Demo Tracker Data</span>
+                    </div>
+
+                    <div id="adminApplicationsContainer">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- TAB 5: SYSTEM & SETTINGS -->
+            <section class="admin-tab-content" id="settingsTab">
+
+                <div class="admin-panel-card" style="margin-bottom: 24px;">
+                    <h2 class="admin-panel-title">Hackathon MVP Prototype Architecture</h2>
+                    <p class="admin-panel-sub" style="margin-bottom: 20px;">Technical architecture overview and configuration details.</p>
+
+                    <div class="admin-settings-grid">
+                        <div class="admin-setting-item">
+                            <div class="admin-setting-label">Application Framework</div>
+                            <div class="admin-setting-val">Python 3 + Flask (Lightweight Microframework)</div>
+                        </div>
+
+                        <div class="admin-setting-item">
+                            <div class="admin-setting-label">Authentication System</div>
+                            <div class="admin-setting-val">Flask Server-Side Session + Role-Based Access Control</div>
+                        </div>
+
+                        <div class="admin-setting-item">
+                            <div class="admin-setting-label">Catalog Source</div>
+                            <div class="admin-setting-val">Python Dataset (<code>opportunities.py</code>) + LocalStorage Admin Overrides</div>
+                        </div>
+
+                        <div class="admin-setting-item">
+                            <div class="admin-setting-label">Client-Side Persistence</div>
+                            <div class="admin-setting-val">Browser LocalStorage (Student Profile &amp; Tracker)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-panel-card">
+                    <h2 class="admin-panel-title" style="color: #b91c1c;">Catalog Maintenance &amp; Reset</h2>
+                    <p class="admin-panel-sub" style="margin-bottom: 16px;">
+                        Reset any opportunities added, edited, or deleted during this admin session back to the standard catalog of 10 opportunities.
+                    </p>
+                    <button type="button" class="admin-danger-btn" onclick="resetOpportunityCatalog()">
+                        ↺ Reset Catalog to Default (10 Opportunities)
+                    </button>
+                </div>
+
+            </section>
+
+        </div>
+    </div>
+
+    <!-- =============================================================
+         3. MODALS: ADD / EDIT OPPORTUNITY
+         ============================================================= -->
+    <div class="admin-modal-overlay" id="opportunityModalOverlay" onclick="handleOverlayClick(event)">
+        <div class="admin-modal" id="opportunityModal">
+            <div class="admin-modal-header">
+                <h3 class="admin-modal-title" id="oppModalTitle">Add New Opportunity</h3>
+                <button type="button" class="admin-modal-close" onclick="closeOppModal()">✕</button>
+            </div>
+
+            <form id="opportunityForm" onsubmit="handleOppFormSubmit(event)">
+                <input type="hidden" id="oppFormId" value="">
+
+                <div class="admin-form-grid">
+                    <div class="admin-form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label" for="oppFormTitle">Opportunity Title *</label>
+                        <input type="text" id="oppFormTitle" class="form-input" placeholder="e.g. NextGen AI Research Internship" required>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="form-label" for="oppFormOrg">Organization *</label>
+                        <input type="text" id="oppFormOrg" class="form-input" placeholder="e.g. DeepMind Labs" required>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="form-label" for="oppFormCategory">Category *</label>
+                        <select id="oppFormCategory" class="admin-select" style="width: 100%;" required>
+                            <option value="Internship">Internship</option>
+                            <option value="Hackathon">Hackathon</option>
+                            <option value="Certification">Certification</option>
+                            <option value="Course">Course</option>
+                            <option value="Fellowship">Fellowship</option>
+                            <option value="Challenge">Challenge</option>
+                            <option value="Bootcamp">Bootcamp</option>
+                        </select>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="form-label" for="oppFormDeadline">Deadline *</label>
+                        <input type="date" id="oppFormDeadline" class="form-input" required>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="form-label" for="oppFormMode">Mode &amp; Location *</label>
+                        <input type="text" id="oppFormMode" class="form-input" placeholder="e.g. Remote / Hybrid, Mumbai" required>
+                    </div>
+
+                    <div class="admin-form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label" for="oppFormDesc">Description *</label>
+                        <textarea id="oppFormDesc" class="admin-textarea" rows="3" placeholder="Briefly describe the role, impact, and deliverables..." required></textarea>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="form-label" for="oppFormSkills">Required Skills (Comma separated)</label>
+                        <input type="text" id="oppFormSkills" class="form-input" placeholder="e.g. Python, Machine Learning, SQL">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="form-label" for="oppFormEdu">Eligibility / Education</label>
+                        <input type="text" id="oppFormEdu" class="form-input" placeholder="e.g. B.Tech, Diploma, All Students">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="form-label" for="oppFormUrl">Apply URL</label>
+                        <input type="url" id="oppFormUrl" class="form-input" placeholder="https://example.com/apply">
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label class="form-label" for="oppFormIcon">Icon Emoji</label>
+                        <input type="text" id="oppFormIcon" class="form-input" placeholder="🤖, 💼, 🏆, 📜" value="💼">
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer">
+                    <button type="button" class="secondary-btn" onclick="closeOppModal()">Cancel</button>
+                    <button type="submit" class="primary-btn" id="oppFormSubmitBtn">Save Opportunity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Server catalog initialized from Jinja
+        const baseOpportunities = {{ opportunities | tojson if opportunities is defined else '[]' }};
+        let activeOpportunities = [];
+
+        /* -------------------------------------------------------------
+           1. State Management & Initialization
+           ------------------------------------------------------------- */
+        function loadAdminOpportunities() {
+            try {
+                const storedOverrides = localStorage.getItem("adminCustomOpportunities");
+                if (storedOverrides) {
+                    activeOpportunities = JSON.parse(storedOverrides);
+                } else {
+                    activeOpportunities = JSON.parse(JSON.stringify(baseOpportunities));
+                }
+            } catch (e) {
+                console.error("Error loading opportunities overrides", e);
+                activeOpportunities = JSON.parse(JSON.stringify(baseOpportunities));
+            }
+        }
+
+        function saveAdminOpportunities() {
+            try {
+                localStorage.setItem("adminCustomOpportunities", JSON.stringify(activeOpportunities));
+            } catch (e) {
+                console.error("Error saving admin opportunities", e);
+            }
+        }
+
+        /* -------------------------------------------------------------
+           2. Activity Logger
+           ------------------------------------------------------------- */
+        function logAdminActivity(actionText, icon = "⚡") {
+            try {
+                const raw = localStorage.getItem("adminActivityLog");
+                const list = raw ? JSON.parse(raw) : [];
+                list.unshift({
+                    action: actionText,
+                    icon: icon,
+                    timestamp: new Date().toISOString()
+                });
+                // Keep last 15 actions
+                localStorage.setItem("adminActivityLog", JSON.stringify(list.slice(0, 15)));
+                renderAdminActivity();
+            } catch (e) {
+                console.error("Error writing admin activity", e);
+            }
+        }
+
+        function renderAdminActivity() {
+            const container = document.getElementById("adminActivityList");
+            if (!container) return;
+
+            let list = [];
+            try {
+                const raw = localStorage.getItem("adminActivityLog");
+                list = raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                list = [];
+            }
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="admin-empty-state" style="padding: 24px;">
+                        <span>📋</span>
+                        <p>No actions logged yet in this session. Add, edit, or delete an opportunity to create entries.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(item => {
+                const d = new Date(item.timestamp);
+                const timeStr = isNaN(d.getTime()) ? "Recently" : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " · " + d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+                return `
+                    <div class="admin-activity-item">
+                        <div class="admin-activity-icon">${item.icon || '📌'}</div>
+                        <div class="admin-activity-body">
+                            <div class="admin-activity-text">${item.action}</div>
+                            <div class="admin-activity-time">${timeStr}</div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function clearAdminActivityLog() {
+            localStorage.removeItem("adminActivityLog");
+            renderAdminActivity();
+        }
+
+        /* -------------------------------------------------------------
+           3. Tab Navigation
+           ------------------------------------------------------------- */
+        function switchAdminTab(tabId) {
+            document.querySelectorAll(".admin-nav-link").forEach(btn => {
+                btn.classList.toggle("active", btn.dataset.tab === tabId);
+            });
+
+            document.querySelectorAll(".admin-tab-content").forEach(sec => {
+                sec.classList.toggle("active", sec.id === tabId);
+            });
+
+            const titleMap = {
+                overviewTab: "Administrative Dashboard",
+                opportunitiesTab: "Opportunity Catalog Management",
+                studentsTab: "Student Overview (Local Session)",
+                applicationsTab: "Application Pipeline (Local Session)",
+                settingsTab: "System Architecture & Settings"
+            };
+
+            const titleElem = document.getElementById("adminSectionTitle");
+            if (titleElem && titleMap[tabId]) {
+                titleElem.textContent = titleMap[tabId];
+            }
+
+            // Close mobile sidebar if open
+            const sidebar = document.getElementById("adminSidebar");
+            if (sidebar) sidebar.classList.remove("open");
+
+            // Refresh tab views
+            if (tabId === "studentsTab") renderStudentOverview();
+            if (tabId === "applicationsTab") renderApplicationsOverview();
+            if (tabId === "opportunitiesTab") filterAdminOpportunities();
+        }
+
+        function toggleAdminSidebar() {
+            const sidebar = document.getElementById("adminSidebar");
+            if (sidebar) sidebar.classList.toggle("open");
+        }
+
+        /* -------------------------------------------------------------
+           4. Render Overview & KPIs
+           ------------------------------------------------------------- */
+        function renderOverview() {
+            // Opportunities Count
+            const elTotalOpps = document.getElementById("kpiTotalOpps");
+            const sidebarOppCount = document.getElementById("sidebarOppCount");
+            if (elTotalOpps) elTotalOpps.textContent = activeOpportunities.length;
+            if (sidebarOppCount) sidebarOppCount.textContent = activeOpportunities.length;
+
+            // Categories Count
+            const categories = new Set(activeOpportunities.map(o => o.category).filter(Boolean));
+            const elTotalCats = document.getElementById("kpiTotalCats");
+            if (elTotalCats) elTotalCats.textContent = categories.size;
+
+            // Student Status
+            let studentName = "None Recorded";
+            try {
+                const rawProfile = localStorage.getItem("studentProfile");
+                if (rawProfile) {
+                    const prof = JSON.parse(rawProfile);
+                    if (prof && prof.name) studentName = prof.name;
+                }
+            } catch (e) {}
+            const elStudent = document.getElementById("kpiStudentName");
+            if (elStudent) elStudent.textContent = studentName;
+
+            // Applications Count
+            let appCount = 0;
+            try {
+                const rawApps = localStorage.getItem("applicationTracker");
+                if (rawApps) {
+                    const apps = JSON.parse(rawApps);
+                    appCount = Object.keys(apps).length;
+                }
+            } catch (e) {}
+            const elTotalApps = document.getElementById("kpiTotalApps");
+            const sidebarAppCount = document.getElementById("sidebarAppCount");
+            if (elTotalApps) elTotalApps.textContent = appCount;
+            if (sidebarAppCount) sidebarAppCount.textContent = appCount;
+
+            // Snapshot list (first 4)
+            const snapshotContainer = document.getElementById("overviewOppsSnapshotList");
+            if (snapshotContainer) {
+                const preview = activeOpportunities.slice(0, 4);
+                snapshotContainer.innerHTML = preview.map(opp => `
+                    <div class="admin-snapshot-item">
+                        <div class="admin-snapshot-icon">${opp.icon || '💼'}</div>
+                        <div class="admin-snapshot-info">
+                            <div class="admin-snapshot-title">${opp.title}</div>
+                            <div class="admin-snapshot-meta">${opp.organization} • <span class="category-badge" style="font-size: 10px; padding: 1px 6px;">${opp.category}</span></div>
+                        </div>
+                        <button type="button" class="admin-btn-action" onclick="openEditModal(${opp.id})" title="Edit opportunity">✏️</button>
+                    </div>
+                `).join("");
+            }
+
+            renderAdminActivity();
+        }
+
+        /* -------------------------------------------------------------
+           5. Opportunity Table & Filtering
+           ------------------------------------------------------------- */
+        function filterAdminOpportunities() {
+            const query = (document.getElementById("adminSearchInput")?.value || "").toLowerCase().trim();
+            const category = document.getElementById("adminCategoryFilter")?.value || "All";
+
+            const filtered = activeOpportunities.filter(opp => {
+                const matchesCategory = category === "All" || (opp.category || "").toLowerCase() === category.toLowerCase();
+                const matchesQuery = !query ||
+                    (opp.title || "").toLowerCase().includes(query) ||
+                    (opp.organization || "").toLowerCase().includes(query) ||
+                    (opp.category || "").toLowerCase().includes(query);
+                return matchesCategory && matchesQuery;
+            });
+
+            renderOppTable(filtered);
+        }
+
+        function renderOppTable(items) {
+            const tbody = document.getElementById("adminOppTableBody");
+            const countLabel = document.getElementById("adminTableCountLabel");
+            if (!tbody) return;
+
+            if (countLabel) {
+                countLabel.textContent = `Showing ${items.length} of ${activeOpportunities.length} opportunities`;
+            }
+
+            if (items.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+                            <strong>No opportunities match your filter</strong>
+                            <p style="font-size: 13px; margin-top: 4px;">Try searching for another keyword or change the category.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = items.map(opp => `
+                <tr>
+                    <td style="font-weight: 700; color: #64748b;">#${opp.id}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 18px;">${opp.icon || '💼'}</span>
+                            <div style="font-weight: 700; color: #0f172a;">${opp.title}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="category-badge" style="font-size: 11px;">${opp.category || 'General'}</span>
+                    </td>
+                    <td style="color: #475569; font-weight: 500;">${opp.organization}</td>
+                    <td style="color: #64748b; font-size: 12px;">${opp.location || opp.mode || 'Remote'}</td>
+                    <td style="color: #0f172a; font-size: 12px; font-weight: 600;">${opp.deadline || 'Open'}</td>
+                    <td>
+                        <div style="display: flex; gap: 6px;">
+                            <a href="/opportunity/${opp.id}" target="_blank" class="admin-btn-action" title="View Opportunity Page">👁️</a>
+                            <button type="button" class="admin-btn-action" onclick="openEditModal(${opp.id})" title="Edit Opportunity">✏️</button>
+                            <button type="button" class="admin-btn-action admin-btn-delete" onclick="deleteOpportunity(${opp.id})" title="Delete Opportunity">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        /* -------------------------------------------------------------
+           6. Add / Edit / Delete Modals
+           ------------------------------------------------------------- */
+        function openAddModal() {
+            document.getElementById("oppModalTitle").textContent = "Add New Opportunity";
+            document.getElementById("oppFormSubmitBtn").textContent = "Create Opportunity";
+            document.getElementById("oppFormId").value = "";
+            document.getElementById("opportunityForm").reset();
+            document.getElementById("oppFormIcon").value = "💼";
+            document.getElementById("opportunityModalOverlay").classList.add("open");
+        }
+
+        function openEditModal(oppId) {
+            const opp = activeOpportunities.find(o => Number(o.id) === Number(oppId));
+            if (!opp) return;
+
+            document.getElementById("oppModalTitle").textContent = `Edit Opportunity #${opp.id}`;
+            document.getElementById("oppFormSubmitBtn").textContent = "Save Changes";
+            document.getElementById("oppFormId").value = opp.id;
+
+            document.getElementById("oppFormTitle").value = opp.title || "";
+            document.getElementById("oppFormOrg").value = opp.organization || "";
+            document.getElementById("oppFormCategory").value = opp.category || "Internship";
+            document.getElementById("oppFormDeadline").value = opp.deadline || "";
+            document.getElementById("oppFormMode").value = opp.mode || opp.location || "Remote";
+            document.getElementById("oppFormDesc").value = opp.description || "";
+            document.getElementById("oppFormSkills").value = Array.isArray(opp.skills) ? opp.skills.join(", ") : (opp.skills || "");
+            document.getElementById("oppFormEdu").value = Array.isArray(opp.education) ? opp.education.join(", ") : (opp.education || "");
+            document.getElementById("oppFormUrl").value = opp.apply_url || "";
+            document.getElementById("oppFormIcon").value = opp.icon || "💼";
+
+            document.getElementById("opportunityModalOverlay").classList.add("open");
+        }
+
+        function closeOppModal() {
+            document.getElementById("opportunityModalOverlay").classList.remove("open");
+        }
+
+        function handleOverlayClick(e) {
+            if (e.target.id === "opportunityModalOverlay") {
+                closeOppModal();
+            }
+        }
+
+        function handleOppFormSubmit(e) {
+            e.preventDefault();
+
+            const formId = document.getElementById("oppFormId").value;
+            const title = document.getElementById("oppFormTitle").value.trim();
+            const organization = document.getElementById("oppFormOrg").value.trim();
+            const category = document.getElementById("oppFormCategory").value;
+            const deadline = document.getElementById("oppFormDeadline").value;
+            const mode = document.getElementById("oppFormMode").value.trim();
+            const description = document.getElementById("oppFormDesc").value.trim();
+            const skillsRaw = document.getElementById("oppFormSkills").value.trim();
+            const eduRaw = document.getElementById("oppFormEdu").value.trim();
+            const apply_url = document.getElementById("oppFormUrl").value.trim();
+            const icon = document.getElementById("oppFormIcon").value.trim() || "💼";
+
+            const skills = skillsRaw ? skillsRaw.split(",").map(s => s.trim()).filter(Boolean) : [];
+            const education = eduRaw ? eduRaw.split(",").map(e => e.trim()).filter(Boolean) : ["All Students"];
+
+            if (formId) {
+                // Edit existing
+                const idNum = Number(formId);
+                const idx = activeOpportunities.findIndex(o => Number(o.id) === idNum);
+                if (idx !== -1) {
+                    activeOpportunities[idx] = {
+                        ...activeOpportunities[idx],
+                        title, organization, category, deadline, mode, location: mode, description, skills, education, apply_url, icon
+                    };
+                    logAdminActivity(`Updated opportunity #${idNum}: "${title}"`, "✏️");
+                }
+            } else {
+                // Add new opportunity with next highest id
+                const maxId = activeOpportunities.reduce((max, o) => Math.max(max, Number(o.id) || 0), 0);
+                const newOpp = {
+                    id: maxId + 1,
+                    title,
+                    organization,
+                    category,
+                    deadline,
+                    mode,
+                    location: mode,
+                    description,
+                    skills,
+                    education,
+                    apply_url: apply_url || `https://example.com/apply/opp-${maxId + 1}`,
+                    icon
+                };
+                activeOpportunities.unshift(newOpp);
+                logAdminActivity(`Added new opportunity #${newOpp.id}: "${title}"`, "➕");
+            }
+
+            saveAdminOpportunities();
+            closeOppModal();
+            renderOverview();
+            filterAdminOpportunities();
+        }
+
+        function deleteOpportunity(oppId) {
+            const idNum = Number(oppId);
+            const opp = activeOpportunities.find(o => Number(o.id) === idNum);
+            if (!opp) return;
+
+            if (confirm(`Are you sure you want to delete "${opp.title}" (#${opp.id}) from the active catalog?`)) {
+                activeOpportunities = activeOpportunities.filter(o => Number(o.id) !== idNum);
+                saveAdminOpportunities();
+                logAdminActivity(`Deleted opportunity #${idNum}: "${opp.title}"`, "🗑️");
+                renderOverview();
+                filterAdminOpportunities();
+            }
+        }
+
+        function resetOpportunityCatalog() {
+            if (confirm("Reset opportunity catalog back to original 10 sample opportunities? Any custom opportunities will be cleared.")) {
+                localStorage.removeItem("adminCustomOpportunities");
+                activeOpportunities = JSON.parse(JSON.stringify(baseOpportunities));
+                logAdminActivity("Reset catalog to default 10 sample opportunities", "↺");
+                renderOverview();
+                filterAdminOpportunities();
+                alert("Catalog successfully restored to base opportunities.");
+            }
+        }
+
+        /* -------------------------------------------------------------
+           7. Render Student Overview
+           ------------------------------------------------------------- */
+        function renderStudentOverview() {
+            const container = document.getElementById("studentOverviewContainer");
+            if (!container) return;
+
+            let prof = null;
+            try {
+                const raw = localStorage.getItem("studentProfile");
+                if (raw) prof = JSON.parse(raw);
+            } catch (e) {}
+
+            if (!prof || !prof.name) {
+                container.innerHTML = `
+                    <div class="admin-empty-state">
+                        <span style="font-size: 36px;">👤</span>
+                        <h3>No Student Profile Detected in Browser</h3>
+                        <p style="max-width: 480px; margin: 8px auto 16px;">
+                            The active browser session does not currently have a student profile configured.
+                        </p>
+                        <a href="/profile" target="_blank" class="primary-btn" style="font-size: 13px; padding: 8px 18px;">
+                            Complete Student Profile ↗
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Calculate profile completion
+            let score = 0;
+            if (prof.name) score += 15;
+            if (prof.email) score += 15;
+            if (prof.education) score += 20;
+            if (prof.branch) score += 10;
+            if (Array.isArray(prof.skills) && prof.skills.length > 0) score += 20;
+            if (Array.isArray(prof.interests) && prof.interests.length > 0) score += 20;
+
+            const skillsHtml = (prof.skills || []).map(s => `<span class="profile-tag-pill">${s}</span>`).join("") || '<span style="color: #94a3b8;">None added</span>';
+            const interestsHtml = (prof.interests || []).map(i => `<span class="profile-tag-pill">${i}</span>`).join("") || '<span style="color: #94a3b8;">None added</span>';
+
+            container.innerHTML = `
+                <div class="admin-student-card">
+                    <div class="admin-student-header">
+                        <div class="admin-student-avatar">${(prof.name || 'S').charAt(0).toUpperCase()}</div>
+                        <div>
+                            <h3 class="admin-student-name">${prof.name}</h3>
+                            <div class="admin-student-meta">
+                                <span>📧 ${prof.email || 'student@opportunityhub.com'}</span>
+                                <span>•</span>
+                                <span>🎓 ${prof.education || 'B.Tech'}${prof.branch ? ' (' + prof.branch + ')' : ''}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin: 18px 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px;">
+                            <span>Profile Strength</span>
+                            <span>${score}% Complete</span>
+                        </div>
+                        <div class="profile-bar-track" style="height: 8px;">
+                            <div class="profile-bar-fill" style="width: ${score}%;"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 14px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 6px;">Skills (${(prof.skills || []).length})</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                            ${skillsHtml}
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 14px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 6px;">Interests (${(prof.interests || []).length})</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                            ${interestsHtml}
+                        </div>
+                    </div>
+
+                    ${prof.bio ? `
+                        <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #e2e8f0; font-size: 13px; color: #475569;">
+                            <strong>Bio:</strong> ${prof.bio}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        /* -------------------------------------------------------------
+           8. Render Applications Overview
+           ------------------------------------------------------------- */
+        function renderApplicationsOverview() {
+            const container = document.getElementById("adminApplicationsContainer");
+            if (!container) return;
+
+            let tracker = {};
+            try {
+                const raw = localStorage.getItem("applicationTracker");
+                if (raw) tracker = JSON.parse(raw);
+            } catch (e) {}
+
+            const entries = Object.entries(tracker);
+
+            if (entries.length === 0) {
+                container.innerHTML = `
+                    <div class="admin-empty-state">
+                        <span style="font-size: 36px;">📝</span>
+                        <h3>No Tracked Applications Found</h3>
+                        <p style="max-width: 480px; margin: 8px auto 16px;">
+                            The active browser session has not tracked any opportunities yet.
+                        </p>
+                        <a href="/opportunities" target="_blank" class="primary-btn" style="font-size: 13px; padding: 8px 18px;">
+                            Explore Opportunities ↗
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Opportunity</th>
+                                <th>Organization</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                                <th>Private Notes</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${entries.map(([id, app]) => {
+                                const idNum = Number(id);
+                                const found = activeOpportunities.find(o => Number(o.id) === idNum) || { title: `Opportunity #${idNum}`, organization: "Catalog Role" };
+                                return `
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight: 700; color: #0f172a;">${found.title}</div>
+                                        </td>
+                                        <td style="color: #475569;">${found.organization}</td>
+                                        <td>
+                                            <span class="status-badge status-${(app.status || 'saved').toLowerCase()}" style="font-size: 11px;">
+                                                ${app.status || 'Saved'}
+                                            </span>
+                                        </td>
+                                        <td style="font-size: 12px; color: #64748b;">${app.appliedDate || 'Not recorded'}</td>
+                                        <td style="font-size: 12px; color: #475569; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            ${app.notes || '—'}
+                                        </td>
+                                        <td>
+                                            <a href="/opportunity/${idNum}" target="_blank" class="admin-btn-action" title="View details">👁️</a>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Initialize on load
+        document.addEventListener("DOMContentLoaded", () => {
+            loadAdminOpportunities();
+            renderOverview();
+            filterAdminOpportunities();
+        });
+    </script>
+</body>
+</html>

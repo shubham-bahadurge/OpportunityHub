@@ -33,7 +33,12 @@
                 <a href="/applications">Applications</a>
                 <a href="/saved">Saved</a>
                 <a href="/profile">Profile</a>
-                <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
+                {% if current_user %}
+                    <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
+                    <a href="/logout" class="nav-logout-btn" title="Sign out of OpportunityHub">Logout</a>
+                {% else %}
+                    <a href="/login" class="login-btn" style="text-decoration: none;">Login</a>
+                {% endif %}
             </div>
         </div>
     </nav>

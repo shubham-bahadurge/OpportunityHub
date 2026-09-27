@@ -2058,6 +2058,22 @@ footer p {
     color: #4f46e5;
 }
 
+.save-opportunity-btn.saved {
+    background: #fef2f2;
+
+    border-color: #fca5a5;
+
+    color: #dc2626;
+}
+
+.save-opportunity-btn.saved:hover {
+    background: #fee2e2;
+
+    border-color: #ef4444;
+
+    color: #b91c1c;
+}
+
 
 /* MATCH EXPLANATION */
 

@@ -328,9 +328,11 @@
             const btn = document.querySelector(".save-opportunity-btn");
             if (btn) {
                 if (isSaved) {
-                    btn.innerHTML = "❤️ Saved";
+                    btn.innerHTML = "❤️ Saved (Click to Unsave)";
+                    btn.classList.add("saved");
                 } else {
                     btn.innerHTML = "🔖 Save Opportunity";
+                    btn.classList.remove("saved");
                 }
             }
         }

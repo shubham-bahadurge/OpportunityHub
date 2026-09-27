@@ -702,7 +702,7 @@ function renderOpportunities() {
 
 
                     <button
-                        class="bookmark-btn"
+                        class="bookmark-btn ${isSaved ? 'saved' : ''}"
                         type="button"
                         title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
                         onclick="toggleSaveOpportunity(${opportunity.id})">

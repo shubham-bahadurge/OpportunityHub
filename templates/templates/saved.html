@@ -169,17 +169,27 @@ function loadSavedOpportunities() {
 
 
             <h3>
-
                 ${opportunity.title}
-
             </h3>
 
 
             <p class="organization">
-
                 ${opportunity.organization}
-
             </p>
+
+
+            ${opportunity.description ? `
+                <p class="explore-description">
+                    ${opportunity.description}
+                </p>
+            ` : ""}
+
+
+            ${opportunity.skills && opportunity.skills.length > 0 ? `
+                <div class="opportunity-tags">
+                    ${opportunity.skills.map(skill => `<span>${skill}</span>`).join("")}
+                </div>
+            ` : ""}
 
 
             <div class="explore-info">

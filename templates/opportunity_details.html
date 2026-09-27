@@ -30,6 +30,7 @@
                 <a href="/">Home</a>
                 <a href="/opportunities" class="active">Opportunities</a>
                 <a href="/dashboard">Dashboard</a>
+                <a href="/applications">Applications</a>
                 <a href="/saved">Saved</a>
                 <a href="/profile">Profile</a>
                 <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
@@ -106,6 +107,92 @@
                  LEFT COLUMN: OVERVIEW, MATCH INSIGHTS, SKILLS, CRITERIA
                  ============================================================= -->
             <div class="details-main">
+
+                <!-- APPLICATION STATUS & TIMELINE TRACKER -->
+                <section class="details-card app-timeline-card" id="appTrackerSection" style="margin-top: 0; margin-bottom: 24px; border: 2px solid #e0e7ff; background: #ffffff;">
+                    <div class="app-timeline-header">
+                        <div>
+                            <span class="category-badge" style="background: #eef2ff; color: #4338ca; border-color: #c7d2fe; margin-bottom: 6px;">RECRUITMENT TRACKER</span>
+                            <h2 class="app-timeline-title" style="margin: 0;">📋 Application Status & Progress</h2>
+                            <p style="font-size: 13px; color: #64748b; margin: 4px 0 0;">
+                                Keep track of your recruitment stages, application dates, and private notes.
+                            </p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="detailStatusSelect" style="font-size: 12px; font-weight: 700; color: #475569;">Stage:</label>
+                            <div class="app-status-select-wrap" style="width: 165px;">
+                                <select id="detailStatusSelect" class="app-status-select" onchange="handleDetailStatusChange(this.value)">
+                                    <option value="Not Applied">⚪ Not Applied</option>
+                                    <option value="Saved">🔖 Saved</option>
+                                    <option value="Applied">📨 Applied</option>
+                                    <option value="Shortlisted">🌟 Shortlisted</option>
+                                    <option value="Interview">🎙️ Interview</option>
+                                    <option value="Selected">🎉 Selected</option>
+                                    <option value="Rejected">⛔ Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Timeline Stepper -->
+                    <div id="timelineContainer" style="margin-top: 14px; margin-bottom: 18px;">
+                        <div class="timeline-stepper">
+                            <div class="timeline-connector">
+                                <div class="timeline-connector-progress" id="timelineProgress" style="width: 0%;"></div>
+                            </div>
+
+                            <div class="timeline-step" id="step-saved">
+                                <div class="timeline-circle">1</div>
+                                <div class="timeline-label">Saved</div>
+                            </div>
+
+                            <div class="timeline-step" id="step-applied">
+                                <div class="timeline-circle">2</div>
+                                <div class="timeline-label">Applied</div>
+                            </div>
+
+                            <div class="timeline-step" id="step-shortlisted">
+                                <div class="timeline-circle">3</div>
+                                <div class="timeline-label">Shortlisted</div>
+                            </div>
+
+                            <div class="timeline-step" id="step-interview">
+                                <div class="timeline-circle">4</div>
+                                <div class="timeline-label">Interview</div>
+                            </div>
+
+                            <div class="timeline-step" id="step-selected">
+                                <div class="timeline-circle">5</div>
+                                <div class="timeline-label">Selected</div>
+                            </div>
+                        </div>
+
+                        <!-- Rejected Notice Banner -->
+                        <div id="rejectedNotice" style="display: none; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 10px; padding: 12px 16px; margin-top: 14px; font-size: 13px; color: #9f1239;">
+                            ⛔ <strong>Application Status: Rejected</strong> — Every attempt is a step forward. Discover other recommended opportunities below!
+                        </div>
+                    </div>
+
+                    <!-- Status Meta & Private Notes Section -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin-top: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                            <label for="detailAppNotes" style="font-size: 13px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                                <span>📝 Private Application Notes</span>
+                            </label>
+                            <div style="font-size: 11px; color: #64748b;">
+                                <span id="detailAppliedDateInfo"></span>
+                                <span id="detailNotesSavedTime" style="margin-left: 8px; color: #059669; font-weight: 600; display: none;">✓ Notes Saved</span>
+                            </div>
+                        </div>
+                        <textarea id="detailAppNotes" class="app-notes-textarea" rows="2" placeholder="e.g. Sent custom resume & portfolio on Sept 28; HR follow-up expected next week..."></textarea>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                            <a href="/applications" style="font-size: 12px; color: #4f46e5; text-decoration: none; font-weight: 600;">
+                                View All Tracked Applications →
+                            </a>
+                            <button type="button" class="btn-save-note" onclick="saveDetailNotes()">Save Notes</button>
+                        </div>
+                    </div>
+                </section>
 
                 <!-- 1. ABOUT THIS OPPORTUNITY -->
                 <section class="details-card">
@@ -220,24 +307,13 @@
                         </div>
                     </div>
 
-                    <!-- PRIMARY ACTION: APPLY NOW -->
-                    {% if opportunity.apply_url and opportunity.apply_url.strip() %}
-                        {% set apply_href = opportunity.apply_url if opportunity.apply_url.startswith('http') else 'https://' ~ opportunity.apply_url %}
-                        <a href="{{ apply_href }}"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="apply-now-btn"
-                           id="applyNowBtn">
-                            Apply Now →
-                        </a>
-                    {% else %}
-                        <button type="button"
-                                class="apply-now-btn"
-                                disabled
-                                style="opacity: 0.6; cursor: not-allowed; background: #94a3b8;">
-                            Applications Closed
-                        </button>
-                    {% endif %}
+                    <!-- PRIMARY ACTION: APPLY NOW (Internal Application-Tracking Action) -->
+                    <button type="button"
+                            class="apply-now-btn"
+                            id="applyNowBtn"
+                            onclick="handleApplyNow()">
+                        Apply Now →
+                    </button>
 
                     <!-- SECONDARY ACTION: SAVE / BOOKMARK -->
                     <button
@@ -304,6 +380,7 @@
                         <li><a href="/">Home</a></li>
                         <li><a href="/opportunities">Opportunities</a></li>
                         <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/applications">Application Tracker</a></li>
                         <li><a href="/saved">Saved Opportunities</a></li>
                         <li><a href="/profile">Student Profile</a></li>
                     </ul>
@@ -480,7 +557,258 @@
             updateSaveButtons();
         }
 
+        /* -------------------------------------------------------------
+           2b. Application Tracker Functionality & Progression
+           ------------------------------------------------------------- */
+        let toastTimeout = null;
+        function showToast(message) {
+            const toast = document.getElementById("applicationToast");
+            const msgElem = document.getElementById("toastMessage");
+            if (!toast || !msgElem) return;
+
+            msgElem.textContent = message || "Application added to your pipeline.";
+            toast.classList.add("visible");
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove("visible");
+            }, 3500);
+        }
+
+        function getTrackerData() {
+            try {
+                const raw = localStorage.getItem("applicationTracker");
+                return raw ? JSON.parse(raw) : {};
+            } catch (e) {
+                console.error("Error reading applicationTracker", e);
+                return {};
+            }
+        }
+
+        function saveTrackerData(data) {
+            try {
+                localStorage.setItem("applicationTracker", JSON.stringify(data));
+            } catch (e) {
+                console.error("Error saving applicationTracker", e);
+            }
+        }
+
+        function getOpportunityTracker() {
+            const tracker = getTrackerData();
+            const idStr = String(currentOpportunity.id);
+            if (tracker[idStr]) {
+                return tracker[idStr];
+            }
+            if (isSavedOpportunity()) {
+                return {
+                    opportunityId: Number(currentOpportunity.id),
+                    status: "Saved",
+                    appliedDate: "",
+                    notes: "",
+                    updatedAt: ""
+                };
+            }
+            return {
+                opportunityId: Number(currentOpportunity.id),
+                status: "Not Applied",
+                appliedDate: "",
+                notes: "",
+                updatedAt: ""
+            };
+        }
+
+        function updateApplyButtonUI() {
+            const applyBtn = document.getElementById("applyNowBtn");
+            if (!applyBtn) return;
+            const current = getOpportunityTracker();
+            const status = current.status || "Not Applied";
+
+            if (status === "Applied") {
+                applyBtn.innerHTML = "✓ Applied (In Pipeline)";
+                applyBtn.classList.add("applied");
+            } else if (["Shortlisted", "Interview", "Selected"].includes(status)) {
+                applyBtn.innerHTML = `✓ Stage: ${status}`;
+                applyBtn.classList.add("applied");
+            } else {
+                applyBtn.innerHTML = "Apply Now →";
+                applyBtn.classList.remove("applied");
+            }
+        }
+
+        function handleApplyNow() {
+            const oppId = Number(currentOpportunity.id);
+            const idStr = String(oppId);
+            const tracker = getTrackerData();
+            const existing = tracker[idStr];
+            const isAlreadyApplied = existing && existing.status === "Applied";
+
+            if (!existing) {
+                tracker[idStr] = {
+                    opportunityId: oppId,
+                    status: "Applied",
+                    appliedDate: new Date().toISOString().split("T")[0],
+                    notes: "",
+                    updatedAt: new Date().toISOString()
+                };
+            } else {
+                tracker[idStr].status = "Applied";
+                if (!tracker[idStr].appliedDate) {
+                    tracker[idStr].appliedDate = new Date().toISOString().split("T")[0];
+                }
+                tracker[idStr].updatedAt = new Date().toISOString();
+            }
+
+            saveTrackerData(tracker);
+            renderTrackerUI();
+
+            if (isAlreadyApplied) {
+                showToast("Application already in your pipeline.");
+            } else {
+                showToast("Application added to your pipeline.");
+            }
+        }
+
+        function renderTrackerUI() {
+            const current = getOpportunityTracker();
+            const status = current.status || "Not Applied";
+
+            // Update status dropdown
+            const statusSelect = document.getElementById("detailStatusSelect");
+            if (statusSelect) {
+                statusSelect.value = status;
+            }
+
+            // Update Notes textarea
+            const notesTextarea = document.getElementById("detailAppNotes");
+            if (notesTextarea && document.activeElement !== notesTextarea) {
+                notesTextarea.value = current.notes || "";
+            }
+
+            // Update applied date info
+            const appliedDateElem = document.getElementById("detailAppliedDateInfo");
+            if (appliedDateElem) {
+                if (status === "Applied" && current.appliedDate) {
+                    appliedDateElem.textContent = `Applied on: ${current.appliedDate}`;
+                } else if (current.updatedAt) {
+                    try {
+                        const d = new Date(current.updatedAt);
+                        appliedDateElem.textContent = `Updated: ${d.toLocaleDateString()}`;
+                    } catch (e) {
+                        appliedDateElem.textContent = "";
+                    }
+                } else {
+                    appliedDateElem.textContent = "";
+                }
+            }
+
+            // Update Timeline Stepper
+            const stepOrder = ["Saved", "Applied", "Shortlisted", "Interview", "Selected"];
+            const stepsElements = {
+                Saved: document.getElementById("step-saved"),
+                Applied: document.getElementById("step-applied"),
+                Shortlisted: document.getElementById("step-shortlisted"),
+                Interview: document.getElementById("step-interview"),
+                Selected: document.getElementById("step-selected")
+            };
+            const progressBar = document.getElementById("timelineProgress");
+            const rejectedNotice = document.getElementById("rejectedNotice");
+
+            // Reset all step classes
+            Object.values(stepsElements).forEach(el => {
+                if (el) {
+                    el.classList.remove("completed", "current");
+                }
+            });
+
+            if (status === "Rejected") {
+                if (progressBar) progressBar.style.width = "0%";
+                if (rejectedNotice) rejectedNotice.style.display = "block";
+            } else {
+                if (rejectedNotice) rejectedNotice.style.display = "none";
+                const currentIndex = stepOrder.indexOf(status);
+
+                if (currentIndex === -1) {
+                    // "Not Applied"
+                    if (progressBar) progressBar.style.width = "0%";
+                } else {
+                    // Mark previous steps as completed
+                    for (let i = 0; i < currentIndex; i++) {
+                        const stepEl = stepsElements[stepOrder[i]];
+                        if (stepEl) stepEl.classList.add("completed");
+                    }
+                    // Current step
+                    const currentEl = stepsElements[stepOrder[currentIndex]];
+                    if (currentEl) {
+                        if (currentIndex === stepOrder.length - 1) {
+                            currentEl.classList.add("completed");
+                        } else {
+                            currentEl.classList.add("current");
+                        }
+                    }
+
+                    // Progress percentage: 0%, 25%, 50%, 75%, 100%
+                    const pct = Math.round((currentIndex / (stepOrder.length - 1)) * 100);
+                    if (progressBar) progressBar.style.width = `${pct}%`;
+                }
+            }
+
+            // Update Apply button text and visual state
+            updateApplyButtonUI();
+        }
+
+        function handleDetailStatusChange(newStatus) {
+            updateTrackerStatus(newStatus, true);
+        }
+
+        function updateTrackerStatus(newStatus, autoAppliedDate = true) {
+            const tracker = getTrackerData();
+            const idStr = String(currentOpportunity.id);
+            const current = tracker[idStr] || {
+                opportunityId: Number(currentOpportunity.id),
+                status: "Not Applied",
+                appliedDate: "",
+                notes: document.getElementById("detailAppNotes") ? document.getElementById("detailAppNotes").value.trim() : "",
+                updatedAt: ""
+            };
+
+            current.status = newStatus;
+            current.updatedAt = new Date().toISOString();
+            if (newStatus === "Applied" && (!current.appliedDate || autoAppliedDate)) {
+                current.appliedDate = new Date().toISOString().split("T")[0];
+            }
+            tracker[idStr] = current;
+            saveTrackerData(tracker);
+
+            renderTrackerUI();
+        }
+
+        function saveDetailNotes() {
+            const textarea = document.getElementById("detailAppNotes");
+            if (!textarea) return;
+            const notes = textarea.value.trim();
+            const tracker = getTrackerData();
+            const idStr = String(currentOpportunity.id);
+            const current = tracker[idStr] || {
+                opportunityId: Number(currentOpportunity.id),
+                status: document.getElementById("detailStatusSelect") ? document.getElementById("detailStatusSelect").value : "Not Applied",
+                appliedDate: "",
+                notes: "",
+                updatedAt: new Date().toISOString()
+            };
+            current.notes = notes;
+            current.updatedAt = new Date().toISOString();
+            tracker[idStr] = current;
+            saveTrackerData(tracker);
+
+            const feedback = document.getElementById("detailNotesSavedTime");
+            if (feedback) {
+                feedback.style.display = "inline";
+                setTimeout(() => { feedback.style.display = "none"; }, 2500);
+            }
+        }
+
         updateSaveButtons();
+        renderTrackerUI();
 
         /* -------------------------------------------------------------
            3. Match Insights & Actual Calculated Score
@@ -767,6 +1095,12 @@
             }).join("");
         }
     </script>
+
+    <!-- APPLICATION SUCCESS TOAST NOTIFICATION -->
+    <div id="applicationToast" class="app-toast" role="alert" aria-live="polite">
+        <span class="app-toast-icon">✓</span>
+        <span id="toastMessage">Application added to your pipeline.</span>
+    </div>
 
 </body>
 

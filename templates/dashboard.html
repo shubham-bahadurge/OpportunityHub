@@ -30,6 +30,7 @@
                 <a href="/">Home</a>
                 <a href="/opportunities">Opportunities</a>
                 <a href="/dashboard" class="active">Dashboard</a>
+                <a href="/applications">Applications</a>
                 <a href="/saved">Saved</a>
                 <a href="/profile">Profile</a>
                 <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
@@ -123,6 +124,107 @@
                 </div>
             </a>
 
+        </section>
+
+
+        <!-- APPLICATION TRACKER & RECRUITMENT PIPELINE SECTION -->
+        <section class="dash-pipeline-card" id="dashboardTrackerSection" aria-label="Application Tracker Overview">
+            <div class="dash-pipeline-header">
+                <div>
+                    <div class="dash-panel-eyebrow">RECRUITMENT PIPELINE</div>
+                    <h2 class="dash-panel-title" style="margin: 0; font-size: 20px;">
+                        📋 Application Tracker
+                    </h2>
+                    <p class="dash-panel-sub" style="margin-top: 4px;">
+                        Monitor your opportunities across all 6 recruitment stages in real time.
+                    </p>
+                </div>
+                <a href="/applications" class="dash-panel-link" style="font-weight: 700;">
+                    Open Full Tracker →
+                </a>
+            </div>
+
+            <!-- 6-Stage Count Cards Grid -->
+            <div class="tracker-stats-grid" style="margin-bottom: 20px;">
+                <a href="/applications?filter=Saved" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
+                    <div class="tracker-stat-icon">🔖</div>
+                    <div class="tracker-stat-val" id="dashCountSaved">0</div>
+                    <div class="tracker-stat-label">Saved</div>
+                </a>
+
+                <a href="/applications?filter=Applied" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
+                    <div class="tracker-stat-icon">📨</div>
+                    <div class="tracker-stat-val" id="dashCountApplied">0</div>
+                    <div class="tracker-stat-label">Applied</div>
+                </a>
+
+                <a href="/applications?filter=Shortlisted" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
+                    <div class="tracker-stat-icon">🌟</div>
+                    <div class="tracker-stat-val" id="dashCountShortlisted">0</div>
+                    <div class="tracker-stat-label">Shortlisted</div>
+                </a>
+
+                <a href="/applications?filter=Interview" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
+                    <div class="tracker-stat-icon">🎙️</div>
+                    <div class="tracker-stat-val" id="dashCountInterview">0</div>
+                    <div class="tracker-stat-label">Interview</div>
+                </a>
+
+                <a href="/applications?filter=Selected" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
+                    <div class="tracker-stat-icon">🎉</div>
+                    <div class="tracker-stat-val" id="dashCountSelected">0</div>
+                    <div class="tracker-stat-label">Selected</div>
+                </a>
+
+                <a href="/applications?filter=Rejected" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
+                    <div class="tracker-stat-icon">⛔</div>
+                    <div class="tracker-stat-val" id="dashCountRejected">0</div>
+                    <div class="tracker-stat-label">Rejected</div>
+                </a>
+            </div>
+
+            <!-- Visual Pipeline Progress Bar / Track -->
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Active Recruitment Pipeline</span>
+                    <span style="font-size: 12px; font-weight: 800; color: #4f46e5;" id="dashActivePipelineCount">0 Active in Pipeline</span>
+                </div>
+
+                <div class="dash-pipeline-track">
+                    <div class="dash-pipeline-node">
+                        <span>🔖 Saved</span>
+                        <span class="dash-pipeline-count" id="pipeCountSaved">0</span>
+                    </div>
+
+                    <span class="dash-pipeline-arrow">➔</span>
+
+                    <div class="dash-pipeline-node">
+                        <span>📨 Applied</span>
+                        <span class="dash-pipeline-count" id="pipeCountApplied">0</span>
+                    </div>
+
+                    <span class="dash-pipeline-arrow">➔</span>
+
+                    <div class="dash-pipeline-node">
+                        <span>🌟 Shortlisted</span>
+                        <span class="dash-pipeline-count" id="pipeCountShortlisted">0</span>
+                    </div>
+
+                    <span class="dash-pipeline-arrow">➔</span>
+
+                    <div class="dash-pipeline-node">
+                        <span>🎙️ Interview</span>
+                        <span class="dash-pipeline-count" id="pipeCountInterview">0</span>
+                    </div>
+
+                    <span class="dash-pipeline-arrow">➔</span>
+
+                    <div class="dash-pipeline-node">
+                        <span>🎉 Selected</span>
+                        <span class="dash-pipeline-count" id="pipeCountSelected" style="background: #ecfdf5; color: #065f46; border-color: #a7f3d0;">0</span>
+                    </div>
+                </div>
+            </div>
         </section>
 
 
@@ -266,6 +368,14 @@
                             </span>
                             <span class="dash-action-arrow">→</span>
                         </a>
+
+                        <a href="/applications" class="dash-action-btn">
+                            <span class="dash-action-left">
+                                <span>📋</span>
+                                <span>Track Career Applications</span>
+                            </span>
+                            <span class="dash-action-arrow">→</span>
+                        </a>
                     </div>
                 </section>
 
@@ -298,6 +408,7 @@
                         <li><a href="/">Home</a></li>
                         <li><a href="/opportunities">Opportunities</a></li>
                         <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/applications">Application Tracker</a></li>
                         <li><a href="/saved">Saved Opportunities</a></li>
                         <li><a href="/profile">Student Profile</a></li>
                     </ul>
@@ -445,7 +556,99 @@
         }
 
         /* -------------------------------------------------------------
-           6. Update KPI Cards
+           6. Application Tracker Data & Pipeline Helper
+           ------------------------------------------------------------- */
+        function getTrackerData() {
+            try {
+                const raw = localStorage.getItem("applicationTracker");
+                const tracker = raw ? JSON.parse(raw) : {};
+
+                // Auto-sync with savedOpportunities
+                const saved = getSavedList();
+                saved.forEach(item => {
+                    const id = String(typeof item === 'object' ? item.id : item);
+                    if (id && !tracker[id]) {
+                        tracker[id] = {
+                            opportunityId: Number(id),
+                            status: "Saved",
+                            appliedDate: "",
+                            notes: "",
+                            updatedAt: new Date().toISOString()
+                        };
+                    }
+                });
+
+                return tracker;
+            } catch (e) {
+                console.error("Error reading applicationTracker", e);
+                return {};
+            }
+        }
+
+        function saveTrackerData(data) {
+            try {
+                localStorage.setItem("applicationTracker", JSON.stringify(data));
+            } catch (e) {
+                console.error("Error saving applicationTracker", e);
+            }
+        }
+
+        function updateTrackerPipelineUI() {
+            const tracker = getTrackerData();
+            const counts = {
+                Saved: 0,
+                Applied: 0,
+                Shortlisted: 0,
+                Interview: 0,
+                Selected: 0,
+                Rejected: 0
+            };
+
+            Object.values(tracker).forEach(item => {
+                const st = item.status;
+                if (counts[st] !== undefined) {
+                    counts[st]++;
+                }
+            });
+
+            // Update 6-stage metric counts
+            const elSaved = document.getElementById("dashCountSaved");
+            const elApplied = document.getElementById("dashCountApplied");
+            const elShortlisted = document.getElementById("dashCountShortlisted");
+            const elInterview = document.getElementById("dashCountInterview");
+            const elSelected = document.getElementById("dashCountSelected");
+            const elRejected = document.getElementById("dashCountRejected");
+
+            if (elSaved) elSaved.textContent = counts.Saved;
+            if (elApplied) elApplied.textContent = counts.Applied;
+            if (elShortlisted) elShortlisted.textContent = counts.Shortlisted;
+            if (elInterview) elInterview.textContent = counts.Interview;
+            if (elSelected) elSelected.textContent = counts.Selected;
+            if (elRejected) elRejected.textContent = counts.Rejected;
+
+            // Update visual pipeline track nodes
+            const pipeSaved = document.getElementById("pipeCountSaved");
+            const pipeApplied = document.getElementById("pipeCountApplied");
+            const pipeShortlisted = document.getElementById("pipeCountShortlisted");
+            const pipeInterview = document.getElementById("pipeCountInterview");
+            const pipeSelected = document.getElementById("pipeCountSelected");
+
+            if (pipeSaved) pipeSaved.textContent = counts.Saved;
+            if (pipeApplied) pipeApplied.textContent = counts.Applied;
+            if (pipeShortlisted) pipeShortlisted.textContent = counts.Shortlisted;
+            if (pipeInterview) pipeInterview.textContent = counts.Interview;
+            if (pipeSelected) pipeSelected.textContent = counts.Selected;
+
+            // Total in active pipeline (Saved + Applied + Shortlisted + Interview + Selected)
+            const activePipelineTotal = counts.Saved + counts.Applied + counts.Shortlisted + counts.Interview + counts.Selected;
+            const elActiveTotal = document.getElementById("dashActivePipelineCount");
+            if (elActiveTotal) {
+                elActiveTotal.textContent = `${activePipelineTotal} Active in Pipeline`;
+            }
+        }
+
+        /* -------------------------------------------------------------
+           6b. Update KPI Cards
            ------------------------------------------------------------- */
         function updateKPIs() {
             // 1. Recommended Count
@@ -475,6 +678,9 @@
             const progressFillElem = document.getElementById("kpiProgressFill");
             if (completionElem) completionElem.textContent = `${completionPct}%`;
             if (progressFillElem) progressFillElem.style.width = `${completionPct}%`;
+
+            // 5. Update Application Tracker Pipeline
+            updateTrackerPipelineUI();
         }
 
         /* -------------------------------------------------------------
@@ -484,16 +690,32 @@
             const idNum = Number(oppId);
             let saved = getSavedList();
             const index = saved.findIndex(item => (typeof item === 'object' ? Number(item.id) === idNum : Number(item) === idNum));
+            const tracker = getTrackerData();
+            const idStr = String(idNum);
 
             if (index >= 0) {
                 saved.splice(index, 1);
+                if (tracker[idStr] && tracker[idStr].status === "Saved") {
+                    tracker[idStr].status = "Not Applied";
+                    tracker[idStr].updatedAt = new Date().toISOString();
+                    saveTrackerData(tracker);
+                }
             } else {
-                // Find in current recommendations or construct minimal object
                 let opp = currentOpportunities.find(item => Number(item.id) === idNum);
                 if (opp) {
                     saved.push(opp);
                 } else {
                     saved.push({ id: idNum });
+                }
+                if (!tracker[idStr] || tracker[idStr].status === "Not Applied") {
+                    tracker[idStr] = {
+                        opportunityId: idNum,
+                        status: "Saved",
+                        appliedDate: "",
+                        notes: tracker[idStr] ? tracker[idStr].notes : "",
+                        updatedAt: new Date().toISOString()
+                    };
+                    saveTrackerData(tracker);
                 }
             }
 

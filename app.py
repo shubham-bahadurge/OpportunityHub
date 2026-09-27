@@ -21,9 +21,15 @@ def profile():
 def dashboard():
     return render_template("dashboard.html")
 @app.route("/opportunities")
-
 def opportunities_page():
     return render_template("opportunities.html")
+
+
+@app.route("/applications")
+def applications_page():
+    return render_template("applications.html", opportunities=opportunities)
+
+
 @app.route("/opportunity/<int:opportunity_id>")
 def opportunity_details(opportunity_id):
 

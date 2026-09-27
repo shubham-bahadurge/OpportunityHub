@@ -335,21 +335,33 @@
                  ========================================================= -->
             <div class="dashboard-main-col">
 
-                <!-- TOP 3 RECOMMENDED OPPORTUNITIES -->
-                <section class="dash-panel" aria-labelledby="headingRecommendations">
+                <!-- SMART RECOMMENDATIONS: RECOMMENDED FOR YOU -->
+                <section class="dash-panel" id="smartRecommendationsSection" aria-labelledby="headingRecommendations">
                     <div class="dash-panel-header">
                         <div>
-                            <div class="dash-panel-eyebrow">TOP PERSONALIZED PICKS</div>
+                            <div class="dash-panel-eyebrow">SMART RECOMMENDATIONS</div>
                             <h2 class="dash-panel-title" id="headingRecommendations">
-                                🎯 Recommended Opportunities
+                                🎯 Recommended For You
                             </h2>
                             <p class="dash-panel-sub">
-                                Top picks aligned with your skills, interests, and degree.
+                                Top picks aligned with your skills, interests, and education.
                             </p>
                         </div>
                         <a href="/opportunities" class="dash-panel-link">
                             View All Opportunities →
                         </a>
+                    </div>
+
+                    <!-- Recommendation Filter Bar ("Recommended for me") -->
+                    <div class="recommendations-filter-bar">
+                        <span class="rec-filter-label">Recommended for me:</span>
+                        <div class="rec-filter-pills" role="tablist" aria-label="Recommendation Filters">
+                            <button type="button" class="rec-filter-btn active" data-filter="all" onclick="setRecommendationFilter('all')">All</button>
+                            <button type="button" class="rec-filter-btn" data-filter="best" onclick="setRecommendationFilter('best')">Best Match</button>
+                            <button type="button" class="rec-filter-btn" data-filter="skills" onclick="setRecommendationFilter('skills')">Skills</button>
+                            <button type="button" class="rec-filter-btn" data-filter="interests" onclick="setRecommendationFilter('interests')">Interests</button>
+                            <button type="button" class="rec-filter-btn" data-filter="category" onclick="setRecommendationFilter('category')">Category</button>
+                        </div>
                     </div>
 
                     <!-- Recommended Cards Container -->
@@ -1186,6 +1198,7 @@
             const tracker = getTrackerData();
             const idStr = String(idNum);
 
+            let isNowSaved = false;
             if (index >= 0) {
                 saved.splice(index, 1);
                 if (tracker[idStr] && tracker[idStr].status === "Saved") {
@@ -1193,6 +1206,7 @@
                     tracker[idStr].updatedAt = new Date().toISOString();
                     saveTrackerData(tracker);
                 }
+                isNowSaved = false;
             } else {
                 let opp = currentOpportunities.find(item => Number(item.id) === idNum);
                 if (opp) {
@@ -1210,6 +1224,7 @@
                     };
                     saveTrackerData(tracker);
                 }
+                isNowSaved = true;
             }
 
             try {
@@ -1219,8 +1234,12 @@
             }
 
             updateKPIs();
+            updateDashboardAnalytics();
             renderRecommendedCards(currentOpportunities);
             renderSavedPreview();
+            if (typeof showToast === "function") {
+                showToast(isNowSaved ? "Opportunity saved to bookmarks! 🔖" : "Removed from saved opportunities.");
+            }
         }
 
         /* -------------------------------------------------------------
@@ -1305,46 +1324,261 @@
         }
 
         /* -------------------------------------------------------------
-           9. Render Top 3 Recommended Opportunities
+           9. Smart Recommendations: Filter, Explanation, Quality, Apply, & Top 5 Render
            ------------------------------------------------------------- */
+        let currentRecFilter = 'all';
+
+        function showToast(msg) {
+            let toast = document.getElementById("dashToast");
+            if (!toast) {
+                toast = document.createElement("div");
+                toast.id = "dashToast";
+                toast.className = "toast-notification";
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.classList.add("visible");
+            setTimeout(() => {
+                toast.classList.remove("visible");
+            }, 3000);
+        }
+
+        function getMatchQuality(score) {
+            const val = Number(score) || 0;
+            if (val >= 80) {
+                return { label: "Excellent Match", className: "quality-excellent" };
+            } else if (val >= 60) {
+                return { label: "Strong Match", className: "quality-strong" };
+            } else if (val >= 40) {
+                return { label: "Moderate Match", className: "quality-moderate" };
+            } else {
+                return { label: "Low Match", className: "quality-low" };
+            }
+        }
+
+        function getRecommendationExplanation(opp) {
+            const matchedSkills = opp.matched_skills || [];
+            const matchedInterests = opp.matched_interests || [];
+            const educationMatch = !!opp.education_match;
+            const categoryMatch = !!opp.category_match;
+            const score = Number(opp.score) || 0;
+
+            const reasons = [];
+
+            // 1. Skill Match Explanation (supported by actual matched skills data)
+            const totalOppSkills = (opp.skills || []).length || 1;
+            if (matchedSkills.length >= 2 || (matchedSkills.length >= 1 && (matchedSkills.length / totalOppSkills) >= 0.5)) {
+                reasons.push(`Strong skill match (${matchedSkills.slice(0, 2).join(", ")})`);
+            } else if (matchedSkills.length === 1) {
+                reasons.push(`Skill match (${matchedSkills[0]})`);
+            }
+
+            // 2. Interests Match Explanation (supported by actual matched interests data)
+            if (matchedInterests.length > 0) {
+                reasons.push(`Matches your interests (${matchedInterests.slice(0, 2).join(", ")})`);
+            }
+
+            // 3. Education Match Explanation (supported by actual education match data)
+            if (educationMatch) {
+                reasons.push("Matches your education");
+            }
+
+            // 4. Category Match Explanation (supported by actual category match data)
+            if (categoryMatch) {
+                reasons.push(`Matches your target category (${opp.category})`);
+            }
+
+            // 5. Fallback for overall profile compatibility
+            if (reasons.length === 0) {
+                if (score >= 60) {
+                    reasons.push("Good overall profile match");
+                } else if (score >= 40) {
+                    reasons.push("Moderate profile alignment");
+                } else {
+                    reasons.push("Explore to expand your skills");
+                }
+            }
+
+            return reasons.join(" • ");
+        }
+
+        function setRecommendationFilter(filterName) {
+            currentRecFilter = filterName;
+            document.querySelectorAll(".rec-filter-btn").forEach(btn => {
+                btn.classList.toggle("active", btn.dataset.filter === filterName);
+            });
+            renderRecommendedCards(currentOpportunities);
+        }
+
+        function filterRecommendations(oppList, filterType) {
+            if (!Array.isArray(oppList)) return [];
+
+            let filtered = [...oppList];
+
+            if (filterType === 'best') {
+                const highScored = filtered.filter(o => (o.score || 0) >= 50);
+                filtered = highScored.length > 0 ? highScored : filtered;
+                filtered.sort((a, b) => (b.score || 0) - (a.score || 0));
+            } else if (filterType === 'skills') {
+                const skillMatched = filtered.filter(o => (o.matched_skills && o.matched_skills.length > 0));
+                filtered = skillMatched.length > 0 ? skillMatched : filtered;
+                filtered.sort((a, b) => {
+                    const countA = (a.matched_skills || []).length;
+                    const countB = (b.matched_skills || []).length;
+                    if (countB !== countA) return countB - countA;
+                    return (b.score || 0) - (a.score || 0);
+                });
+            } else if (filterType === 'interests') {
+                const interestMatched = filtered.filter(o => (o.matched_interests && o.matched_interests.length > 0));
+                filtered = interestMatched.length > 0 ? interestMatched : filtered;
+                filtered.sort((a, b) => {
+                    const countA = (a.matched_interests || []).length;
+                    const countB = (b.matched_interests || []).length;
+                    if (countB !== countA) return countB - countA;
+                    return (b.score || 0) - (a.score || 0);
+                });
+            } else if (filterType === 'category') {
+                const catMatched = filtered.filter(o => o.category_match === true);
+                filtered = catMatched.length > 0 ? catMatched : filtered;
+                filtered.sort((a, b) => (b.score || 0) - (a.score || 0));
+            } else {
+                // 'all': sorted strictly by match score descending
+                filtered.sort((a, b) => (b.score || 0) - (a.score || 0));
+            }
+
+            return filtered;
+        }
+
+        function handleDashboardApply(oppId) {
+            const idNum = Number(oppId);
+            const idStr = String(idNum);
+            const tracker = getTrackerData();
+            const existing = tracker[idStr];
+            const isAlreadyApplied = existing && ["Applied", "Shortlisted", "Interview", "Selected"].includes(existing.status);
+
+            if (!existing) {
+                tracker[idStr] = {
+                    opportunityId: idNum,
+                    status: "Applied",
+                    appliedDate: new Date().toISOString().split("T")[0],
+                    notes: "",
+                    updatedAt: new Date().toISOString()
+                };
+            } else if (!isAlreadyApplied) {
+                tracker[idStr].status = "Applied";
+                if (!tracker[idStr].appliedDate) {
+                    tracker[idStr].appliedDate = new Date().toISOString().split("T")[0];
+                }
+                tracker[idStr].updatedAt = new Date().toISOString();
+            }
+
+            saveTrackerData(tracker);
+            updateKPIs();
+            updateDashboardAnalytics();
+            renderRecommendedCards(currentOpportunities);
+            renderSavedPreview();
+            showToast(isAlreadyApplied ? "Application already in your pipeline." : "Application added to pipeline as Applied! 🚀");
+        }
+
         function renderRecommendedCards(opportunities) {
             const container = document.getElementById("recommendedContainer");
             if (!container) return;
 
-            if (!opportunities || opportunities.length === 0) {
+            // 1. Check if profile is complete enough for useful recommendations
+            const hasSkills = currentStudentProfile && Array.isArray(currentStudentProfile.skills) && currentStudentProfile.skills.length > 0;
+            const hasInterests = currentStudentProfile && Array.isArray(currentStudentProfile.interests) && currentStudentProfile.interests.length > 0;
+
+            if (!currentStudentProfile || (!hasSkills && !hasInterests)) {
                 container.innerHTML = `
                     <div class="dash-empty-box">
-                        <div class="dash-empty-icon">🎯</div>
-                        <h3 class="dash-empty-title">No recommendations found</h3>
-                        <p class="dash-empty-text">Complete your student profile to discover matching opportunities.</p>
-                        <a href="/profile" class="primary-btn" style="padding: 9px 18px; font-size: 13px;">Update Profile →</a>
+                        <div class="dash-empty-icon">👤</div>
+                        <h3 class="dash-empty-title">Complete your profile to get personalized recommendations.</h3>
+                        <p class="dash-empty-text">Add your skills, interests, and education so OpportunityHub can find matches tailored to your career goals.</p>
+                        <a href="/profile" class="primary-btn" style="padding: 10px 20px; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                            <span>👤 Complete Profile</span>
+                            <span>→</span>
+                        </a>
                     </div>
                 `;
                 return;
             }
 
-            const top3 = opportunities.slice(0, 3);
-            const studentSkills = ((currentStudentProfile && currentStudentProfile.skills) || []).map(s => s.toLowerCase());
+            // 2. Check if opportunities exist in catalog
+            if (!opportunities || opportunities.length === 0) {
+                container.innerHTML = `
+                    <div class="dash-empty-box">
+                        <div class="dash-empty-icon">🔎</div>
+                        <h3 class="dash-empty-title">No opportunities found</h3>
+                        <p class="dash-empty-text">There are currently no matching opportunities available in the catalog.</p>
+                        <a href="/opportunities" class="primary-btn" style="padding: 10px 20px; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                            <span>🔎 Explore Opportunities</span>
+                            <span>→</span>
+                        </a>
+                    </div>
+                `;
+                return;
+            }
 
-            container.innerHTML = top3.map((opp, idx) => {
-                const isSaved = isOpportunitySaved(opp.id);
+            // 3. Deduplicate opportunities by ID to prevent duplicate recommendations
+            const seen = new Set();
+            const uniqueOpps = [];
+            for (const opp of opportunities) {
+                const id = Number(opp.id);
+                if (!seen.has(id)) {
+                    seen.add(id);
+                    uniqueOpps.push(opp);
+                }
+            }
+
+            // 4. Apply recommendation filter
+            const filteredOpps = filterRecommendations(uniqueOpps, currentRecFilter);
+
+            if (filteredOpps.length === 0) {
+                container.innerHTML = `
+                    <div class="dash-empty-box">
+                        <div class="dash-empty-icon">🎯</div>
+                        <h3 class="dash-empty-title">No opportunities found for "${currentRecFilter}"</h3>
+                        <p class="dash-empty-text">Try selecting a different filter or reset to All recommendations.</p>
+                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px;">
+                            <button type="button" class="secondary-btn" onclick="setRecommendationFilter('all')" style="padding: 8px 16px; font-size: 13px;">
+                                Show All Recommendations
+                            </button>
+                            <a href="/opportunities" class="primary-btn" style="padding: 8px 16px; font-size: 13px; text-decoration: none;">
+                                Explore Opportunities →
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 5. Display the top 5 recommendations
+            const top5 = filteredOpps.slice(0, 5);
+            const studentSkills = ((currentStudentProfile && currentStudentProfile.skills) || []).map(s => s.toLowerCase());
+            const tracker = getTrackerData();
+
+            container.innerHTML = top5.map((opp, idx) => {
+                const idStr = String(opp.id);
+                const trackerItem = tracker[idStr];
+                const isApplied = trackerItem && ["Applied", "Shortlisted", "Interview", "Selected"].includes(trackerItem.status);
+                const isSaved = isOpportunitySaved(opp.id) || (trackerItem && trackerItem.status === "Saved");
+                const appliedStatusLabel = trackerItem ? trackerItem.status : "Applied";
+
                 const deadline = getDeadlineStatus(opp.deadline);
                 const score = opp.score || 0;
+                const quality = getMatchQuality(score);
+                const explanation = getRecommendationExplanation(opp);
 
-                // Match reasons
-                const matchedTags = [
-                    ...(opp.matched_skills || []),
-                    ...(opp.matched_interests || [])
-                ];
+                // Skill gap: Matched and Missing skills
+                const oppSkills = opp.skills || [];
+                const matchedSkills = oppSkills.filter(s => studentSkills.includes(s.toLowerCase()));
+                const missingSkills = oppSkills.filter(s => !studentSkills.includes(s.toLowerCase()));
 
-                const skillsList = (opp.skills || []).map(skill => {
-                    const isMatched = studentSkills.includes(skill.toLowerCase());
-                    return `<span class="dash-skill-pill ${isMatched ? 'matched' : ''}">${isMatched ? '✓ ' : ''}${skill}</span>`;
-                }).join("");
+                const educationStr = Array.isArray(opp.education) ? opp.education.join(", ") : (opp.education || "All Degrees");
 
                 return `
                     <article class="dash-opp-card" data-id="${opp.id}">
-                        <div class="dash-opp-card-rank">#${idx + 1} Top Match</div>
+                        <div class="dash-opp-card-rank">#${idx + 1} Best Match</div>
 
                         <div class="dash-opp-top">
                             <div class="dash-opp-left-header">
@@ -1369,28 +1603,45 @@
                         <div class="dash-opp-badges">
                             <span class="category-badge">${opp.category}</span>
                             <span class="match-badge">${score}% Match</span>
+                            <span class="match-quality-badge ${quality.className}">${quality.label}</span>
                             <span class="status-badge ${deadline.className}">📅 ${deadline.label}</span>
+                            ${isApplied ? `<span class="app-status-pill applied">✓ Already Applied</span>` : (isSaved ? `<span class="app-status-pill saved">🔖 Saved</span>` : '')}
                         </div>
 
                         <p class="dash-opp-desc">
                             ${opp.description}
                         </p>
 
-                        <div class="dash-skills-pills">
-                            ${skillsList}
+                        <!-- Personalized Explanation -->
+                        <div class="dash-rec-explanation">
+                            <span class="rec-exp-icon">💡</span>
+                            <div><strong>Why it matches:</strong> ${explanation}</div>
                         </div>
 
-                        ${matchedTags.length > 0 ? `
-                            <div class="dash-match-summary-box">
-                                <span>🎯</span>
-                                <span><strong>Why it matches:</strong> Aligned with ${matchedTags.slice(0, 3).join(", ")}${matchedTags.length > 3 ? ` +${matchedTags.length - 3} more` : ''}</span>
+                        <!-- Skill Gap Breakdown: Matched & Missing Skills -->
+                        <div class="dash-skill-gap-row">
+                            <div class="dash-skill-group">
+                                <span class="dash-skill-group-title matched-title">✓ Matched Skills (${matchedSkills.length})</span>
+                                <div class="dash-skills-pills">
+                                    ${matchedSkills.length > 0
+                                        ? matchedSkills.map(s => `<span class="dash-skill-pill matched">✓ ${s}</span>`).join("")
+                                        : `<span class="dash-skill-empty">None matched yet</span>`}
+                                </div>
                             </div>
-                        ` : ''}
+                            <div class="dash-skill-group">
+                                <span class="dash-skill-group-title missing-title">+ Missing Skills (${missingSkills.length})</span>
+                                <div class="dash-skills-pills">
+                                    ${missingSkills.length > 0
+                                        ? missingSkills.map(s => `<span class="dash-skill-pill missing">+ ${s}</span>`).join("")
+                                        : `<span class="dash-skill-empty matched-all">🎉 All skills matched!</span>`}
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="dash-opp-footer">
                             <div class="dash-opp-meta">
                                 <span>📍 ${opp.location}</span>
-                                <span>🎓 ${Array.isArray(opp.education) ? opp.education.join(", ") : (opp.education || "All")}</span>
+                                <span>🎓 ${educationStr}</span>
                             </div>
 
                             <div class="dash-opp-actions">
@@ -1401,6 +1652,17 @@
                                     title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}">
                                     ${isSaved ? '❤️ Saved' : '🔖 Save'}
                                 </button>
+
+                                ${isApplied ? `
+                                    <button type="button" class="btn-apply-dash applied" disabled title="Already in application pipeline (${appliedStatusLabel})">
+                                        ✓ Already Applied
+                                    </button>
+                                ` : `
+                                    <button type="button" class="btn-apply-dash" onclick="handleDashboardApply(${opp.id})" title="Submit application to pipeline">
+                                        Apply Now →
+                                    </button>
+                                `}
+
                                 <a href="/opportunity/${opp.id}"
                                    class="btn-view-dash"
                                    onclick="markOpportunityViewed(${opp.id})">

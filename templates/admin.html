@@ -74,7 +74,7 @@
                     <div class="admin-user-avatar">A</div>
                     <div class="admin-user-meta">
                         <div class="admin-user-name">{{ current_user.name if current_user else 'Administrator' }}</div>
-                        <div class="admin-user-email">{{ current_user.email if current_user else 'admin@opportunityhub.com' }}</div>
+                        <div class="admin-user-email">Administrator Account</div>
                     </div>
                 </div>
             </div>
@@ -860,7 +860,7 @@
                         <div>
                             <h3 class="admin-student-name">${prof.name}</h3>
                             <div class="admin-student-meta">
-                                <span>📧 ${prof.email || 'student@opportunityhub.com'}</span>
+                                <span>📧 ${prof.email || 'Not specified'}</span>
                                 <span>•</span>
                                 <span>🎓 ${prof.education || 'B.Tech'}${prof.branch ? ' (' + prof.branch + ')' : ''}</span>
                             </div>

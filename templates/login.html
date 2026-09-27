@@ -38,7 +38,7 @@
                 </div>
                 <h1 class="login-title">Sign In to OpportunityHub</h1>
                 <p class="login-subtitle">
-                    Select a demo account below or enter your credentials to access your portal.
+                    Enter your credentials to access your student or admin portal.
                 </p>
             </div>
 
@@ -51,35 +51,9 @@
             {% else %}
             <div class="login-alert login-alert-error" id="loginAlert" style="display: none;">
                 <span>⚠️</span>
-                <span id="loginAlertText"></span>
+                <span>{{ error if error else '' }}</span>
             </div>
             {% endif %}
-
-            <!-- Demo Credentials Quick-Select Box -->
-            <div class="demo-accounts-box">
-                <div class="demo-accounts-title">
-                    <span>⚡ Quick Demo Login (Hackathon MVP)</span>
-                </div>
-                <div class="demo-accounts-grid">
-                    <button type="button" class="demo-btn" onclick="fillCredentials('admin@opportunityhub.com', 'admin123', 'admin')">
-                        <div class="demo-btn-role">
-                            <span class="role-badge role-admin">Admin Portal</span>
-                            <span class="demo-btn-arrow">→</span>
-                        </div>
-                        <div class="demo-btn-cred">admin@opportunityhub.com</div>
-                        <div class="demo-btn-pwd">Password: <code>admin123</code></div>
-                    </button>
-
-                    <button type="button" class="demo-btn" onclick="fillCredentials('student@opportunityhub.com', 'student123', 'student')">
-                        <div class="demo-btn-role">
-                            <span class="role-badge role-student">Student Dashboard</span>
-                            <span class="demo-btn-arrow">→</span>
-                        </div>
-                        <div class="demo-btn-cred">student@opportunityhub.com</div>
-                        <div class="demo-btn-pwd">Password: <code>student123</code></div>
-                    </button>
-                </div>
-            </div>
 
             <!-- Login Form -->
             <form action="/login{% if request.args.get('next') %}?next={{ request.args.get('next') }}{% endif %}" method="POST" id="loginForm" class="login-form">
@@ -93,7 +67,7 @@
                             id="emailInput"
                             name="email"
                             class="form-input"
-                            placeholder="admin@opportunityhub.com or student"
+                            placeholder="Enter your email or username"
                             required
                             autocomplete="username"
                         >
@@ -169,31 +143,17 @@
             }
         }
 
-        function fillCredentials(email, pwd, role) {
-            const emailInput = document.getElementById("emailInput");
-            const pwdInput = document.getElementById("passwordInput");
-            if (emailInput) emailInput.value = email;
-            if (pwdInput) pwdInput.value = pwd;
-
-            // Highlight filled state
-            if (emailInput) {
-                emailInput.focus();
-                emailInput.classList.add("input-highlight");
-                setTimeout(() => emailInput.classList.remove("input-highlight"), 1000);
-            }
-        }
-
         // Handle client-side profile initialization if student logs in
         document.getElementById("loginForm").addEventListener("submit", function(e) {
             const email = (document.getElementById("emailInput").value || "").trim().toLowerCase();
             if (email.includes("student")) {
                 try {
-                    // Check if student profile exists, if not set a clean demo profile
+                    // Check if student profile exists, if not set a clean profile
                     const existingProfile = localStorage.getItem("studentProfile");
                     if (!existingProfile || existingProfile === "{}") {
                         const defaultStudent = {
-                            name: "Demo Student",
-                            email: "student@opportunityhub.com",
+                            name: "Student",
+                            email: "",
                             education: "B.Tech",
                             branch: "Computer Science",
                             skills: ["Python", "Machine Learning", "Data Science", "SQL"],
@@ -204,7 +164,7 @@
                     }
                     localStorage.setItem("userRole", "student");
                 } catch (err) {
-                    console.error("Error setting demo student profile", err);
+                    console.error("Error setting student profile", err);
                 }
             } else if (email.includes("admin")) {
                 try {

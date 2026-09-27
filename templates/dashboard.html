@@ -2,652 +2,969 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Dashboard | OpportunityHub</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | OpportunityHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 
 <body class="dashboard-page">
 
+    <!-- =================================================================
+         1. NAVBAR (Consistent with OpportunityHub design system)
+         ================================================================= -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
+            </a>
 
-<!-- NAVBAR -->
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
 
-<nav class="dashboard-navbar">
-
-    <div class="logo" style="cursor: pointer;" onclick="window.location.href='/'">
-        🚀 OpportunityHub
-    </div>
-
-    <div class="dashboard-nav">
-
-        <a href="/dashboard" class="active">
-            Dashboard
-        </a>
-
-        <a href="/opportunities">
-            Opportunities
-        </a>
-
-        <a href="/saved">
-            Saved
-        </a>
-
-        <a href="/profile">
-            Profile
-        </a>
-
-        <div class="user-avatar" id="userAvatar">
-            S
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/opportunities">Opportunities</a>
+                <a href="/dashboard" class="active">Dashboard</a>
+                <a href="/saved">Saved</a>
+                <a href="/profile">Profile</a>
+                <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
+            </div>
         </div>
-
-    </div>
-
-</nav>
-
-
-
-<!-- DASHBOARD -->
-
-<main class="dashboard-container">
-
-
-    <!-- WELCOME -->
-
-    <section class="welcome-section">
-
-        <div>
-
-            <p class="welcome-small">
-                Welcome back 👋
-            </p>
-
-            <h1 id="welcomeName">
-                Student
-            </h1>
-
-            <p class="welcome-text">
-                Here are opportunities selected for your
-                skills and interests.
-            </p>
-
-        </div>
-
-
-        <a href="/opportunities"
-           class="primary-btn dashboard-explore-btn">
-
-            🔎 Explore Opportunities
-
-        </a>
-
-    </section>
-
-
-
-    <!-- STAT CARDS -->
-
-    <section class="dashboard-stats">
-
-
-        <div class="dashboard-stat">
-
-            <div class="stat-icon purple">
-                🎯
-            </div>
-
-            <div>
-
-                <h3 id="recommendedCount">
-                    0
-                </h3>
-
-                <p>Recommended</p>
-
-            </div>
-
-        </div>
-
-
-        <div class="dashboard-stat" onclick="window.location.href='/opportunities'" style="cursor: pointer;">
-
-            <div class="stat-icon blue">
-                💼
-            </div>
-
-            <div>
-
-                <h3 id="totalCount">
-                    0
-                </h3>
-
-                <p>Total Opportunities</p>
-
-            </div>
-
-        </div>
-
-
-        <div class="dashboard-stat" onclick="window.location.href='/opportunities'" style="cursor: pointer;">
-
-            <div class="stat-icon orange">
-                📁
-            </div>
-
-            <div>
-
-                <h3 id="categoriesCount">
-                    0
-                </h3>
-
-                <p>Categories Available</p>
-
-            </div>
-
-        </div>
-
-
-        <div class="dashboard-stat" onclick="window.location.href='/saved'" style="cursor: pointer;">
-
-            <div class="stat-icon green">
-                🔖
-            </div>
-
-            <div>
-
-                <h3 id="savedCount">
-                    0
-                </h3>
-
-                <p>Saved</p>
-
-            </div>
-
-        </div>
-
-
-    </section>
-
-
-
-    <!-- MAIN GRID -->
-
-    <section class="dashboard-grid">
-
-
-        <!-- RECOMMENDATIONS -->
-
-        <div class="recommendations-panel">
-
-            <div class="panel-header">
-
-                <div>
-
-                    <p class="panel-label">
-                        TOP RECOMMENDATIONS
+    </nav>
+
+
+    <!-- =================================================================
+         2. DASHBOARD HERO / HEADER
+         ================================================================= -->
+    <header class="dashboard-hero">
+        <div class="container">
+            <div class="dashboard-hero-content">
+                <div class="dashboard-header-text">
+                    <span class="eyebrow-badge">🎓 STUDENT CAREER DASHBOARD</span>
+                    <h1>Welcome back, <span id="welcomeName">Student</span> 👋</h1>
+                    <p class="subtitle">
+                        Here’s what’s happening with your opportunities.
                     </p>
-
-                    <h2>
-                        🎯 Top Picks For You
-                    </h2>
-
                 </div>
 
-                <a href="/opportunities">
-                    View All →
-                </a>
-
-            </div>
-
-
-            <!-- TOP 3 PICKS -->
-
-            <div id="topPicksContainer">
-
-                <p>
-                    Loading your top personalized picks...
-                </p>
-
-            </div>
-
-
-            <div class="panel-header" style="margin-top: 35px; padding-top: 20px; border-top: 1px solid #eeeeee;">
-
-                <div>
-
-                    <p class="panel-label">
-                        EXPLORE MORE
-                    </p>
-
-                    <h2>
-                        More Recommended Opportunities 🚀
-                    </h2>
-
+                <div class="dashboard-hero-actions">
+                    <a href="/opportunities" class="primary-btn">
+                        <span>🔎 Explore Opportunities</span>
+                    </a>
+                    <a href="/profile" class="secondary-btn">
+                        <span>👤 Edit Profile</span>
+                    </a>
                 </div>
-
             </div>
-
-
-            <!-- DYNAMIC OPPORTUNITIES -->
-
-            <div id="recommendations">
-
-                <p>
-                    Loading personalized opportunities...
-                </p>
-
-            </div>
-
         </div>
+    </header>
 
 
+    <!-- =================================================================
+         3. DASHBOARD MAIN CONTENT
+         ================================================================= -->
+    <main class="dashboard-container">
 
-        <!-- SIDEBAR -->
+        <!-- 4 KPI STATS CARDS -->
+        <section class="kpi-grid" aria-label="Dashboard Overview KPIs">
 
-        <aside class="dashboard-sidebar">
-
-
-            <!-- PROFILE CARD -->
-
-            <div class="sidebar-card profile-summary">
-
-                <div class="profile-avatar"
-                     id="profileAvatar">
-                    S
+            <!-- KPI 1: Recommended Opportunities -->
+            <div class="kpi-card" id="kpiCardRecommended">
+                <div class="kpi-icon-wrapper kpi-icon-indigo">
+                    🎯
                 </div>
-
-                <h3 id="profileName">
-                    Student
-                </h3>
-
-                <p id="profileEducation">
-                    Student
-                </p>
-
-                <a href="/profile">
-                    Edit Profile →
-                </a>
-
+                <div class="kpi-body">
+                    <div class="kpi-value" id="kpiRecommended">0</div>
+                    <div class="kpi-label">Recommended Opportunities</div>
+                    <div class="kpi-subtext">Personalized Matches</div>
+                </div>
             </div>
 
-
-
-            <!-- MATCH CARD -->
-
-            <div class="sidebar-card">
-
-                <div class="panel-label">
-                    YOUR PROFILE
+            <!-- KPI 2: Saved Opportunities -->
+            <a href="/saved" class="kpi-card interactive" id="kpiCardSaved" title="View your saved opportunities">
+                <div class="kpi-icon-wrapper kpi-icon-emerald">
+                    🔖
                 </div>
+                <div class="kpi-body">
+                    <div class="kpi-value" id="kpiSaved">0</div>
+                    <div class="kpi-label">Saved Opportunities</div>
+                    <div class="kpi-subtext">Bookmarked for later →</div>
+                </div>
+            </a>
 
-                <h3>
-                    Opportunity Match
-                </h3>
+            <!-- KPI 3: Viewed Opportunities -->
+            <div class="kpi-card" id="kpiCardViewed">
+                <div class="kpi-icon-wrapper kpi-icon-amber">
+                    👀
+                </div>
+                <div class="kpi-body">
+                    <div class="kpi-value" id="kpiViewed">0</div>
+                    <div class="kpi-label">Viewed Opportunities</div>
+                    <div class="kpi-subtext">Opportunities explored</div>
+                </div>
+            </div>
+
+            <!-- KPI 4: Profile Completion -->
+            <a href="/profile" class="kpi-card interactive" id="kpiCardProfile" title="Edit your profile">
+                <div class="kpi-icon-wrapper kpi-icon-purple">
+                    📈
+                </div>
+                <div class="kpi-body">
+                    <div class="kpi-value" id="kpiProfileCompletion">0%</div>
+                    <div class="kpi-label">Profile Completion</div>
+                    <div class="kpi-progress-bar">
+                        <div class="kpi-progress-fill" id="kpiProgressFill" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </a>
+
+        </section>
 
 
-                <div class="match-score">
+        <!-- MAIN 2-COLUMN LAYOUT -->
+        <div class="dashboard-main-layout">
 
-                    <div class="score-circle">
+            <!-- =========================================================
+                 LEFT COLUMN: TOP RECOMMENDATIONS & SAVED PREVIEW
+                 ========================================================= -->
+            <div class="dashboard-main-col">
 
-                        <span id="profileScore">
-                            0%
-                        </span>
-
+                <!-- TOP 3 RECOMMENDED OPPORTUNITIES -->
+                <section class="dash-panel" aria-labelledby="headingRecommendations">
+                    <div class="dash-panel-header">
+                        <div>
+                            <div class="dash-panel-eyebrow">TOP PERSONALIZED PICKS</div>
+                            <h2 class="dash-panel-title" id="headingRecommendations">
+                                🎯 Recommended Opportunities
+                            </h2>
+                            <p class="dash-panel-sub">
+                                Top picks aligned with your skills, interests, and degree.
+                            </p>
+                        </div>
+                        <a href="/opportunities" class="dash-panel-link">
+                            View All Opportunities →
+                        </a>
                     </div>
 
-                    <div>
+                    <!-- Recommended Cards Container -->
+                    <div class="dash-opp-list" id="recommendedContainer">
+                        <div class="dash-empty-box">
+                            <div class="dash-empty-icon">⏳</div>
+                            <h3 class="dash-empty-title">Loading recommendations...</h3>
+                            <p class="dash-empty-text">Matching opportunities with your student profile.</p>
+                        </div>
+                    </div>
+                </section>
 
-                        <strong>
-                            Profile Ready
-                        </strong>
 
-                        <p>
-                            Your profile is being used
-                            to personalize opportunities.
+                <!-- SAVED OPPORTUNITIES PREVIEW -->
+                <section class="dash-panel" aria-labelledby="headingSaved">
+                    <div class="dash-panel-header">
+                        <div>
+                            <div class="dash-panel-eyebrow">YOUR BOOKMARKS</div>
+                            <h2 class="dash-panel-title" id="headingSaved">
+                                🔖 Saved Opportunities
+                            </h2>
+                            <p class="dash-panel-sub">
+                                Quick preview of opportunities you've bookmarked for later.
+                            </p>
+                        </div>
+                        <a href="/saved" class="dash-panel-link">
+                            Go to Saved Page →
+                        </a>
+                    </div>
+
+                    <!-- Saved Preview Grid -->
+                    <div id="savedPreviewContainer">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </section>
+
+            </div>
+
+
+            <!-- =========================================================
+                 RIGHT COLUMN: PROFILE CARD, MATCH INSIGHTS, SKILL GAP & ACTIONS
+                 ========================================================= -->
+            <aside class="dashboard-side-col">
+
+                <!-- 1. PROFILE SUMMARY CARD -->
+                <section class="dash-panel" id="profileSummarySection">
+                    <div class="dash-panel-eyebrow">YOUR PROFILE</div>
+
+                    <div id="profileSummaryContent">
+                        <!-- Loaded by JavaScript (populates real profile or empty state prompt) -->
+                    </div>
+                </section>
+
+
+                <!-- 2. MATCH INSIGHTS CARD -->
+                <section class="dash-panel" id="matchInsightsSection">
+                    <div class="dash-panel-eyebrow">MATCH INTELLIGENCE</div>
+                    <h2 class="dash-panel-title" style="font-size: 18px; margin-bottom: 4px;">
+                        🎯 Your Opportunity Match
+                    </h2>
+                    <p class="dash-panel-sub" id="matchSubtitle" style="margin-bottom: 16px;">
+                        Insights based on your top recommended opportunity.
+                    </p>
+
+                    <div id="matchInsightsContent">
+                        <!-- Loaded by JavaScript -->
+                    </div>
+                </section>
+
+
+                <!-- 3. SKILL GAP CARD -->
+                <section class="dash-panel" id="skillGapSection">
+                    <div class="dash-panel-eyebrow">CAREER GROWTH</div>
+                    <h2 class="dash-panel-title" style="font-size: 18px; margin-bottom: 4px;">
+                        📈 Skills You Can Build
+                    </h2>
+                    <p class="dash-panel-sub" style="margin-bottom: 16px;">
+                        Key skills from top recommendations to strengthen your profile.
+                    </p>
+
+                    <div id="skillGapContent">
+                        <!-- Loaded by JavaScript -->
+                    </div>
+                </section>
+
+
+                <!-- 4. QUICK ACTIONS CARD -->
+                <section class="dash-panel">
+                    <div class="dash-panel-eyebrow">SHORTCUTS</div>
+                    <h2 class="dash-panel-title" style="font-size: 18px; margin-bottom: 16px;">
+                        ⚡ Quick Actions
+                    </h2>
+
+                    <div class="dash-actions-list">
+                        <a href="/opportunities" class="dash-action-btn">
+                            <span class="dash-action-left">
+                                <span>🚀</span>
+                                <span>Explore All Opportunities</span>
+                            </span>
+                            <span class="dash-action-arrow">→</span>
+                        </a>
+
+                        <a href="/profile" class="dash-action-btn">
+                            <span class="dash-action-left">
+                                <span>👤</span>
+                                <span>Complete / Edit Profile</span>
+                            </span>
+                            <span class="dash-action-arrow">→</span>
+                        </a>
+
+                        <a href="/saved" class="dash-action-btn">
+                            <span class="dash-action-left">
+                                <span>🔖</span>
+                                <span>View Saved Opportunities</span>
+                            </span>
+                            <span class="dash-action-arrow">→</span>
+                        </a>
+                    </div>
+                </section>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+    <!-- =================================================================
+         4. PROFESSIONAL FOOTER (Consistent with Homepage & Opportunities)
+         ================================================================= -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-logo">
+                        🚀 OpportunityHub
+                    </a>
+                    <p class="footer-desc">
+                        One Platform. Every Opportunity. Dedicated to helping students discover, match, and apply for high-value career opportunities.
+                    </p>
+                    <span class="footer-badge">Hackathon 2026 Finalist</span>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/opportunities">Opportunities</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/saved">Saved Opportunities</a></li>
+                        <li><a href="/profile">Student Profile</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Categories</h4>
+                    <ul class="footer-links">
+                        <li><a href="/opportunities?category=Internship">Internships</a></li>
+                        <li><a href="/opportunities?category=Hackathon">Hackathons</a></li>
+                        <li><a href="/opportunities?category=Scholarship">Scholarships</a></li>
+                        <li><a href="/opportunities?category=Certification">Certifications</a></li>
+                        <li><a href="/opportunities?category=Competition">Competitions</a></li>
+                        <li><a href="/opportunities?category=Workshop">Workshops</a></li>
+                        <li><a href="/opportunities?category=Course">Courses</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Project Information</h4>
+                    <div class="footer-team-box">
+                        <div class="footer-team-name">Team Godlike</div>
+                        <p class="footer-team-desc">
+                            Built for Hackathon 2026 using Python Flask, lightweight local persistence, and smart matching algorithms.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2026 OpportunityHub. Designed and built with ❤️ by Team Godlike.</span>
+                <span>All opportunities curated for student success.</span>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- =================================================================
+         5. JAVASCRIPT FUNCTIONALITY
+         ================================================================= -->
+    <script>
+        /* -------------------------------------------------------------
+           1. Global State
+           ------------------------------------------------------------- */
+        let currentOpportunities = [];
+        let currentStudentProfile = null;
+
+        /* -------------------------------------------------------------
+           2. Mobile Navigation Toggle
+           ------------------------------------------------------------- */
+        const mobileToggle = document.getElementById("mobileToggle");
+        const navLinks = document.getElementById("navLinks");
+        if (mobileToggle && navLinks) {
+            mobileToggle.addEventListener("click", () => {
+                navLinks.classList.toggle("active");
+                mobileToggle.classList.toggle("open");
+            });
+        }
+
+        /* -------------------------------------------------------------
+           3. Safe LocalStorage Helpers
+           ------------------------------------------------------------- */
+        function getSavedList() {
+            try {
+                const raw = localStorage.getItem("savedOpportunities");
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                console.error("Error reading savedOpportunities", e);
+                return [];
+            }
+        }
+
+        function getViewedList() {
+            try {
+                const raw = localStorage.getItem("viewedOpportunities");
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                console.error("Error reading viewedOpportunities", e);
+                return [];
+            }
+        }
+
+        function markOpportunityViewed(oppId) {
+            try {
+                const viewed = getViewedList();
+                const idNum = Number(oppId);
+                if (!viewed.includes(idNum)) {
+                    viewed.push(idNum);
+                    localStorage.setItem("viewedOpportunities", JSON.stringify(viewed));
+                    updateKPIs();
+                }
+            } catch (e) {
+                console.error("Error updating viewedOpportunities", e);
+            }
+        }
+
+        function isOpportunitySaved(oppId) {
+            const saved = getSavedList();
+            const idNum = Number(oppId);
+            return saved.some(item => (typeof item === 'object' ? Number(item.id) === idNum : Number(item) === idNum));
+        }
+
+        /* -------------------------------------------------------------
+           4. Profile Completion Calculator
+           ------------------------------------------------------------- */
+        function calculateProfileCompletion(profile) {
+            if (!profile || typeof profile !== 'object') return 0;
+            let score = 0;
+            if (profile.name && profile.name.trim().length > 0) score += 15;
+            if (profile.email && profile.email.trim().length > 0) score += 15;
+            if (profile.education && profile.education.trim().length > 0) score += 20;
+            if (profile.branch && profile.branch.trim().length > 0) score += 10;
+            if (Array.isArray(profile.skills) && profile.skills.length > 0) score += 20;
+            if (Array.isArray(profile.interests) && profile.interests.length > 0) score += 20;
+            return Math.min(100, Math.round(score));
+        }
+
+        /* -------------------------------------------------------------
+           5. Deadline Formatter
+           ------------------------------------------------------------- */
+        function getDeadlineStatus(deadlineStr) {
+            if (!deadlineStr) return { label: "Open", className: "status-open", days: 0 };
+            const deadlineDate = new Date(deadlineStr);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            deadlineDate.setHours(0, 0, 0, 0);
+            const diffTime = deadlineDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) {
+                return { label: "Closed", className: "status-closed", days: diffDays };
+            } else if (diffDays === 0) {
+                return { label: "Closing Today", className: "status-urgent", days: diffDays };
+            } else if (diffDays <= 3) {
+                return { label: `${diffDays}d left`, className: "status-urgent", days: diffDays };
+            } else if (diffDays <= 7) {
+                return { label: `${diffDays}d left`, className: "status-soon", days: diffDays };
+            } else {
+                return { label: `Until ${deadlineStr}`, className: "status-open", days: diffDays };
+            }
+        }
+
+        /* -------------------------------------------------------------
+           6. Update KPI Cards
+           ------------------------------------------------------------- */
+        function updateKPIs() {
+            // 1. Recommended Count
+            const recCountElem = document.getElementById("kpiRecommended");
+            if (recCountElem) {
+                const scoredCount = currentOpportunities.filter(opp => (opp.score || 0) > 0).length;
+                recCountElem.textContent = scoredCount > 0 ? scoredCount : currentOpportunities.length;
+            }
+
+            // 2. Saved Count
+            const savedCountElem = document.getElementById("kpiSaved");
+            if (savedCountElem) {
+                const saved = getSavedList();
+                savedCountElem.textContent = saved.length;
+            }
+
+            // 3. Viewed Count
+            const viewedCountElem = document.getElementById("kpiViewed");
+            if (viewedCountElem) {
+                const viewed = getViewedList();
+                viewedCountElem.textContent = viewed.length;
+            }
+
+            // 4. Profile Completion
+            const completionPct = calculateProfileCompletion(currentStudentProfile);
+            const completionElem = document.getElementById("kpiProfileCompletion");
+            const progressFillElem = document.getElementById("kpiProgressFill");
+            if (completionElem) completionElem.textContent = `${completionPct}%`;
+            if (progressFillElem) progressFillElem.style.width = `${completionPct}%`;
+        }
+
+        /* -------------------------------------------------------------
+           7. Toggle Save / Bookmark Functionality
+           ------------------------------------------------------------- */
+        function toggleSave(oppId) {
+            const idNum = Number(oppId);
+            let saved = getSavedList();
+            const index = saved.findIndex(item => (typeof item === 'object' ? Number(item.id) === idNum : Number(item) === idNum));
+
+            if (index >= 0) {
+                saved.splice(index, 1);
+            } else {
+                // Find in current recommendations or construct minimal object
+                let opp = currentOpportunities.find(item => Number(item.id) === idNum);
+                if (opp) {
+                    saved.push(opp);
+                } else {
+                    saved.push({ id: idNum });
+                }
+            }
+
+            try {
+                localStorage.setItem("savedOpportunities", JSON.stringify(saved));
+            } catch (e) {
+                console.error("Error saving to localStorage", e);
+            }
+
+            updateKPIs();
+            renderRecommendedCards(currentOpportunities);
+            renderSavedPreview();
+        }
+
+        /* -------------------------------------------------------------
+           8. Render Profile Summary Card
+           ------------------------------------------------------------- */
+        function renderProfileSummary() {
+            const container = document.getElementById("profileSummaryContent");
+            const navBtn = document.getElementById("navProfileBtn");
+            if (!container) return;
+
+            if (!currentStudentProfile || !currentStudentProfile.name) {
+                // Empty state prompting to complete profile
+                container.innerHTML = `
+                    <div class="dash-empty-box" style="padding: 24px 16px; margin-top: 10px;">
+                        <div class="dash-empty-icon">👤</div>
+                        <h3 class="dash-empty-title">Profile Not Completed</h3>
+                        <p class="dash-empty-text">
+                            Add your education, skills, and interests to get accurate match scores and recommendations.
+                        </p>
+                        <a href="/profile" class="primary-btn" style="padding: 9px 18px; font-size: 13px;">
+                            Complete Profile Now 🚀
+                        </a>
+                    </div>
+                `;
+                if (navBtn) navBtn.textContent = "Profile";
+                return;
+            }
+
+            const p = currentStudentProfile;
+            const completionPct = calculateProfileCompletion(p);
+            const initial = (p.name || "S").charAt(0).toUpperCase();
+
+            if (navBtn) navBtn.textContent = p.name.split(" ")[0];
+
+            const skillsHtml = (p.skills && p.skills.length > 0)
+                ? p.skills.map(s => `<span class="profile-tag-pill">${s}</span>`).join("")
+                : `<span style="font-size: 12px; color: #94a3b8;">No skills added yet</span>`;
+
+            const interestsHtml = (p.interests && p.interests.length > 0)
+                ? p.interests.map(i => `<span class="profile-tag-pill">${i}</span>`).join("")
+                : `<span style="font-size: 12px; color: #94a3b8;">No interests added yet</span>`;
+
+            container.innerHTML = `
+                <div class="profile-card-header">
+                    <div class="profile-card-avatar">${initial}</div>
+                    <div class="profile-card-info">
+                        <h3 id="profileName">${p.name}</h3>
+                        <p id="profileEducation">${p.education || "Student"}${p.branch ? ` • ${p.branch}` : ""}</p>
+                    </div>
+                </div>
+
+                <div class="profile-completion-box">
+                    <div class="profile-completion-header">
+                        <span class="profile-completion-label">Profile Strength</span>
+                        <span class="profile-completion-pct">${completionPct}% Complete</span>
+                    </div>
+                    <div class="profile-bar-track">
+                        <div class="profile-bar-fill" style="width: ${completionPct}%;"></div>
+                    </div>
+                </div>
+
+                <div class="profile-details-group">
+                    <div class="profile-details-label">Your Skills (${(p.skills || []).length})</div>
+                    <div class="profile-tags-row">
+                        ${skillsHtml}
+                    </div>
+                </div>
+
+                <div class="profile-details-group">
+                    <div class="profile-details-label">Your Interests (${(p.interests || []).length})</div>
+                    <div class="profile-tags-row">
+                        ${interestsHtml}
+                    </div>
+                </div>
+
+                <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid #f1f5f9;">
+                    <a href="/profile" class="secondary-btn" style="width: 100%; justify-content: center; font-size: 13px; padding: 10px 16px;">
+                        ✏️ Edit Profile Details
+                    </a>
+                </div>
+            `;
+        }
+
+        /* -------------------------------------------------------------
+           9. Render Top 3 Recommended Opportunities
+           ------------------------------------------------------------- */
+        function renderRecommendedCards(opportunities) {
+            const container = document.getElementById("recommendedContainer");
+            if (!container) return;
+
+            if (!opportunities || opportunities.length === 0) {
+                container.innerHTML = `
+                    <div class="dash-empty-box">
+                        <div class="dash-empty-icon">🎯</div>
+                        <h3 class="dash-empty-title">No recommendations found</h3>
+                        <p class="dash-empty-text">Complete your student profile to discover matching opportunities.</p>
+                        <a href="/profile" class="primary-btn" style="padding: 9px 18px; font-size: 13px;">Update Profile →</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const top3 = opportunities.slice(0, 3);
+            const studentSkills = ((currentStudentProfile && currentStudentProfile.skills) || []).map(s => s.toLowerCase());
+
+            container.innerHTML = top3.map((opp, idx) => {
+                const isSaved = isOpportunitySaved(opp.id);
+                const deadline = getDeadlineStatus(opp.deadline);
+                const score = opp.score || 0;
+
+                // Match reasons
+                const matchedTags = [
+                    ...(opp.matched_skills || []),
+                    ...(opp.matched_interests || [])
+                ];
+
+                const skillsList = (opp.skills || []).map(skill => {
+                    const isMatched = studentSkills.includes(skill.toLowerCase());
+                    return `<span class="dash-skill-pill ${isMatched ? 'matched' : ''}">${isMatched ? '✓ ' : ''}${skill}</span>`;
+                }).join("");
+
+                return `
+                    <article class="dash-opp-card" data-id="${opp.id}">
+                        <div class="dash-opp-card-rank">#${idx + 1} Top Match</div>
+
+                        <div class="dash-opp-top">
+                            <div class="dash-opp-left-header">
+                                <div class="dash-opp-icon">
+                                    ${opp.icon || "💼"}
+                                </div>
+                                <div class="dash-opp-title-area">
+                                    <h3>
+                                        <a href="/opportunity/${opp.id}" onclick="markOpportunityViewed(${opp.id})">
+                                            ${opp.title}
+                                        </a>
+                                    </h3>
+                                    <div class="dash-opp-org">
+                                        <span>🏢 ${opp.organization}</span>
+                                        <span>•</span>
+                                        <span>🌐 ${opp.mode}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dash-opp-badges">
+                            <span class="category-badge">${opp.category}</span>
+                            <span class="match-badge">${score}% Match</span>
+                            <span class="status-badge ${deadline.className}">📅 ${deadline.label}</span>
+                        </div>
+
+                        <p class="dash-opp-desc">
+                            ${opp.description}
                         </p>
 
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- SKILLS -->
-
-            <div class="sidebar-card">
-
-                <div class="panel-label">
-                    YOUR SKILLS
-                </div>
-
-                <div class="skills-list"
-                     id="skillsList">
-                </div>
-
-            </div>
-
-
-        </aside>
-
-    </section>
-
-</main>
-
-
-
-<script>
-
-let currentRecommendations = [];
-
-function updateSavedCount() {
-    const saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
-    const countElem = document.getElementById("savedCount");
-    if (countElem) {
-        countElem.textContent = saved.length;
-    }
-}
-
-function toggleSaveOpportunity(id) {
-    const opp = currentRecommendations.find(item => item.id === id);
-    if (!opp) return;
-
-    let saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
-    const index = saved.findIndex(item => item.id === id);
-
-    if (index >= 0) {
-        saved.splice(index, 1);
-        alert(`Removed "${opp.title}" from saved opportunities.`);
-    } else {
-        saved.push(opp);
-        alert(`Saved "${opp.title}"! 🔖`);
-    }
-
-    localStorage.setItem("savedOpportunities", JSON.stringify(saved));
-    updateSavedCount();
-    displayRecommendations(currentRecommendations);
-}
-
-const savedProfile = localStorage.getItem("studentProfile");
-
-if (!savedProfile) {
-    window.location.href = "/profile";
-} else {
-    updateSavedCount();
-
-    const profile = JSON.parse(savedProfile);
-
-    document.getElementById("welcomeName").textContent = profile.name || "Student";
-    document.getElementById("profileName").textContent = profile.name || "Student";
-    document.getElementById("profileEducation").textContent =
-        `${profile.education || "Student"}${profile.branch ? " • " + profile.branch : ""}`;
-
-    if (profile.name) {
-        const firstLetter = profile.name.charAt(0).toUpperCase();
-        const userAvatar = document.getElementById("userAvatar");
-        if (userAvatar) userAvatar.textContent = firstLetter;
-        const profileAvatar = document.getElementById("profileAvatar");
-        if (profileAvatar) profileAvatar.textContent = firstLetter;
-    }
-
-    const skillsList = document.getElementById("skillsList");
-    if (profile.skills && profile.skills.length > 0) {
-        profile.skills.forEach(function(skill) {
-            const span = document.createElement("span");
-            span.textContent = skill;
-            skillsList.appendChild(span);
-        });
-    }
-
-    fetch("/api/recommendations", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(profile)
-    })
-    .then(response => response.json())
-    .then(data => {
-        currentRecommendations = data;
-        displayRecommendations(data);
-    })
-    .catch(error => {
-        console.error(error);
-        document.getElementById("recommendations").innerHTML = `
-            <p>Unable to load recommendations.</p>
-        `;
-    });
-}
-
-function getDeadlineStatus(deadlineStr) {
-    if (!deadlineStr) return { label: "Open", className: "open", days: 0 };
-    const deadlineDate = new Date(deadlineStr);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    deadlineDate.setHours(0, 0, 0, 0);
-    const diffTime = deadlineDate - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) {
-        return { label: "Expired", className: "closed", days: diffDays };
-    } else if (diffDays === 0) {
-        return { label: "Closing Today", className: "urgent", days: diffDays };
-    } else if (diffDays <= 3) {
-        return { label: `Closing Soon (${diffDays}d)`, className: "urgent", days: diffDays };
-    } else if (diffDays <= 7) {
-        return { label: `Upcoming (${diffDays}d)`, className: "soon", days: diffDays };
-    } else {
-        return { label: `Open (${diffDays}d)`, className: "open", days: diffDays };
-    }
-}
-
-function displayRecommendations(opportunities) {
-    const topContainer = document.getElementById("topPicksContainer");
-    const moreContainer = document.getElementById("recommendations");
-    topContainer.innerHTML = "";
-    moreContainer.innerHTML = "";
-
-    if (!opportunities || opportunities.length === 0) {
-        topContainer.innerHTML = `
-            <div style="padding: 30px; text-align: center; background: white; border-radius: 12px; border: 1px dashed #d1d5db;">
-                <p style="font-size: 24px; margin-bottom: 8px;">🎯</p>
-                <h3 style="font-size: 16px; margin-bottom: 6px;">No recommendations found</h3>
-                <p style="color: #6b7280; font-size: 13px;">Add your skills and interests in your profile to view personalized matches.</p>
-                <br>
-                <a href="/profile" class="primary-btn" style="padding: 8px 18px; font-size: 13px; text-decoration: none; display: inline-block;">Update Profile →</a>
-            </div>
-        `;
-        moreContainer.innerHTML = `<p style="color: #6b7280; font-size: 13px;">No additional opportunities available.</p>`;
-        return;
-    }
-
-    // Dynamic stats without fake numbers
-    document.getElementById("totalCount").textContent = opportunities.length;
-    document.getElementById("recommendedCount").textContent = opportunities.filter(item => (item.score || 0) > 0).length || opportunities.length;
-    document.getElementById("categoriesCount").textContent = new Set(opportunities.map(item => item.category)).size;
-
-    if (opportunities.length > 0) {
-        document.getElementById("profileScore").textContent = (opportunities[0].score || 0) + "%";
-    }
-
-    const saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
-    const savedIds = new Set(saved.map(item => item.id));
-
-    // TOP 3 PICKS
-    const top3 = opportunities.slice(0, 3);
-    top3.forEach(function(opportunity, idx) {
-        const isSaved = savedIds.has(opportunity.id);
-        const deadline = getDeadlineStatus(opportunity.deadline);
-
-        const card = document.createElement("div");
-        card.className = "top-pick-card";
-
-        const matchedTags = [
-            ...(opportunity.matched_skills || []),
-            ...(opportunity.matched_interests || [])
-        ];
-
-        card.innerHTML = `
-            <span class="top-pick-ribbon">#${idx + 1} Top Pick</span>
-
-            <div style="display: flex; gap: 14px; align-items: flex-start;">
-                <div class="opportunity-icon" style="background: #eef2ff;">
-                    ${opportunity.icon}
-                </div>
-
-                <div style="flex: 1;">
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;">
-                        <span class="category-badge">${opportunity.category}</span>
-                        <span class="match-badge">${opportunity.score}% Match</span>
-                        <span class="deadline-badge ${deadline.className}">📅 ${deadline.label}</span>
-                    </div>
-
-                    <h3 style="font-size: 18px; margin-bottom: 6px;">
-                        <a href="/opportunity/${opportunity.id}" style="color: inherit; text-decoration: none;">
-                            ${opportunity.title}
-                        </a>
-                    </h3>
-
-                    <p style="font-size: 13px; color: #4b5563; margin-bottom: 8px;">
-                        🏢 ${opportunity.organization} • 🌐 ${opportunity.mode} • 📍 ${opportunity.location}
-                    </p>
-
-                    ${matchedTags.length > 0 ? `
-                        <div class="match-reasons-summary">
-                            <span>✓</span> Matches: ${matchedTags.join(", ")}
+                        <div class="dash-skills-pills">
+                            ${skillsList}
                         </div>
-                    ` : ""}
 
-                    ${opportunity.missing_skills && opportunity.missing_skills.length > 0 ? `
-                        <div class="skill-gap-alert">
-                            💡 <strong>Skill Gap:</strong> Learn ${opportunity.missing_skills.join(", ")}
+                        ${matchedTags.length > 0 ? `
+                            <div class="dash-match-summary-box">
+                                <span>🎯</span>
+                                <span><strong>Why it matches:</strong> Aligned with ${matchedTags.slice(0, 3).join(", ")}${matchedTags.length > 3 ? ` +${matchedTags.length - 3} more` : ''}</span>
+                            </div>
+                        ` : ''}
+
+                        <div class="dash-opp-footer">
+                            <div class="dash-opp-meta">
+                                <span>📍 ${opp.location}</span>
+                                <span>🎓 ${Array.isArray(opp.education) ? opp.education.join(", ") : (opp.education || "All")}</span>
+                            </div>
+
+                            <div class="dash-opp-actions">
+                                <button
+                                    type="button"
+                                    class="btn-save-toggle ${isSaved ? 'saved' : ''}"
+                                    onclick="toggleSave(${opp.id})"
+                                    title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}">
+                                    ${isSaved ? '❤️ Saved' : '🔖 Save'}
+                                </button>
+                                <a href="/opportunity/${opp.id}"
+                                   class="btn-view-dash"
+                                   onclick="markOpportunityViewed(${opp.id})">
+                                    View Details →
+                                </a>
+                            </div>
                         </div>
-                    ` : `
-                        <div class="skill-gap-alert complete">
-                            ✓ You have all required skills!
-                        </div>
-                    `}
+                    </article>
+                `;
+            }).join("");
+        }
 
-                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 14px;">
-                        <a href="/opportunity/${opportunity.id}" class="view-details-btn" style="display: inline-block; width: auto; padding: 9px 20px; font-size: 13px;">
-                            View Details →
-                        </a>
-                        <button
-                            class="bookmark-btn ${isSaved ? 'saved' : ''}"
-                            type="button"
-                            title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
-                            onclick="toggleSaveOpportunity(${opportunity.id})">
-                            ${isSaved ? '❤️ Saved' : '🔖 Save'}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
+        /* -------------------------------------------------------------
+           10. Render Saved Opportunities Preview
+           ------------------------------------------------------------- */
+        function renderSavedPreview() {
+            const container = document.getElementById("savedPreviewContainer");
+            if (!container) return;
 
-        topContainer.appendChild(card);
-    });
+            const saved = getSavedList();
 
-    // MORE RECOMMENDATIONS (Next 4 items)
-    const moreOpps = opportunities.slice(3, 8);
-    if (moreOpps.length === 0) {
-        moreContainer.innerHTML = `<p style="color: #6b7280; font-size: 13px;">All available recommendations are shown in Top Picks.</p>`;
-    } else {
-        moreOpps.forEach(function(opportunity) {
-            const isSaved = savedIds.has(opportunity.id);
-            const deadline = getDeadlineStatus(opportunity.deadline);
-            const card = document.createElement("div");
-            card.className = "opportunity-card";
-
-            const matchedTags = [
-                ...(opportunity.matched_skills || []),
-                ...(opportunity.matched_interests || [])
-            ];
-
-            card.innerHTML = `
-                <div class="opportunity-icon">
-                    ${opportunity.icon}
-                </div>
-
-                <div class="opportunity-content">
-                    <div class="opportunity-top">
-                        <span class="category-badge">
-                            ${opportunity.category}
-                        </span>
-                        <span class="match-badge">
-                            ${opportunity.score}% Match
-                        </span>
-                        <span class="deadline-badge ${deadline.className}">
-                            📅 ${deadline.label}
-                        </span>
-                    </div>
-
-                    <h3>
-                        <a href="/opportunity/${opportunity.id}" style="color: inherit; text-decoration: none;">
-                            ${opportunity.title}
-                        </a>
-                    </h3>
-
-                    <p>
-                        ${opportunity.description}
-                    </p>
-
-                    <div class="opportunity-tags">
-                        ${(opportunity.skills || []).map(skill => `<span>${skill}</span>`).join("")}
-                    </div>
-
-                    ${matchedTags.length > 0 ? `
-                        <div class="match-reasons-summary">
-                            <span>✓</span> Matches: ${matchedTags.join(", ")}
-                        </div>
-                    ` : ""}
-
-                    ${opportunity.missing_skills && opportunity.missing_skills.length > 0 ? `
-                        <div class="skill-gap-alert">
-                            💡 <strong>Skill Gap:</strong> Learn ${opportunity.missing_skills.join(", ")}
-                        </div>
-                    ` : `
-                        <div class="skill-gap-alert complete">
-                            ✓ You have all required skills!
-                        </div>
-                    `}
-
-                    <div class="opportunity-bottom">
-                        <span>📅 ${opportunity.deadline}</span>
-                        <span>🌐 ${opportunity.mode}</span>
-                        <span>📍 ${opportunity.location}</span>
-                    </div>
-
-                    <div style="margin-top: 14px;">
-                        <a href="/opportunity/${opportunity.id}" class="view-details-btn" style="display: inline-block; width: auto; padding: 7px 16px; font-size: 13px;">
-                            View Details →
+            if (saved.length === 0) {
+                container.innerHTML = `
+                    <div class="dash-empty-box">
+                        <div class="dash-empty-icon">🔖</div>
+                        <h3 class="dash-empty-title">No saved opportunities yet</h3>
+                        <p class="dash-empty-text">
+                            Explore opportunities and bookmark your favorites to track them here.
+                        </p>
+                        <a href="/opportunities" class="primary-btn" style="padding: 9px 18px; font-size: 13px;">
+                            Explore Opportunities →
                         </a>
                     </div>
-                </div>
+                `;
+                return;
+            }
 
-                <button
-                    class="bookmark-btn ${isSaved ? 'saved' : ''}"
-                    type="button"
-                    title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
-                    onclick="toggleSaveOpportunity(${opportunity.id})">
-                    ${isSaved ? '❤️' : '🔖'}
-                </button>
+            // Map saved items to full opportunity details if possible
+            const previewItems = saved.slice(0, 4).map(item => {
+                if (typeof item === 'object' && item.title) return item;
+                const found = currentOpportunities.find(o => Number(o.id) === Number(item.id || item));
+                return found || { id: Number(item.id || item), title: `Opportunity #${item.id || item}`, category: "Opportunity", organization: "Platform", icon: "🔖", deadline: "" };
+            });
+
+            container.innerHTML = `
+                <div class="dash-saved-grid">
+                    ${previewItems.map(opp => {
+                        const deadline = getDeadlineStatus(opp.deadline);
+                        return `
+                            <div class="dash-saved-item">
+                                <div class="dash-saved-item-header">
+                                    <span style="font-size: 20px;">${opp.icon || "🔖"}</span>
+                                    <button
+                                        type="button"
+                                        class="bookmark-btn saved"
+                                        title="Remove from saved"
+                                        onclick="toggleSave(${opp.id})">
+                                        ✕
+                                    </button>
+                                </div>
+                                <div class="dash-saved-title">
+                                    <a href="/opportunity/${opp.id}" onclick="markOpportunityViewed(${opp.id})">
+                                        ${opp.title}
+                                    </a>
+                                </div>
+                                <div class="dash-saved-meta">
+                                    <span class="category-badge" style="padding: 2px 8px; font-size: 11px;">${opp.category || "Opportunity"}</span>
+                                    <span>📅 ${deadline.label}</span>
+                                </div>
+                                <div class="dash-saved-footer">
+                                    <span style="font-size: 11px; color: #64748b;">${opp.organization || ""}</span>
+                                    <a href="/opportunity/${opp.id}" class="dash-panel-link" style="font-size: 12px;" onclick="markOpportunityViewed(${opp.id})">
+                                        View →
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    }).join("")}
+                </div>
             `;
+        }
 
-            moreContainer.appendChild(card);
-        });
-    }
-}
-</script>
+        /* -------------------------------------------------------------
+           11. Render Match Insights Card
+           ------------------------------------------------------------- */
+        function renderMatchInsights(topOpp) {
+            const container = document.getElementById("matchInsightsContent");
+            const subtitleElem = document.getElementById("matchSubtitle");
+            if (!container) return;
 
+            if (!topOpp) {
+                container.innerHTML = `<p style="font-size: 13px; color: #64748b;">Insights will appear once recommendations are loaded.</p>`;
+                return;
+            }
+
+            if (subtitleElem) {
+                subtitleElem.innerHTML = `Based on your #1 pick: <strong>${topOpp.title}</strong>`;
+            }
+
+            const score = topOpp.score || 0;
+            const matchedSkills = topOpp.matched_skills || [];
+            const matchedInterests = topOpp.matched_interests || [];
+            const hasCatMatch = Boolean(topOpp.category_match);
+            const hasEduMatch = Boolean(topOpp.education_match);
+
+            container.innerHTML = `
+                <div class="match-insights-top">
+                    <div class="match-insights-circle">
+                        ${score}%
+                    </div>
+                    <div class="match-insights-text">
+                        <strong>${score >= 70 ? 'High Compatibility 🚀' : 'Fair Match 👍'}</strong>
+                        <p>Scored using your profile skills, interests, category, and education level.</p>
+                    </div>
+                </div>
+
+                <div class="match-breakdown-list">
+                    <div class="match-breakdown-item">
+                        <div class="match-item-left">
+                            <span>🛠️</span>
+                            <span>Matched Skills</span>
+                        </div>
+                        <div class="match-item-status ${matchedSkills.length > 0 ? 'status-yes' : 'status-no'}">
+                            ${matchedSkills.length > 0 ? matchedSkills.join(", ") : "None yet"}
+                        </div>
+                    </div>
+
+                    <div class="match-breakdown-item">
+                        <div class="match-item-left">
+                            <span>💡</span>
+                            <span>Matched Interests</span>
+                        </div>
+                        <div class="match-item-status ${matchedInterests.length > 0 ? 'status-yes' : 'status-no'}">
+                            ${matchedInterests.length > 0 ? matchedInterests.join(", ") : "None yet"}
+                        </div>
+                    </div>
+
+                    <div class="match-breakdown-item">
+                        <div class="match-item-left">
+                            <span>📁</span>
+                            <span>Category Preference</span>
+                        </div>
+                        <div class="match-item-status ${hasCatMatch ? 'status-yes' : 'status-no'}">
+                            ${hasCatMatch ? "✓ Matched" : "No match"}
+                        </div>
+                    </div>
+
+                    <div class="match-breakdown-item">
+                        <div class="match-item-left">
+                            <span>🎓</span>
+                            <span>Education Level</span>
+                        </div>
+                        <div class="match-item-status ${hasEduMatch ? 'status-yes' : 'status-no'}">
+                            ${hasEduMatch ? "✓ Eligible" : "General"}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* -------------------------------------------------------------
+           12. Render Skill Gap Card
+           ------------------------------------------------------------- */
+        function renderSkillGap(opportunities) {
+            const container = document.getElementById("skillGapContent");
+            if (!container) return;
+
+            if (!opportunities || opportunities.length === 0) {
+                container.innerHTML = `<p style="font-size: 13px; color: #64748b;">Complete your profile to see skill gap analysis.</p>`;
+                return;
+            }
+
+            // Gather all missing skills from top 3 opportunities
+            const topOpps = opportunities.slice(0, 3);
+            const missingSet = new Set();
+            topOpps.forEach(opp => {
+                if (Array.isArray(opp.missing_skills)) {
+                    opp.missing_skills.forEach(s => missingSet.add(s));
+                }
+            });
+
+            const missingList = Array.from(missingSet);
+
+            if (missingList.length === 0) {
+                container.innerHTML = `
+                    <div class="skillgap-complete">
+                        🎉 <strong>Awesome Job!</strong><br>
+                        You have all the key skills for your top recommendations!
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="skillgap-box">
+                        ${missingList.slice(0, 5).map(skill => `
+                            <div class="skillgap-item">
+                                <span>📚 ${skill}</span>
+                                <span class="skillgap-badge">+ Recommended</span>
+                            </div>
+                        `).join("")}
+                    </div>
+                    <p style="font-size: 11px; color: #94a3b8; margin-top: 10px;">
+                        Adding these skills to your profile and portfolio can significantly increase your opportunity match rate.
+                    </p>
+                `;
+            }
+        }
+
+        /* -------------------------------------------------------------
+           13. Initialization & Recommendations Fetch
+           ------------------------------------------------------------- */
+        async function initializeDashboard() {
+            // Read profile
+            try {
+                const rawProfile = localStorage.getItem("studentProfile");
+                if (rawProfile) {
+                    currentStudentProfile = JSON.parse(rawProfile);
+                }
+            } catch (e) {
+                console.error("Error parsing studentProfile", e);
+            }
+
+            // Update welcome name
+            const welcomeElem = document.getElementById("welcomeName");
+            if (welcomeElem && currentStudentProfile && currentStudentProfile.name) {
+                welcomeElem.textContent = currentStudentProfile.name;
+            }
+
+            // Render profile card & initial KPIs
+            renderProfileSummary();
+            updateKPIs();
+            renderSavedPreview();
+
+            // Fetch personalized recommendations
+            try {
+                const response = await fetch("/api/recommendations", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(currentStudentProfile || {})
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+
+                const data = await response.json();
+                currentOpportunities = Array.isArray(data) ? data : [];
+
+                updateKPIs();
+                renderRecommendedCards(currentOpportunities);
+                renderSavedPreview();
+
+                if (currentOpportunities.length > 0) {
+                    renderMatchInsights(currentOpportunities[0]);
+                    renderSkillGap(currentOpportunities);
+                } else {
+                    renderMatchInsights(null);
+                    renderSkillGap([]);
+                }
+            } catch (err) {
+                console.error("Failed to load recommendations", err);
+                const recContainer = document.getElementById("recommendedContainer");
+                if (recContainer) {
+                    recContainer.innerHTML = `
+                        <div class="dash-empty-box">
+                            <div class="dash-empty-icon">⚠️</div>
+                            <h3 class="dash-empty-title">Could not load recommendations</h3>
+                            <p class="dash-empty-text">Please check your connection and try refreshing.</p>
+                            <a href="/opportunities" class="primary-btn" style="padding: 9px 18px; font-size: 13px;">Browse All Opportunities →</a>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Run on DOM loaded
+        document.addEventListener("DOMContentLoaded", initializeDashboard);
+    </script>
 
 </body>
 

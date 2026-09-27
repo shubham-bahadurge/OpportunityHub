@@ -4,293 +4,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>{{ opportunity.title }} | OpportunityHub</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body class="opportunity-details-page">
 
-    <!-- NAVBAR -->
-    <nav class="dashboard-navbar">
-
-        <div class="logo" style="cursor: pointer;" onclick="window.location.href='/'">
-            🚀 OpportunityHub
-        </div>
-
-        <div class="dashboard-nav">
-
-            <a href="/dashboard">
-                Dashboard
+    <!-- =================================================================
+         1. NAVBAR (Consistent with OpportunityHub design system)
+         ================================================================= -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
             </a>
 
-            <a href="/opportunities" class="active">
-                Opportunities
-            </a>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
 
-            <a href="/saved">
-                Saved
-            </a>
-
-            <a href="/profile">
-                Profile
-            </a>
-
-            <div class="user-avatar" id="userAvatar">
-                S
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/opportunities" class="active">Opportunities</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/saved">Saved</a>
+                <a href="/profile">Profile</a>
+                <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
             </div>
-
         </div>
-
     </nav>
 
 
-    <!-- MAIN -->
+    <!-- =================================================================
+         2. MAIN CONTAINER & BREADCRUMB
+         ================================================================= -->
     <main class="details-container">
 
-        <!-- BACK -->
-        <a href="/opportunities"
-           class="back-opportunities">
+        <!-- BREADCRUMB -->
+        <nav class="details-breadcrumb" aria-label="Breadcrumb navigation">
+            <a href="/">Home</a>
+            <span class="bc-sep">/</span>
+            <a href="/opportunities">Opportunities</a>
+            <span class="bc-sep">/</span>
+            <span class="bc-current">{{ opportunity.title }}</span>
+        </nav>
 
-            ← Back to Opportunities
 
-        </a>
-
-
-        <!-- HERO -->
+        <!-- =================================================================
+             3. HERO INFORMATION CARD
+             ================================================================= -->
         <section class="details-hero">
-
-            <div class="details-icon">
-                {{ opportunity.icon }}
-            </div>
-
-            <div class="details-heading">
-
-                <div class="details-badges">
-
-                    <span class="category-badge">
-                        {{ opportunity.category }}
-                    </span>
-
-                    <span class="match-badge" id="detailsMatchBadge">
-                        Opportunity
-                    </span>
-
-                    <span class="deadline-badge open" id="detailsDeadlineBadge">
-                        📅 Deadline
-                    </span>
-
+            <div class="details-hero-left">
+                <div class="details-icon">
+                    {{ opportunity.icon or '💼' }}
                 </div>
 
-                <h1>
-                    {{ opportunity.title }}
-                </h1>
+                <div class="details-heading">
+                    <div class="details-badges">
+                        <span class="category-badge">{{ opportunity.category }}</span>
+                        <span class="match-badge" id="detailsMatchBadge">Calculating Match...</span>
+                        <span class="deadline-badge open" id="detailsDeadlineBadge">📅 {{ opportunity.deadline }}</span>
+                    </div>
 
-                <p class="organization-large">
-                    {{ opportunity.organization }}
-                </p>
+                    <h1>{{ opportunity.title }}</h1>
 
+                    <div class="organization-large">
+                        <span>🏢 {{ opportunity.organization }}</span>
+                    </div>
+
+                    <div class="details-hero-meta">
+                        <span>🌐 {{ opportunity.mode }}</span>
+                        <span>•</span>
+                        <span>📍 {{ opportunity.location }}</span>
+                        <span>•</span>
+                        <span>🎓 {{ opportunity.education | join(', ') if opportunity.education is iterable and opportunity.education is not string else (opportunity.education or 'Open to All') }}</span>
+                    </div>
+                </div>
             </div>
 
+            <div class="details-hero-actions">
+                <button
+                    type="button"
+                    class="save-opportunity-btn"
+                    id="heroSaveBtn"
+                    onclick="toggleSaveOpportunity()">
+                    🔖 Save Opportunity
+                </button>
+            </div>
         </section>
 
 
-        <!-- CONTENT -->
-        <section class="details-grid">
+        <!-- =================================================================
+             4. MAIN CONTENT & RIGHT SIDEBAR GRID
+             ================================================================= -->
+        <div class="details-grid">
 
-            <!-- LEFT -->
+            <!-- =============================================================
+                 LEFT COLUMN: OVERVIEW, MATCH INSIGHTS, SKILLS, CRITERIA
+                 ============================================================= -->
             <div class="details-main">
 
-                <!-- ABOUT -->
-                <div class="details-card">
-
-                    <h2>
-                        About This Opportunity
-                    </h2>
-
+                <!-- 1. ABOUT THIS OPPORTUNITY -->
+                <section class="details-card">
+                    <h2>📝 About This Opportunity</h2>
                     <p class="details-description">
                         {{ opportunity.description }}
                     </p>
+                </section>
 
-                </div>
 
-
-                <!-- 🎯 WHY THIS MATCHES YOU -->
-                <div class="details-card match-card" id="whyMatchesCard">
-
-                    <h2>
-                        🎯 Why This Matches You
-                    </h2>
-
+                <!-- 2. WHY THIS MATCHES YOU (MATCH INSIGHTS) -->
+                <section class="details-card" id="whyMatchesSection">
+                    <h2>🎯 Why This Matches You</h2>
                     <div id="matchCardContent">
-                        <div class="loading-message" style="font-size: 13px; color: #6b7280; padding: 6px 0;">
-                            Checking profile match...
+                        <p style="font-size: 13px; color: #64748b;">Analyzing match with your student profile...</p>
+                    </div>
+                </section>
+
+
+                <!-- 3. SKILL GAP -->
+                <section class="details-card" id="skillGapSection">
+                    <h2>📈 Skill Gap Analysis</h2>
+                    <div id="skillGapContent">
+                        <p style="font-size: 13px; color: #64748b;">Comparing opportunity skills against your student profile...</p>
+                    </div>
+                </section>
+
+
+                <!-- 4. SKILLS REQUIRED -->
+                <section class="details-card">
+                    <h2>💻 Skills Required</h2>
+                    <div class="details-skills" id="detailsSkillsList">
+                        {% for skill in opportunity.skills %}
+                            <span class="details-skill-pill" data-skill="{{ skill }}">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </section>
+
+
+                <!-- 5. ELIGIBILITY & ACADEMIC REQUIREMENTS -->
+                <section class="details-card">
+                    <h2>🎓 Eligibility & Academic Background</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: #334155;">
+                        <div>
+                            <strong style="color: #0f172a; display: block; margin-bottom: 6px;">Eligible Degrees & Levels:</strong>
+                            <div class="details-skills">
+                                {% for education in opportunity.education %}
+                                    <span class="details-skill-pill">{{ education }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 8px;">
+                            <strong style="color: #0f172a;">Work Mode & Location:</strong>
+                            <p style="color: #64748b; margin-top: 4px;">
+                                This opportunity is conducted in <strong>{{ opportunity.mode }}</strong> format based in <strong>{{ opportunity.location }}</strong>.
+                            </p>
                         </div>
                     </div>
-
-                </div>
-
-
-                <!-- SKILLS -->
-                <div class="details-card">
-
-                    <h2>
-                        💻 Skills Required
-                    </h2>
-
-                    <div class="details-skills">
-
-                        {% for skill in opportunity.skills %}
-
-                            <span>
-                                {{ skill }}
-                            </span>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-
-                <!-- INTERESTS -->
-                <div class="details-card">
-
-                    <h2>
-                        🎯 Related Interests
-                    </h2>
-
-                    <div class="details-skills">
-
-                        {% for interest in opportunity.interests %}
-
-                            <span>
-                                {{ interest }}
-                            </span>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-
-                <!-- ELIGIBILITY -->
-                <div class="details-card">
-
-                    <h2>
-                        🎓 Eligibility
-                    </h2>
-
-                    <div class="details-skills">
-
-                        {% for education in opportunity.education %}
-
-                            <span>
-                                {{ education }}
-                            </span>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
+                </section>
 
             </div>
 
 
-            <!-- RIGHT -->
+            <!-- =============================================================
+                 RIGHT SIDEBAR: MATCH SCORE, QUICK FACTS & APPLY BUTTON
+                 ============================================================= -->
             <aside class="details-sidebar">
 
+                <!-- APPLY & QUICK FACTS CARD -->
                 <div class="details-card apply-card">
 
+                    <!-- Calculated Match Score -->
                     <div class="apply-score">
-
-                        <span>
-                            Opportunity Type
-                        </span>
-
-                        <strong>
-                            {{ opportunity.category }}
-                        </strong>
-
+                        <span>Match Compatibility</span>
+                        <strong id="sidebarMatchScore">--%</strong>
                     </div>
 
-
-                    <div class="apply-score" style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #e5e7eb;">
-
-                        <span>
-                            Match Score
-                        </span>
-
-                        <strong id="sidebarMatchScore" style="color: #4f46e5; font-size: 22px;">
-                            --%
-                        </strong>
-
-                    </div>
-
-
+                    <!-- Quick Facts List -->
                     <div class="detail-info">
-
                         <div>
-
-                            <span>
-                                📅 Deadline
-                            </span>
-
-                            <strong>
-                                {{ opportunity.deadline }}
-                            </strong>
-
-                            <span id="detailsDeadlineCountdown" style="font-size: 11px; font-weight: 600; display: block; margin-top: 2px;"></span>
-
+                            <span>📁 Category</span>
+                            <strong>{{ opportunity.category }}</strong>
                         </div>
 
-
                         <div>
-
-                            <span>
-                                🌐 Mode
-                            </span>
-
-                            <strong>
-                                {{ opportunity.mode }}
-                            </strong>
-
+                            <span>📅 Deadline</span>
+                            <div style="text-align: right;">
+                                <strong>{{ opportunity.deadline }}</strong>
+                                <span id="sidebarDeadlineCountdown" style="display: block; font-size: 11px; font-weight: 700; color: #047857; margin-top: 2px;"></span>
+                            </div>
                         </div>
 
-
                         <div>
-
-                            <span>
-                                📍 Location
-                            </span>
-
-                            <strong>
-                                {{ opportunity.location }}
-                            </strong>
-
+                            <span>🌐 Mode</span>
+                            <strong>{{ opportunity.mode }}</strong>
                         </div>
 
-
                         <div>
-
-                            <span>
-                                🏢 Organization
-                            </span>
-
-                            <strong>
-                                {{ opportunity.organization }}
-                            </strong>
-
+                            <span>📍 Location</span>
+                            <strong>{{ opportunity.location }}</strong>
                         </div>
 
+                        <div>
+                            <span>🏢 Organization</span>
+                            <strong>{{ opportunity.organization }}</strong>
+                        </div>
+
+                        <div>
+                            <span>🎓 Education</span>
+                            <strong>{{ opportunity.education | join(', ') if opportunity.education is iterable and opportunity.education is not string else (opportunity.education or 'Open to All') }}</strong>
+                        </div>
                     </div>
 
-
-                    <!-- APPLY -->
+                    <!-- PRIMARY ACTION: APPLY NOW -->
                     {% if opportunity.apply_url and opportunity.apply_url.strip() %}
                         {% set apply_href = opportunity.apply_url if opportunity.apply_url.startswith('http') else 'https://' ~ opportunity.apply_url %}
                         <a href="{{ apply_href }}"
@@ -298,62 +228,166 @@
                            rel="noopener noreferrer"
                            class="apply-now-btn"
                            id="applyNowBtn">
-
-                            🔗 Apply Now
-
+                            Apply Now →
                         </a>
                     {% else %}
                         <button type="button"
                                 class="apply-now-btn"
                                 disabled
-                                style="opacity: 0.6; cursor: not-allowed;">
-
-                            🔒 Applications Closed
-
+                                style="opacity: 0.6; cursor: not-allowed; background: #94a3b8;">
+                            Applications Closed
                         </button>
                     {% endif %}
 
-
-                    <!-- SAVE -->
+                    <!-- SECONDARY ACTION: SAVE / BOOKMARK -->
                     <button
                         type="button"
                         class="save-opportunity-btn"
-                        onclick="saveOpportunity()">
-
+                        id="sidebarSaveBtn"
+                        onclick="toggleSaveOpportunity()">
                         🔖 Save Opportunity
-
                     </button>
 
                 </div>
 
 
-                <!-- INFO -->
+                <!-- TRUST & APPLICATION GUIDANCE CARD -->
                 <div class="details-card trust-card">
-
-                    <strong>
-                        💡 Before You Apply
-                    </strong>
-
+                    <strong>💡 Before You Apply</strong>
                     <p>
-                        Check the official opportunity page
-                        for the latest eligibility requirements,
-                        deadline and application instructions.
+                        Review all prerequisites, eligibility criteria, and submission deadlines on the official opportunity portal. Tailor your resume with relevant skills to maximize application success.
                     </p>
-
                 </div>
 
             </aside>
 
+        </div>
+
+
+        <!-- =================================================================
+             5. RELATED OPPORTUNITIES ("More Opportunities You May Like")
+             ================================================================= -->
+        <section class="related-opps-section" aria-labelledby="relatedOppsHeading">
+            <div class="related-opps-header">
+                <h2 id="relatedOppsHeading">🎯 More Opportunities You May Like</h2>
+                <p>Discover other recommended opportunities aligned with your background.</p>
+            </div>
+
+            <div class="related-opps-grid" id="relatedOppsGrid">
+                <!-- Loaded via JavaScript from existing opportunity dataset -->
+                <p style="color: #64748b; font-size: 13px;">Loading related opportunities...</p>
+            </div>
         </section>
 
     </main>
 
 
-    <!-- JAVASCRIPT -->
+    <!-- =================================================================
+         6. PROFESSIONAL FOOTER (Matching OpportunityHub design system)
+         ================================================================= -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-logo">
+                        🚀 OpportunityHub
+                    </a>
+                    <p class="footer-desc">
+                        One Platform. Every Opportunity. Dedicated to helping students discover, match, and apply for high-value career opportunities.
+                    </p>
+                    <span class="footer-badge">Hackathon 2026 Finalist</span>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/opportunities">Opportunities</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/saved">Saved Opportunities</a></li>
+                        <li><a href="/profile">Student Profile</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Categories</h4>
+                    <ul class="footer-links">
+                        <li><a href="/opportunities?category=Internship">Internships</a></li>
+                        <li><a href="/opportunities?category=Hackathon">Hackathons</a></li>
+                        <li><a href="/opportunities?category=Scholarship">Scholarships</a></li>
+                        <li><a href="/opportunities?category=Certification">Certifications</a></li>
+                        <li><a href="/opportunities?category=Competition">Competitions</a></li>
+                        <li><a href="/opportunities?category=Workshop">Workshops</a></li>
+                        <li><a href="/opportunities?category=Course">Courses</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Project Information</h4>
+                    <div class="footer-team-box">
+                        <div class="footer-team-name">Team Godlike</div>
+                        <p class="footer-team-desc">
+                            Built for Hackathon 2026 using Python Flask, lightweight local persistence, and smart matching algorithms.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2026 OpportunityHub. Designed and built with ❤️ by Team Godlike.</span>
+                <span>All opportunities curated for student success.</span>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- =================================================================
+         7. JAVASCRIPT FUNCTIONALITY
+         ================================================================= -->
     <script>
         const currentOpportunity = {{ opportunity | tojson }};
+        let studentProfile = null;
 
-        // Deadline status helper
+        // Load profile safely
+        try {
+            const rawProfile = localStorage.getItem("studentProfile");
+            if (rawProfile) studentProfile = JSON.parse(rawProfile);
+        } catch (e) {
+            console.error("Error reading studentProfile", e);
+        }
+
+        // Update nav profile button
+        const navProfileBtn = document.getElementById("navProfileBtn");
+        if (navProfileBtn && studentProfile && studentProfile.name) {
+            navProfileBtn.textContent = studentProfile.name.split(" ")[0];
+        }
+
+        // Mobile Nav Toggle
+        const mobileToggle = document.getElementById("mobileToggle");
+        const navLinks = document.getElementById("navLinks");
+        if (mobileToggle && navLinks) {
+            mobileToggle.addEventListener("click", () => {
+                navLinks.classList.toggle("active");
+                mobileToggle.classList.toggle("open");
+            });
+        }
+
+        // Mark this opportunity as viewed in localStorage
+        try {
+            const viewedRaw = localStorage.getItem("viewedOpportunities");
+            const viewed = viewedRaw ? JSON.parse(viewedRaw) : [];
+            const idNum = Number(currentOpportunity.id);
+            if (!viewed.includes(idNum)) {
+                viewed.push(idNum);
+                localStorage.setItem("viewedOpportunities", JSON.stringify(viewed));
+            }
+        } catch (e) {
+            console.error("Error updating viewedOpportunities", e);
+        }
+
+        /* -------------------------------------------------------------
+           1. Deadline Status Formatter
+           ------------------------------------------------------------- */
         function getDeadlineStatus(deadlineStr) {
             if (!deadlineStr) return { label: "Open", className: "open", days: 0 };
             const deadlineDate = new Date(deadlineStr);
@@ -376,254 +410,361 @@
             }
         }
 
-        // Apply deadline status
         const deadline = getDeadlineStatus(currentOpportunity.deadline);
         const deadlineBadge = document.getElementById("detailsDeadlineBadge");
         if (deadlineBadge) {
             deadlineBadge.className = `deadline-badge ${deadline.className}`;
             deadlineBadge.textContent = `📅 ${deadline.label}`;
         }
-        const deadlineCountdown = document.getElementById("detailsDeadlineCountdown");
-        if (deadlineCountdown) {
-            deadlineCountdown.textContent = deadline.label;
-            deadlineCountdown.style.color = deadline.className === "urgent" ? "#b91c1c" : (deadline.className === "soon" ? "#b45309" : "#047857");
+        const countdownElem = document.getElementById("sidebarDeadlineCountdown");
+        if (countdownElem) {
+            countdownElem.textContent = deadline.label;
+            countdownElem.style.color = deadline.className === "urgent" ? "#b91c1c" : (deadline.className === "soon" ? "#b45309" : "#047857");
         }
 
-        // User avatar initialization & profile matching
-        const savedProfile = localStorage.getItem("studentProfile");
-        let profile = null;
-        if (savedProfile) {
+        /* -------------------------------------------------------------
+           2. Bookmark / Save Functionality
+           ------------------------------------------------------------- */
+        function getSavedList() {
             try {
-                profile = JSON.parse(savedProfile);
-                if (profile.name) {
-                    const avatarElem = document.getElementById("userAvatar");
-                    if (avatarElem) {
-                        avatarElem.textContent = profile.name.charAt(0).toUpperCase();
+                const raw = localStorage.getItem("savedOpportunities");
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function isSavedOpportunity() {
+            const saved = getSavedList();
+            const idNum = Number(currentOpportunity.id);
+            return saved.some(item => (typeof item === 'object' ? Number(item.id) === idNum : Number(item) === idNum));
+        }
+
+        function updateSaveButtons() {
+            const isSaved = isSavedOpportunity();
+            const heroBtn = document.getElementById("heroSaveBtn");
+            const sideBtn = document.getElementById("sidebarSaveBtn");
+
+            [heroBtn, sideBtn].forEach(btn => {
+                if (btn) {
+                    if (isSaved) {
+                        btn.innerHTML = "❤️ Saved (Click to Unsave)";
+                        btn.classList.add("saved");
+                    } else {
+                        btn.innerHTML = "🔖 Save Opportunity";
+                        btn.classList.remove("saved");
                     }
                 }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        const matchContent = document.getElementById("matchCardContent");
-        const matchBadge = document.getElementById("detailsMatchBadge");
-
-        if (!profile || (!profile.skills?.length && !profile.interests?.length && !profile.education && !profile.categories?.length)) {
-            if (matchContent) {
-                matchContent.innerHTML = `
-                    <div class="no-profile-notice" style="padding: 10px 0;">
-                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 14px; line-height: 1.6;">
-                            Set up your student profile with your skills, interests, and education to see your personalized match breakdown, overall match score, and skill gap insights for this opportunity.
-                        </p>
-                        <a href="/profile" class="primary-btn" style="display: inline-block; padding: 8px 18px; font-size: 13px; text-decoration: none;">
-                            🚀 Set Up Profile →
-                        </a>
-
-                        <div class="skill-gap-section" style="margin-top: 18px; padding-top: 14px; border-top: 1px solid #e5e7eb;">
-                            <h3 style="font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 6px;">
-                                📈 Skill Gap
-                            </h3>
-                            <p style="font-size: 13px; color: #6b7280; margin: 0;">
-                                Complete your profile to identify which skills you have and which skills to improve for this role.
-                            </p>
-                        </div>
-                    </div>
-                `;
-            }
-            const sidebarScore = document.getElementById("sidebarMatchScore");
-            if (sidebarScore) {
-                sidebarScore.textContent = `N/A`;
-            }
-        } else {
-            // Immediate rendering using client-side calculation
-            renderWhyMatches(null, profile);
-
-            fetch("/api/recommendations", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(profile)
-            })
-            .then(res => res.json())
-            .then(recommendations => {
-                const oppMatch = recommendations.find(o => o.id === currentOpportunity.id);
-                renderWhyMatches(oppMatch, profile);
-            })
-            .catch(err => {
-                console.error("Match error:", err);
-                renderWhyMatches(null, profile);
             });
         }
 
-        function renderWhyMatches(oppMatch, prof) {
-            if (!matchContent) return;
+        function toggleSaveOpportunity() {
+            const idNum = Number(currentOpportunity.id);
+            let saved = getSavedList();
+            const index = saved.findIndex(item => (typeof item === 'object' ? Number(item.id) === idNum : Number(item) === idNum));
+
+            if (index >= 0) {
+                saved.splice(index, 1);
+            } else {
+                saved.push(currentOpportunity);
+            }
+
+            try {
+                localStorage.setItem("savedOpportunities", JSON.stringify(saved));
+            } catch (e) {
+                console.error("Error saving to localStorage", e);
+            }
+
+            updateSaveButtons();
+        }
+
+        updateSaveButtons();
+
+        /* -------------------------------------------------------------
+           3. Match Insights & Actual Calculated Score
+           ------------------------------------------------------------- */
+        function calculateLocalMatch(opp, prof) {
+            if (!prof) return { score: 70, matched_skills: [], missing_skills: opp.skills || [], matched_interests: [], category_match: false, education_match: false };
 
             const userSkills = (prof.skills || []).map(s => String(s).toLowerCase().trim());
             const userInterests = (prof.interests || []).map(i => String(i).toLowerCase().trim());
             const userEducation = String(prof.education || "").toLowerCase().trim();
-
-            const oppSkills = (currentOpportunity.skills || []).map(s => String(s));
-            const oppInterests = (currentOpportunity.interests || []).map(i => String(i));
-            const oppEdu = (currentOpportunity.education || []).map(e => String(e).toLowerCase().trim());
             const userCategories = (prof.categories || []).map(c => String(c).toLowerCase().trim());
 
-            const matchedSkills = oppMatch && oppMatch.matched_skills ? oppMatch.matched_skills :
-                oppSkills.filter(s => userSkills.includes(s.toLowerCase().trim()));
+            const oppSkills = opp.skills || [];
+            const oppInterests = opp.interests || [];
+            const oppEdu = (opp.education || []).map(e => String(e).toLowerCase().trim());
 
-            const missingSkills = oppMatch && oppMatch.missing_skills ? oppMatch.missing_skills :
-                oppSkills.filter(s => !userSkills.includes(s.toLowerCase().trim()));
+            const matched_skills = oppSkills.filter(s => userSkills.includes(s.toLowerCase().trim()));
+            const missing_skills = oppSkills.filter(s => !userSkills.includes(s.toLowerCase().trim()));
+            const matched_interests = oppInterests.filter(i => userInterests.includes(i.toLowerCase().trim()));
 
-            const matchedInterests = oppMatch && oppMatch.matched_interests ? oppMatch.matched_interests :
-                oppInterests.filter(i => userInterests.includes(i.toLowerCase().trim()));
+            const category_match = userCategories.includes(String(opp.category || "").toLowerCase().trim());
+            const education_match = userEducation ? oppEdu.some(e => e === userEducation || e === "all" || e === "any") : false;
 
-            const eduMatch = oppMatch ? Boolean(oppMatch.education_match) :
-                (userEducation ? oppEdu.some(e => e === userEducation || e === "all" || e === "any") : false);
-
-            const catMatch = oppMatch ? Boolean(oppMatch.category_match) :
-                userCategories.includes(String(currentOpportunity.category || "").toLowerCase().trim());
-
-            // Exact formula from matching.py
-            const score = oppMatch && typeof oppMatch.score === "number" ? oppMatch.score :
-                Math.min(100, Math.round(
-                    (oppSkills.length > 0 ? (matchedSkills.length / oppSkills.length) * 40 : 0) +
-                    (oppInterests.length > 0 ? (matchedInterests.length / oppInterests.length) * 30 : 0) +
-                    (catMatch ? 20 : 0) +
-                    (eduMatch ? 10 : 0)
-                ));
-
-            if (matchBadge) {
-                matchBadge.textContent = `${score}% Match`;
+            // Matching formula from matching.py
+            let score = 0;
+            if (oppSkills.length > 0) {
+                score += (matched_skills.length / oppSkills.length) * 40;
+            }
+            if (oppInterests.length > 0) {
+                score += (matched_interests.length / oppInterests.length) * 30;
+            }
+            if (category_match) {
+                score += 20;
+            }
+            if (education_match) {
+                score += 10;
             }
 
+            return {
+                score: Math.min(100, Math.round(score)),
+                matched_skills,
+                missing_skills,
+                matched_interests,
+                category_match,
+                education_match
+            };
+        }
+
+        function renderMatchInsights(matchData, prof) {
+            const matchCardContent = document.getElementById("matchCardContent");
+            const skillGapContent = document.getElementById("skillGapContent");
+            const heroMatchBadge = document.getElementById("detailsMatchBadge");
             const sidebarScore = document.getElementById("sidebarMatchScore");
-            if (sidebarScore) {
-                sidebarScore.textContent = `${score}%`;
+
+            const score = matchData.score !== undefined ? matchData.score : 0;
+            const matchedSkills = matchData.matched_skills || [];
+            const missingSkills = matchData.missing_skills || [];
+            const matchedInterests = matchData.matched_interests || [];
+            const categoryMatch = Boolean(matchData.category_match);
+            const educationMatch = Boolean(matchData.education_match);
+
+            // Update badges
+            if (heroMatchBadge) heroMatchBadge.textContent = `${score}% Match`;
+            if (sidebarScore) sidebarScore.textContent = `${score}%`;
+
+            // Highlight matched skills pills in skills section
+            document.querySelectorAll("#detailsSkillsList .details-skill-pill").forEach(pill => {
+                const s = pill.getAttribute("data-skill");
+                if (matchedSkills.some(ms => ms.toLowerCase() === s.toLowerCase())) {
+                    pill.classList.add("matched");
+                    pill.textContent = `✓ ${s}`;
+                }
+            });
+
+            // If profile is completely empty
+            if (!prof || (!prof.skills?.length && !prof.interests?.length && !prof.education)) {
+                if (matchCardContent) {
+                    matchCardContent.innerHTML = `
+                        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center;">
+                            <span style="font-size: 28px; display: inline-block; margin-bottom: 8px;">👤</span>
+                            <h4 style="font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">Set Up Profile For Match Breakdown</h4>
+                            <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">Complete your student profile to view personalized match percentages, skill alignment, and gap analysis.</p>
+                            <a href="/profile" class="primary-btn" style="padding: 8px 18px; font-size: 13px;">Complete Profile →</a>
+                        </div>
+                    `;
+                }
+                if (skillGapContent) {
+                    skillGapContent.innerHTML = `
+                        <p style="font-size: 13px; color: #64748b;">Complete your student profile to discover your specific skill gap for this role.</p>
+                    `;
+                }
+                return;
             }
 
-            let html = `
-                <div class="match-breakdown-container">
-                    <!-- 5. Overall Match Percentage -->
-                    <div class="match-item highlight" style="margin-bottom: 16px;">
-                        <span style="font-size: 14px;">🎯</span>
+            // Render Match Insights Card
+            if (matchCardContent) {
+                matchCardContent.innerHTML = `
+                    <div class="match-item highlight">
+                        <span class="status-icon">🎯</span>
                         <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                             <div>
-                                <strong style="font-size: 14px; color: #111827;">5. Overall Match Percentage</strong>
-                                <p style="margin: 2px 0 0 0; font-size: 12px; color: #6b7280;">Calculated from skills (40%), interests (30%), category (20%) & education (10%)</p>
+                                <strong style="font-size: 15px; color: #0f172a;">Overall Match Score</strong>
+                                <p style="font-size: 12px; color: #64748b; margin-top: 2px;">Calculated using skills (40%), interests (30%), category (20%), and education (10%).</p>
                             </div>
-                            <span style="font-size: 18px; font-weight: 800; color: #4f46e5; background: #eef2ff; padding: 4px 14px; border-radius: 20px;">
+                            <span style="font-size: 18px; font-weight: 800; color: #065f46; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 4px 14px; border-radius: 9999px;">
                                 ${score}% Match
                             </span>
                         </div>
                     </div>
 
-                    <!-- 1. Matched Skills -->
+                    <!-- Matched Skills -->
                     <div class="match-item">
-                        <span class="${matchedSkills.length > 0 ? '' : 'neutral'}">${matchedSkills.length > 0 ? '✓' : '—'}</span>
+                        <span class="status-icon ${matchedSkills.length > 0 ? '' : 'neutral'}">${matchedSkills.length > 0 ? '✓' : '—'}</span>
                         <div style="flex: 1;">
-                            <strong style="color: #111827;">1. Matched Skills</strong>
+                            <strong>Matched Skills (${matchedSkills.length})</strong>
                             ${matchedSkills.length > 0
-                                ? `<p style="margin-top: 4px;">${matchedSkills.map(s => `<span class="skill-tag-pill">${s}</span>`).join(" ")}</p>`
-                                : `<p style="color: #6b7280; margin-top: 2px; font-size: 13px;">No overlapping skills found with your profile.</p>`
+                                ? `<div style="margin-top: 6px;">${matchedSkills.map(s => `<span class="skill-tag-pill">${s}</span>`).join(" ")}</div>`
+                                : `<p style="font-size: 13px; color: #64748b; margin-top: 2px;">No matching skills found in your profile.</p>`
                             }
                         </div>
                     </div>
 
-                    <!-- 2. Matched Interests -->
+                    <!-- Matched Interests -->
                     <div class="match-item">
-                        <span class="${matchedInterests.length > 0 ? '' : 'neutral'}">${matchedInterests.length > 0 ? '✓' : '—'}</span>
+                        <span class="status-icon ${matchedInterests.length > 0 ? '' : 'neutral'}">${matchedInterests.length > 0 ? '✓' : '—'}</span>
                         <div style="flex: 1;">
-                            <strong style="color: #111827;">2. Matched Interests</strong>
+                            <strong>Matched Interests (${matchedInterests.length})</strong>
                             ${matchedInterests.length > 0
-                                ? `<p style="margin-top: 4px;">${matchedInterests.map(i => `<span class="interest-tag-pill">${i}</span>`).join(" ")}</p>`
-                                : `<p style="color: #6b7280; margin-top: 2px; font-size: 13px;">No overlapping interests found with your profile.</p>`
+                                ? `<div style="margin-top: 6px;">${matchedInterests.map(i => `<span class="interest-tag-pill">${i}</span>`).join(" ")}</div>`
+                                : `<p style="font-size: 13px; color: #64748b; margin-top: 2px;">No matching interests found in your profile.</p>`
                             }
                         </div>
                     </div>
 
-                    <!-- 3. Category Match -->
+                    <!-- Category Match -->
                     <div class="match-item">
-                        <span class="${catMatch ? '' : 'neutral'}">${catMatch ? '✓' : '—'}</span>
+                        <span class="status-icon ${categoryMatch ? '' : 'neutral'}">${categoryMatch ? '✓' : '—'}</span>
                         <div style="flex: 1;">
-                            <strong style="color: #111827;">3. Category Match</strong>
-                            <p style="margin-top: 2px; font-size: 13px; color: #4b5563;">
-                                ${catMatch
+                            <strong>Category Match</strong>
+                            <p style="font-size: 13px; color: #475569; margin-top: 2px;">
+                                ${categoryMatch
                                     ? `Matches your preferred opportunity category: <strong>${currentOpportunity.category}</strong>`
-                                    : `Opportunity category is <strong>${currentOpportunity.category}</strong> (not in your preferred categories)`
+                                    : `Category is <strong>${currentOpportunity.category}</strong> (not selected in your profile)`
                                 }
                             </p>
                         </div>
                     </div>
 
-                    <!-- 4. Education Match -->
+                    <!-- Education Match -->
                     <div class="match-item">
-                        <span class="${eduMatch ? '' : 'neutral'}">${eduMatch ? '✓' : '—'}</span>
+                        <span class="status-icon ${educationMatch ? '' : 'neutral'}">${educationMatch ? '✓' : '—'}</span>
                         <div style="flex: 1;">
-                            <strong style="color: #111827;">4. Education Match</strong>
-                            <p style="margin-top: 2px; font-size: 13px; color: #4b5563;">
-                                ${eduMatch
+                            <strong>Education Match</strong>
+                            <p style="font-size: 13px; color: #475569; margin-top: 2px;">
+                                ${educationMatch
                                     ? `Your education (<strong>${prof.education || 'All'}</strong>) meets the eligibility criteria.`
-                                    : `Requires: <strong>${(currentOpportunity.education || []).join(", ")}</strong> (Your profile: ${prof.education || 'Not specified'})`
+                                    : `Opportunity requires: <strong>${(currentOpportunity.education || []).join(", ")}</strong>`
                                 }
                             </p>
                         </div>
                     </div>
+                `;
+            }
 
-                    <!-- 📈 Skill Gap -->
-                    <div class="skill-gap-section" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
-                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-                            📈 Skill Gap
-                        </h3>
-                        ${missingSkills.length > 0 ? `
-                            <p style="font-size: 13px; font-weight: 700; color: #b45309; margin-bottom: 6px;">
-                                Skills to Improve
-                            </p>
-                            <ul class="skills-to-improve-list">
+            // Render Skill Gap Card
+            if (skillGapContent) {
+                if (missingSkills.length === 0) {
+                    skillGapContent.innerHTML = `
+                        <div style="background: #ecfdf5; border-left: 4px solid #10b981; color: #065f46; padding: 14px 16px; border-radius: 8px; font-weight: 600; font-size: 14px;">
+                            🎉 Great match — no major skill gaps identified! You have all key skills required for this opportunity.
+                        </div>
+                    `;
+                } else {
+                    skillGapContent.innerHTML = `
+                        <p style="font-size: 13px; color: #64748b; margin-bottom: 8px;">
+                            Learning the following skills could boost your candidacy and application score:
+                        </p>
+                        <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 10px; padding: 14px;">
+                            <strong style="font-size: 13px; color: #b45309; display: block; margin-bottom: 6px;">Skills to Improve:</strong>
+                            <ul class="skills-to-improve-list" style="margin: 0; padding-left: 18px;">
                                 ${missingSkills.map(s => `<li>${s}</li>`).join("")}
                             </ul>
-                        ` : `
-                            <div style="background: #ecfdf5; border-left: 4px solid #10b981; color: #047857; padding: 12px 14px; border-radius: 6px; font-weight: 600; font-size: 14px;">
-                                🎉 You have all the key skills for this opportunity!
-                            </div>
-                        `}
-                    </div>
-                </div>
-            `;
-
-            matchContent.innerHTML = html;
-        }
-
-        // Update button state on load
-        function updateSaveButtonState() {
-            const saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
-            const isSaved = saved.some(item => item.id === currentOpportunity.id);
-            const btn = document.querySelector(".save-opportunity-btn");
-            if (btn) {
-                if (isSaved) {
-                    btn.innerHTML = "❤️ Saved (Click to Unsave)";
-                    btn.classList.add("saved");
-                } else {
-                    btn.innerHTML = "🔖 Save Opportunity";
-                    btn.classList.remove("saved");
+                        </div>
+                    `;
                 }
             }
         }
-        updateSaveButtonState();
 
-        function saveOpportunity() {
-            let saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
-            const index = saved.findIndex(item => item.id === currentOpportunity.id);
+        /* -------------------------------------------------------------
+           4. Fetch Recommendations for Live Match & Related Opportunities
+           ------------------------------------------------------------- */
+        // Calculate immediately client-side
+        const initialMatch = calculateLocalMatch(currentOpportunity, studentProfile);
+        renderMatchInsights(initialMatch, studentProfile);
 
-            if (index >= 0) {
-                saved.splice(index, 1);
-                localStorage.setItem("savedOpportunities", JSON.stringify(saved));
-                updateSaveButtonState();
-                alert(`Removed "${currentOpportunity.title}" from saved opportunities.`);
-            } else {
-                saved.push(currentOpportunity);
-                localStorage.setItem("savedOpportunities", JSON.stringify(saved));
-                updateSaveButtonState();
-                alert(`"${currentOpportunity.title}" saved successfully! 🔖`);
+        // Fetch from API to enrich match and load related opportunities
+        fetch("/api/recommendations", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(studentProfile || {})
+        })
+        .then(res => res.json())
+        .then(recommendations => {
+            if (Array.isArray(recommendations)) {
+                // Find current match in scored recommendations
+                const oppMatch = recommendations.find(o => Number(o.id) === Number(currentOpportunity.id));
+                if (oppMatch) {
+                    renderMatchInsights(oppMatch, studentProfile);
+                }
+
+                // Render 3 Related Opportunities
+                renderRelatedOpportunities(recommendations);
             }
+        })
+        .catch(err => {
+            console.error("Recommendations fetch error", err);
+        });
+
+        /* -------------------------------------------------------------
+           5. Render Related Opportunities
+           ------------------------------------------------------------- */
+        function renderRelatedOpportunities(allOpps) {
+            const grid = document.getElementById("relatedOppsGrid");
+            if (!grid) return;
+
+            // Filter out current opportunity
+            const otherOpps = allOpps.filter(o => Number(o.id) !== Number(currentOpportunity.id));
+
+            // Prioritize same category, then highest match score
+            otherOpps.sort((a, b) => {
+                const aCat = a.category === currentOpportunity.category ? 1 : 0;
+                const bCat = b.category === currentOpportunity.category ? 1 : 0;
+                if (aCat !== bCat) return bCat - aCat;
+                return (b.score || 0) - (a.score || 0);
+            });
+
+            const top3Related = otherOpps.slice(0, 3);
+
+            if (top3Related.length === 0) {
+                grid.innerHTML = `<p style="color: #64748b; font-size: 13px;">No related opportunities available.</p>`;
+                return;
+            }
+
+            grid.innerHTML = top3Related.map(opp => {
+                const oppDeadline = getDeadlineStatus(opp.deadline);
+                const score = opp.score !== undefined ? opp.score : 85;
+
+                return `
+                    <div class="explore-card" style="padding: 20px;">
+                        <div>
+                            <div class="explore-card-top">
+                                <div class="explore-card-badges">
+                                    <span class="category-badge">${opp.category}</span>
+                                    <span class="match-badge">${score}% Match</span>
+                                </div>
+                            </div>
+
+                            <h3 style="font-size: 16px; margin: 8px 0 4px;">
+                                <a href="/opportunity/${opp.id}" style="color: inherit; text-decoration: none;">
+                                    ${opp.title}
+                                </a>
+                            </h3>
+                            <div class="organization" style="font-size: 12px; margin-bottom: 8px;">
+                                🏢 ${opp.organization}
+                            </div>
+
+                            <p class="explore-description" style="font-size: 12px; line-height: 1.5; margin-bottom: 12px;">
+                                ${opp.description}
+                            </p>
+                        </div>
+
+                        <div>
+                            <div class="explore-info" style="font-size: 11px; margin-bottom: 10px;">
+                                <span class="deadline-badge ${oppDeadline.className}">📅 ${oppDeadline.label}</span>
+                                <span>🌐 ${opp.mode}</span>
+                            </div>
+
+                            <a href="/opportunity/${opp.id}" class="view-details-btn" style="padding: 8px; font-size: 12px;">
+                                View Opportunity →
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join("");
         }
     </script>
 

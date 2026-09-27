@@ -2,608 +2,980 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Create Profile | OpportunityHub</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | OpportunityHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 
 <body class="profile-page">
 
-
-    <!-- NAVBAR -->
-
+    <!-- =================================================================
+         1. NAVBAR (Consistent with OpportunityHub design system)
+         ================================================================= -->
     <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
+            </a>
 
-        <div class="logo">
-            🚀 OpportunityHub
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/opportunities">Opportunities</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/saved">Saved</a>
+                <a href="/profile" class="active">Profile</a>
+                <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
+            </div>
         </div>
-
-        <a href="/" class="back-link">
-            ← Home
-        </a>
-
     </nav>
 
 
-    <!-- PROFILE CONTAINER -->
+    <!-- =================================================================
+         2. PROFILE HERO / HEADER
+         ================================================================= -->
+    <header class="profile-hero">
+        <div class="container">
+            <div class="profile-hero-content">
+                <div class="profile-hero-text">
+                    <span class="profile-hero-badge">👤 STUDENT PROFILE SETUP</span>
+                    <h1>Build Your Student Profile</h1>
+                    <p class="subtitle">
+                        Tell us about yourself so OpportunityHub can find opportunities that match your skills and interests.
+                    </p>
+                </div>
 
+                <div class="dashboard-hero-actions">
+                    <div style="background: #ffffff; padding: 10px 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 20px;">📈</span>
+                        <div>
+                            <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Profile Completion</div>
+                            <div style="font-size: 16px; font-weight: 800; color: #4f46e5;" id="heroCompletionText">0% / 100%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- =================================================================
+         3. PROFILE MAIN CONTENT (2 COLUMNS)
+         ================================================================= -->
     <main class="profile-container">
 
-        <div class="profile-heading">
+        <div class="profile-layout">
 
-            <span class="profile-badge">
-                🎯 Personalize Your Experience
-            </span>
+            <!-- =========================================================
+                 LEFT COLUMN: PROFILE FORM
+                 ========================================================= -->
+            <div class="profile-form-col">
 
-            <h1>
-                Tell Us About Yourself
-            </h1>
+                <form id="studentProfileForm" novalidate>
 
-            <p>
-                We'll use your profile to find opportunities
-                that match your skills and interests.
-            </p>
+                    <!-- CARD 1: PERSONAL INFORMATION -->
+                    <section class="profile-card">
+                        <div class="profile-card-header">
+                            <span class="profile-card-eyebrow">STEP 1</span>
+                            <h2 class="profile-card-title">👤 Personal Information</h2>
+                            <p class="profile-card-desc">Your basic details help verify opportunity eligibility and degree match.</p>
+                        </div>
 
-        </div>
+                        <div class="profile-grid-2">
+                            <!-- Full Name -->
+                            <div class="profile-input-group">
+                                <label for="name" class="profile-label">
+                                    Full Name <span class="req">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    class="profile-input"
+                                    placeholder="e.g. Alex Johnson"
+                                    autocomplete="name"
+                                    required>
+                                <div class="field-error-msg" id="nameError">Please enter your full name.</div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="profile-input-group">
+                                <label for="email" class="profile-label">
+                                    Email Address <span class="req">*</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    class="profile-input"
+                                    placeholder="e.g. alex@university.edu"
+                                    autocomplete="email"
+                                    required>
+                                <div class="field-error-msg" id="emailError">Please enter a valid email address.</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-grid-2">
+                            <!-- Education -->
+                            <div class="profile-input-group">
+                                <label for="education" class="profile-label">
+                                    Education / Degree <span class="req">*</span>
+                                </label>
+                                <select id="education" class="profile-select" required>
+                                    <option value="">Select your education level</option>
+                                    <option value="B.Tech">B.Tech (Bachelor of Technology)</option>
+                                    <option value="B.E.">B.E. (Bachelor of Engineering)</option>
+                                    <option value="BCA">BCA (Bachelor of Computer Applications)</option>
+                                    <option value="MCA">MCA (Master of Computer Applications)</option>
+                                    <option value="M.Tech">M.Tech (Master of Technology)</option>
+                                    <option value="M.E.">M.E. (Master of Engineering)</option>
+                                    <option value="Diploma">Diploma in Engineering</option>
+                                    <option value="Other">Other Degree / Program</option>
+                                </select>
+                                <div class="field-error-msg" id="educationError">Please select your education level.</div>
+                            </div>
+
+                            <!-- Branch / Specialization -->
+                            <div class="profile-input-group">
+                                <label for="branch" class="profile-label">
+                                    Branch / Major
+                                </label>
+                                <input
+                                    type="text"
+                                    id="branch"
+                                    class="profile-input"
+                                    placeholder="e.g. Computer Science, AI & ML">
+                            </div>
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="profile-input-group" style="margin-top: 14px;">
+                            <label for="bio" class="profile-label">
+                                Short Bio / Summary
+                            </label>
+                            <textarea
+                                id="bio"
+                                class="profile-textarea"
+                                placeholder="Tell recruiters and algorithms a little about yourself, your career focus, and what drives you..."></textarea>
+                        </div>
+                    </section>
 
 
-        <!-- PROFILE FORM -->
+                    <!-- CARD 2: SKILLS -->
+                    <section class="profile-card" style="margin-top: 28px;">
+                        <div class="profile-card-header">
+                            <span class="profile-card-eyebrow">STEP 2</span>
+                            <h2 class="profile-card-title">💻 Technical & Professional Skills</h2>
+                            <p class="profile-card-desc">Add skills you possess or are actively learning. Selected skills directly power your match percentage.</p>
+                        </div>
 
-        <form id="profileForm" class="profile-form">
+                        <div class="tag-manager-box">
+                            <!-- Selected Skills List -->
+                            <div class="selected-tags-area" id="selectedSkillsArea" aria-label="Selected Skills">
+                                <span class="empty-tags-hint" id="emptySkillsHint">No skills selected yet. Click suggestions below or type your own.</span>
+                            </div>
+                            <div class="field-error-msg" id="skillsError">Please select or add at least one skill.</div>
+
+                            <!-- Custom Skill Input -->
+                            <div class="custom-tag-adder">
+                                <input
+                                    type="text"
+                                    id="customSkillInput"
+                                    placeholder="Type a skill (e.g. Docker, TypeScript) and press Enter">
+                                <button type="button" class="btn-add-tag" id="btnAddSkill">+ Add Skill</button>
+                            </div>
+
+                            <!-- Suggestion Pills -->
+                            <div class="tag-suggestions-section">
+                                <div class="tag-suggestions-label">Popular suggestions (click to add/remove):</div>
+                                <div class="tag-suggestions-row" id="skillsSuggestions">
+                                    <button type="button" class="tag-suggest-btn" data-value="Python">🐍 Python</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Machine Learning">🤖 Machine Learning</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="JavaScript">⚡ JavaScript</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="HTML/CSS">🌐 HTML/CSS</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Data Science">📊 Data Science</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="SQL">🗄️ SQL</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Java">☕ Java</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="C++">⚙️ C++</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="React">⚛️ React</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Node.js">🟢 Node.js</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
 
-            <!-- BASIC INFORMATION -->
+                    <!-- CARD 3: INTERESTS & PREFERRED OPPORTUNITIES -->
+                    <section class="profile-card" style="margin-top: 28px;">
+                        <div class="profile-card-header">
+                            <span class="profile-card-eyebrow">STEP 3</span>
+                            <h2 class="profile-card-title">❤️ Interests & Preferred Opportunities</h2>
+                            <p class="profile-card-desc">Choose domain areas you're interested in and the opportunity types you're looking to discover.</p>
+                        </div>
 
-            <section class="form-section">
+                        <!-- Interests Tag Manager -->
+                        <div class="tag-manager-box" style="margin-bottom: 24px;">
+                            <div class="profile-label" style="margin-bottom: 2px;">
+                                Areas of Interest <span class="req">*</span>
+                            </div>
+                            <div class="selected-tags-area" id="selectedInterestsArea" aria-label="Selected Interests">
+                                <span class="empty-tags-hint" id="emptyInterestsHint">No interests selected yet. Click suggestions below or type your own.</span>
+                            </div>
+                            <div class="field-error-msg" id="interestsError">Please select or add at least one area of interest.</div>
 
-                <h2>👤 Basic Information</h2>
+                            <!-- Custom Interest Input -->
+                            <div class="custom-tag-adder">
+                                <input
+                                    type="text"
+                                    id="customInterestInput"
+                                    placeholder="Type an interest (e.g. Robotics, Blockchain) and press Enter">
+                                <button type="button" class="btn-add-tag" id="btnAddInterest">+ Add Interest</button>
+                            </div>
 
-                <div class="form-grid">
+                            <!-- Suggestion Pills -->
+                            <div class="tag-suggestions-section">
+                                <div class="tag-suggestions-label">Popular suggestions (click to add/remove):</div>
+                                <div class="tag-suggestions-row" id="interestsSuggestions">
+                                    <button type="button" class="tag-suggest-btn" data-value="Artificial Intelligence">🤖 Artificial Intelligence</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Web Development">🌐 Web Development</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Data Science">📊 Data Science</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Cybersecurity">🔐 Cybersecurity</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Cloud Computing">☁️ Cloud Computing</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Entrepreneurship">🚀 Entrepreneurship</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="Open Source">🌟 Open Source</button>
+                                    <button type="button" class="tag-suggest-btn" data-value="UI/UX Design">🎨 UI/UX Design</button>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="form-group">
+                        <!-- Preferred Opportunity Categories -->
+                        <div style="border-top: 1px solid #f1f5f9; padding-top: 20px;">
+                            <div class="profile-label" style="margin-bottom: 10px;">
+                                What opportunity types are you looking for?
+                            </div>
+                            <div class="category-choice-grid">
+                                <label class="category-choice-label">
+                                    <input type="checkbox" name="categories" value="Internship">
+                                    <span>💼 Internships</span>
+                                </label>
+                                <label class="category-choice-label">
+                                    <input type="checkbox" name="categories" value="Hackathon">
+                                    <span>🏆 Hackathons</span>
+                                </label>
+                                <label class="category-choice-label">
+                                    <input type="checkbox" name="categories" value="Course">
+                                    <span>📚 Courses</span>
+                                </label>
+                                <label class="category-choice-label">
+                                    <input type="checkbox" name="categories" value="Certification">
+                                    <span>📜 Certifications</span>
+                                </label>
+                                <label class="category-choice-label">
+                                    <input type="checkbox" name="categories" value="Scholarship">
+                                    <span>💰 Scholarships</span>
+                                </label>
+                                <label class="category-choice-label">
+                                    <input type="checkbox" name="categories" value="Competition">
+                                    <span>🥇 Competitions</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
 
-                        <label for="name">
-                            Full Name
-                        </label>
 
-                        <input
-                            type="text"
-                            id="name"
-                            placeholder="Enter your name"
-                            required>
+                    <!-- SAVE PROFILE ACTIONS -->
+                    <div class="profile-actions-wrapper" style="margin-top: 28px;">
+                        <button type="submit" class="btn-save-profile" id="btnSaveProfile">
+                            <span>Save Profile 🚀</span>
+                        </button>
 
+                        <div class="profile-save-status" id="profileSaveStatus">
+                            <span id="saveStatusText">Profile saved successfully!</span>
+                            <div style="display: flex; gap: 10px;">
+                                <a href="/dashboard" class="primary-btn" style="padding: 6px 14px; font-size: 12px;">Go to Dashboard →</a>
+                                <a href="/opportunities" class="secondary-btn" style="padding: 6px 14px; font-size: 12px;">Explore Matches →</a>
+                            </div>
+                        </div>
                     </div>
 
-
-                    <div class="form-group">
-
-                        <label for="email">
-                            Email
-                        </label>
-
-                        <input
-                            type="email"
-                            id="email"
-                            placeholder="Enter your email"
-                            required>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- EDUCATION -->
-
-            <section class="form-section">
-
-                <h2>🎓 Education</h2>
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-
-                        <label for="education">
-                            Education
-                        </label>
-
-                        <select id="education" required>
-
-                            <option value="">
-                                Select education
-                            </option>
-
-                            <option>
-                                Diploma
-                            </option>
-
-                            <option>
-                                B.E.
-                            </option>
-
-                            <option>
-                                B.Tech
-                            </option>
-
-                            <option>
-                                M.E.
-                            </option>
-
-                            <option>
-                                M.Tech
-                            </option>
-
-                            <option>
-                                Other
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="branch">
-                            Branch / Specialization
-                        </label>
-
-                        <input
-                            type="text"
-                            id="branch"
-                            placeholder="e.g. AI & ML">
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- SKILLS -->
-
-            <section class="form-section">
-
-                <h2>💻 Your Skills</h2>
-
-                <p class="section-description">
-                    Select the skills you currently have.
-                </p>
-
-
-                <div class="checkbox-grid">
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="skills"
-                            value="Python">
-
-                        <span>🐍 Python</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="skills"
-                            value="JavaScript">
-
-                        <span>⚡ JavaScript</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="skills"
-                            value="HTML/CSS">
-
-                        <span>🌐 HTML/CSS</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="skills"
-                            value="Machine Learning">
-
-                        <span>🤖 Machine Learning</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="skills"
-                            value="Data Science">
-
-                        <span>📊 Data Science</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="skills"
-                            value="SQL">
-
-                        <span>🗄️ SQL</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="skills"
-                            value="Java">
-
-                        <span>☕ Java</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="skills"
-                            value="C++">
-
-                        <span>⚙️ C++</span>
-
-                    </label>
-
-                </div>
-
-            </section>
-
-
-            <!-- INTERESTS -->
-
-            <section class="form-section">
-
-                <h2>❤️ Your Interests</h2>
-
-                <p class="section-description">
-                    Choose the areas you are interested in.
-                </p>
-
-
-                <div class="checkbox-grid">
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="interests"
-                            value="Artificial Intelligence">
-
-                        <span>🤖 Artificial Intelligence</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="interests"
-                            value="Web Development">
-
-                        <span>🌐 Web Development</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="interests"
-                            value="Data Science">
-
-                        <span>📊 Data Science</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="interests"
-                            value="Cybersecurity">
-
-                        <span>🔐 Cybersecurity</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="interests"
-                            value="Cloud Computing">
-
-                        <span>☁️ Cloud Computing</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="interests"
-                            value="Entrepreneurship">
-
-                        <span>🚀 Entrepreneurship</span>
-
-                    </label>
-
-                </div>
-
-            </section>
-
-
-            <!-- PREFERRED OPPORTUNITIES -->
-
-            <section class="form-section">
-
-                <h2>🎯 What Are You Looking For?</h2>
-
-                <p class="section-description">
-                    Select the types of opportunities you want.
-                </p>
-
-
-                <div class="checkbox-grid">
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="categories"
-                            value="Internship">
-
-                        <span>💼 Internships</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="categories"
-                            value="Hackathon">
-
-                        <span>🏆 Hackathons</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="categories"
-                            value="Course">
-
-                        <span>📚 Courses</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="categories"
-                            value="Certification">
-
-                        <span>📜 Certifications</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="categories"
-                            value="Scholarship">
-
-                        <span>💰 Scholarships</span>
-
-                    </label>
-
-
-                    <label class="checkbox-card">
-
-                        <input
-                            type="checkbox"
-                            name="categories"
-                            value="Competition">
-
-                        <span>🥇 Competitions</span>
-
-                    </label>
-
-                </div>
-
-            </section>
-
-
-            <!-- SUBMIT -->
-
-            <div class="form-submit">
-
-                <button
-                    type="submit"
-                    class="primary-btn">
-
-                    Create My Profile 🚀
-
-                </button>
+                </form>
 
             </div>
 
-        </form>
+
+            <!-- =========================================================
+                 RIGHT COLUMN: SIDEBAR
+                 ========================================================= -->
+            <aside class="profile-sidebar-col">
+
+                <!-- 1. PROFILE COMPLETION CARD -->
+                <section class="profile-card">
+                    <div class="profile-card-eyebrow">PROFILE STRENGTH</div>
+                    <h2 class="profile-card-title" style="font-size: 18px; margin-bottom: 8px;">
+                        Completion Status
+                    </h2>
+
+                    <div class="sidebar-completion-metric">
+                        <span class="sidebar-completion-pct" id="sidebarCompletionPct">0%</span>
+                        <span class="sidebar-completion-scale">/ 100% Completed</span>
+                    </div>
+
+                    <div class="sidebar-bar-track">
+                        <div class="sidebar-bar-fill" id="sidebarBarFill" style="width: 0%;"></div>
+                    </div>
+
+                    <p class="sidebar-completion-hint" id="sidebarCompletionHint">
+                        Complete your profile to improve your opportunity matches.
+                    </p>
+
+                    <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #64748b;" id="remainingNotice">
+                        <!-- Dynamic checklist loaded by JS -->
+                    </div>
+                </section>
+
+
+                <!-- 2. LIVE PROFILE PREVIEW CARD -->
+                <section class="profile-card">
+                    <div class="profile-card-eyebrow">REAL-TIME PREVIEW</div>
+                    <h2 class="profile-card-title" style="font-size: 18px; margin-bottom: 4px;">
+                        Student Profile Preview
+                    </h2>
+                    <p class="profile-card-desc" style="margin-bottom: 16px;">
+                        How your profile appears to the OpportunityHub matching system.
+                    </p>
+
+                    <div class="profile-preview-box" id="previewContainer">
+                        <!-- Live preview loaded by JS -->
+                        <div class="preview-empty-hint" id="previewEmptyHint">
+                            👤<br>
+                            <strong>Profile Incomplete</strong><br>
+                            Complete your profile to see your student profile preview here.
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- 3. MATCHING CONNECTION (WHY COMPLETE?) -->
+                <section class="profile-card">
+                    <div class="profile-card-eyebrow">SMART MATCHING</div>
+                    <h2 class="profile-card-title" style="font-size: 18px; margin-bottom: 14px;">
+                        🎯 Why Complete Your Profile?
+                    </h2>
+
+                    <div class="why-complete-list">
+                        <div class="why-complete-item">
+                            <div class="why-complete-icon">🎯</div>
+                            <div class="why-complete-text">
+                                <strong>Better Opportunity Matching</strong>
+                                <p>Our algorithm ranks openings based on your specific academic background and qualifications.</p>
+                            </div>
+                        </div>
+
+                        <div class="why-complete-item">
+                            <div class="why-complete-icon">🛠️</div>
+                            <div class="why-complete-text">
+                                <strong>Skill-Based Recommendations</strong>
+                                <p>Discover internships and hackathons tailored to your technical abilities and strengths.</p>
+                            </div>
+                        </div>
+
+                        <div class="why-complete-item">
+                            <div class="why-complete-icon">💡</div>
+                            <div class="why-complete-text">
+                                <strong>Interest-Based Discovery</strong>
+                                <p>Uncover scholarships, workshops, and courses aligned with your personal passions.</p>
+                            </div>
+                        </div>
+
+                        <div class="why-complete-item">
+                            <div class="why-complete-icon">📈</div>
+                            <div class="why-complete-text">
+                                <strong>Skill Gap Insights</strong>
+                                <p>Identify key missing tools or frameworks to learn and boost your employability.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </aside>
+
+        </div>
 
     </main>
 
 
+    <!-- =================================================================
+         4. PROFESSIONAL FOOTER (Matching Homepage, Opportunities & Dashboard)
+         ================================================================= -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-logo">
+                        🚀 OpportunityHub
+                    </a>
+                    <p class="footer-desc">
+                        One Platform. Every Opportunity. Dedicated to helping students discover, match, and apply for high-value career opportunities.
+                    </p>
+                    <span class="footer-badge">Hackathon 2026 Finalist</span>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/opportunities">Opportunities</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/saved">Saved Opportunities</a></li>
+                        <li><a href="/profile">Student Profile</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Categories</h4>
+                    <ul class="footer-links">
+                        <li><a href="/opportunities?category=Internship">Internships</a></li>
+                        <li><a href="/opportunities?category=Hackathon">Hackathons</a></li>
+                        <li><a href="/opportunities?category=Scholarship">Scholarships</a></li>
+                        <li><a href="/opportunities?category=Certification">Certifications</a></li>
+                        <li><a href="/opportunities?category=Competition">Competitions</a></li>
+                        <li><a href="/opportunities?category=Workshop">Workshops</a></li>
+                        <li><a href="/opportunities?category=Course">Courses</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-heading">Project Information</h4>
+                    <div class="footer-team-box">
+                        <div class="footer-team-name">Team Godlike</div>
+                        <p class="footer-team-desc">
+                            Built for Hackathon 2026 using Python Flask, lightweight local persistence, and smart matching algorithms.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2026 OpportunityHub. Designed and built with ❤️ by Team Godlike.</span>
+                <span>All opportunities curated for student success.</span>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- =================================================================
+         5. JAVASCRIPT FUNCTIONALITY
+         ================================================================= -->
     <script>
+        /* -------------------------------------------------------------
+           1. Global State
+           ------------------------------------------------------------- */
+        let selectedSkills = [];
+        let selectedInterests = [];
 
-        const form =
-            document.getElementById("profileForm");
+        /* -------------------------------------------------------------
+           2. Mobile Nav Toggle
+           ------------------------------------------------------------- */
+        const mobileToggle = document.getElementById("mobileToggle");
+        const navLinks = document.getElementById("navLinks");
+        if (mobileToggle && navLinks) {
+            mobileToggle.addEventListener("click", () => {
+                navLinks.classList.toggle("active");
+                mobileToggle.classList.toggle("open");
+            });
+        }
 
-        // Populate existing profile if available
-        const existingProfileJson = localStorage.getItem("studentProfile");
-        if (existingProfileJson) {
-            try {
-                const ep = JSON.parse(existingProfileJson);
-                if (ep.name) document.getElementById("name").value = ep.name;
-                if (ep.email) document.getElementById("email").value = ep.email;
-                if (ep.education) document.getElementById("education").value = ep.education;
-                if (ep.branch) document.getElementById("branch").value = ep.branch;
+        /* -------------------------------------------------------------
+           3. Profile Completion Calculation
+           ------------------------------------------------------------- */
+        function getProfileValues() {
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const education = document.getElementById("education").value.trim();
+            const branch = document.getElementById("branch").value.trim();
+            const bio = document.getElementById("bio").value.trim();
+            const categories = [...document.querySelectorAll('input[name="categories"]:checked')].map(el => el.value);
 
-                if (Array.isArray(ep.skills)) {
-                    document.querySelectorAll('input[name="skills"]').forEach(input => {
-                        input.checked = ep.skills.includes(input.value);
-                    });
+            return {
+                name,
+                email,
+                education,
+                branch,
+                bio,
+                skills: [...selectedSkills],
+                interests: [...selectedInterests],
+                categories
+            };
+        }
+
+        function calculateCompletion(p) {
+            let score = 0;
+            const missing = [];
+
+            if (p.name && p.name.length > 0) score += 15; else missing.push("Full Name");
+            if (p.email && p.email.length > 0) score += 15; else missing.push("Email");
+            if (p.education && p.education.length > 0) score += 20; else missing.push("Education");
+            if (p.branch && p.branch.length > 0) score += 10; else missing.push("Branch");
+            if (p.bio && p.bio.length > 0) score += 10;
+            if (p.skills && p.skills.length > 0) score += 15; else missing.push("Skills");
+            if (p.interests && p.interests.length > 0) score += 15; else missing.push("Interests");
+
+            return {
+                percent: Math.min(100, score),
+                missing
+            };
+        }
+
+        function updateCompletionUI() {
+            const p = getProfileValues();
+            const result = calculateCompletion(p);
+            const pct = result.percent;
+
+            // Hero badge
+            const heroElem = document.getElementById("heroCompletionText");
+            if (heroElem) heroElem.textContent = `${pct}% / 100%`;
+
+            // Sidebar metric
+            const sidebarPct = document.getElementById("sidebarCompletionPct");
+            const sidebarBar = document.getElementById("sidebarBarFill");
+            const sidebarHint = document.getElementById("sidebarCompletionHint");
+            const noticeElem = document.getElementById("remainingNotice");
+
+            if (sidebarPct) sidebarPct.textContent = `${pct}%`;
+            if (sidebarBar) sidebarBar.style.width = `${pct}%`;
+
+            if (sidebarHint) {
+                if (pct === 100) {
+                    sidebarHint.innerHTML = "🎉 <strong>Profile fully completed!</strong> You will receive optimal match scores.";
+                } else if (pct >= 60) {
+                    sidebarHint.textContent = "Great progress! Fill in remaining details to maximize recommendation accuracy.";
+                } else {
+                    sidebarHint.textContent = "Complete your profile to improve your opportunity matches.";
                 }
-                if (Array.isArray(ep.interests)) {
-                    document.querySelectorAll('input[name="interests"]').forEach(input => {
-                        input.checked = ep.interests.includes(input.value);
-                    });
+            }
+
+            if (noticeElem) {
+                if (result.missing.length > 0) {
+                    noticeElem.innerHTML = `<strong>Next to add:</strong> ${result.missing.slice(0, 3).join(", ")}`;
+                } else {
+                    noticeElem.innerHTML = `✓ All core information completed.`;
                 }
-                if (Array.isArray(ep.categories)) {
-                    document.querySelectorAll('input[name="categories"]').forEach(input => {
-                        input.checked = ep.categories.includes(input.value);
-                    });
+            }
+
+            updateLivePreview(p);
+        }
+
+        /* -------------------------------------------------------------
+           4. Live Profile Preview
+           ------------------------------------------------------------- */
+        function updateLivePreview(p) {
+            const container = document.getElementById("previewContainer");
+            if (!container) return;
+
+            const hasAnyData = Boolean(
+                p.name || p.education || p.branch || p.bio ||
+                p.skills.length > 0 || p.interests.length > 0
+            );
+
+            if (!hasAnyData) {
+                container.innerHTML = `
+                    <div class="preview-empty-hint">
+                        👤<br>
+                        <strong>Profile Incomplete</strong><br>
+                        Complete your profile to see your student profile preview here.
+                    </div>
+                `;
+                return;
+            }
+
+            const initial = (p.name || "S").charAt(0).toUpperCase();
+            const displayName = p.name || "Student Name";
+            const displayEdu = `${p.education || "Degree"}${p.branch ? ` • ${p.branch}` : ""}`;
+
+            const skillsPills = p.skills.length > 0
+                ? p.skills.map(s => `<span class="preview-pill">${s}</span>`).join("")
+                : `<span style="font-size: 11px; color: #94a3b8; font-style: italic;">No skills added</span>`;
+
+            const interestsPills = p.interests.length > 0
+                ? p.interests.map(i => `<span class="preview-pill">${i}</span>`).join("")
+                : `<span style="font-size: 11px; color: #94a3b8; font-style: italic;">No interests added</span>`;
+
+            container.innerHTML = `
+                <div class="preview-header-area">
+                    <div class="preview-avatar">${initial}</div>
+                    <div class="preview-names">
+                        <h4>${displayName}</h4>
+                        <p>${displayEdu}</p>
+                    </div>
+                </div>
+
+                ${p.bio ? `<div class="preview-bio-text">"${p.bio}"</div>` : ''}
+
+                <div class="preview-subgroup">
+                    <div class="preview-subgroup-label">Skills (${p.skills.length})</div>
+                    <div class="preview-pills-row">
+                        ${skillsPills}
+                    </div>
+                </div>
+
+                <div class="preview-subgroup" style="margin-top: 10px;">
+                    <div class="preview-subgroup-label">Interests (${p.interests.length})</div>
+                    <div class="preview-pills-row">
+                        ${interestsPills}
+                    </div>
+                </div>
+            `;
+        }
+
+        /* -------------------------------------------------------------
+           5. Tag Management Helpers (Skills & Interests)
+           ------------------------------------------------------------- */
+        function renderSkillsTags() {
+            const area = document.getElementById("selectedSkillsArea");
+            if (!area) return;
+
+            if (selectedSkills.length === 0) {
+                area.innerHTML = `<span class="empty-tags-hint" id="emptySkillsHint">No skills selected yet. Click suggestions below or type your own.</span>`;
+            } else {
+                area.innerHTML = selectedSkills.map(skill => `
+                    <span class="selected-tag-item">
+                        <span>${skill}</span>
+                        <button type="button" class="selected-tag-remove" onclick="removeSkill('${escapeJsString(skill)}')">×</button>
+                    </span>
+                `).join("");
+            }
+
+            // Sync suggestion pill active states
+            document.querySelectorAll("#skillsSuggestions .tag-suggest-btn").forEach(btn => {
+                const val = btn.getAttribute("data-value");
+                if (selectedSkills.some(s => s.toLowerCase() === val.toLowerCase())) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
                 }
-            } catch (e) {
-                console.error("Could not parse existing profile", e);
+            });
+
+            // Hide error if present
+            const err = document.getElementById("skillsError");
+            if (err && selectedSkills.length > 0) err.classList.remove("visible");
+
+            updateCompletionUI();
+        }
+
+        function addSkill(skillName) {
+            const trimmed = skillName.trim();
+            if (!trimmed) return;
+            const exists = selectedSkills.some(s => s.toLowerCase() === trimmed.toLowerCase());
+            if (!exists) {
+                selectedSkills.push(trimmed);
+                renderSkillsTags();
             }
         }
 
-        form.addEventListener("submit", function(event) {
+        function removeSkill(skillName) {
+            selectedSkills = selectedSkills.filter(s => s.toLowerCase() !== skillName.toLowerCase());
+            renderSkillsTags();
+        }
 
-            event.preventDefault();
+        function renderInterestsTags() {
+            const area = document.getElementById("selectedInterestsArea");
+            if (!area) return;
 
-            const name =
-                document.getElementById("name").value.trim();
-
-            const email =
-                document.getElementById("email").value.trim();
-
-            const education =
-                document.getElementById("education").value;
-
-            const branch =
-                document.getElementById("branch").value.trim();
-
-            const skills =
-                [...document.querySelectorAll(
-                    'input[name="skills"]:checked'
-                )].map(item => item.value);
-
-            const interests =
-                [...document.querySelectorAll(
-                    'input[name="interests"]:checked'
-                )].map(item => item.value);
-
-            const categories =
-                [...document.querySelectorAll(
-                    'input[name="categories"]:checked'
-                )].map(item => item.value);
-
-            if (!name) {
-                alert("Please enter your full name.");
-                document.getElementById("name").focus();
-                return;
+            if (selectedInterests.length === 0) {
+                area.innerHTML = `<span class="empty-tags-hint" id="emptyInterestsHint">No interests selected yet. Click suggestions below or type your own.</span>`;
+            } else {
+                area.innerHTML = selectedInterests.map(interest => `
+                    <span class="selected-tag-item">
+                        <span>${interest}</span>
+                        <button type="button" class="selected-tag-remove" onclick="removeInterest('${escapeJsString(interest)}')">×</button>
+                    </span>
+                `).join("");
             }
 
-            if (!email) {
-                alert("Please enter your email address.");
-                document.getElementById("email").focus();
-                return;
+            // Sync suggestion pill active states
+            document.querySelectorAll("#interestsSuggestions .tag-suggest-btn").forEach(btn => {
+                const val = btn.getAttribute("data-value");
+                if (selectedInterests.some(i => i.toLowerCase() === val.toLowerCase())) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+            });
+
+            // Hide error if present
+            const err = document.getElementById("interestsError");
+            if (err && selectedInterests.length > 0) err.classList.remove("visible");
+
+            updateCompletionUI();
+        }
+
+        function addInterest(interestName) {
+            const trimmed = interestName.trim();
+            if (!trimmed) return;
+            const exists = selectedInterests.some(i => i.toLowerCase() === trimmed.toLowerCase());
+            if (!exists) {
+                selectedInterests.push(trimmed);
+                renderInterestsTags();
+            }
+        }
+
+        function removeInterest(interestName) {
+            selectedInterests = selectedInterests.filter(i => i.toLowerCase() !== interestName.toLowerCase());
+            renderInterestsTags();
+        }
+
+        function escapeJsString(str) {
+            return str.replace(/'/g, "\\'");
+        }
+
+        /* -------------------------------------------------------------
+           6. Form Validation & Submission
+           ------------------------------------------------------------- */
+        function validateForm() {
+            let isValid = true;
+            let firstInvalidElem = null;
+
+            // Name
+            const nameElem = document.getElementById("name");
+            const nameError = document.getElementById("nameError");
+            if (!nameElem.value.trim()) {
+                nameElem.classList.add("has-error");
+                nameError.classList.add("visible");
+                isValid = false;
+                if (!firstInvalidElem) firstInvalidElem = nameElem;
+            } else {
+                nameElem.classList.remove("has-error");
+                nameError.classList.remove("visible");
             }
 
-            if (!education) {
-                alert("Please select your education level.");
-                document.getElementById("education").focus();
-                return;
+            // Email
+            const emailElem = document.getElementById("email");
+            const emailError = document.getElementById("emailError");
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailElem.value.trim() || !emailRegex.test(emailElem.value.trim())) {
+                emailElem.classList.add("has-error");
+                emailError.classList.add("visible");
+                isValid = false;
+                if (!firstInvalidElem) firstInvalidElem = emailElem;
+            } else {
+                emailElem.classList.remove("has-error");
+                emailError.classList.remove("visible");
             }
 
-            if (skills.length === 0) {
-                alert("Please select at least one skill.");
-                return;
+            // Education
+            const eduElem = document.getElementById("education");
+            const eduError = document.getElementById("educationError");
+            if (!eduElem.value.trim()) {
+                eduElem.classList.add("has-error");
+                eduError.classList.add("visible");
+                isValid = false;
+                if (!firstInvalidElem) firstInvalidElem = eduElem;
+            } else {
+                eduElem.classList.remove("has-error");
+                eduError.classList.remove("visible");
             }
 
-            if (interests.length === 0) {
-                alert("Please select at least one area of interest.");
-                return;
+            // Skills
+            const skillsError = document.getElementById("skillsError");
+            if (selectedSkills.length === 0) {
+                skillsError.classList.add("visible");
+                isValid = false;
+                if (!firstInvalidElem) firstInvalidElem = document.getElementById("customSkillInput");
+            } else {
+                skillsError.classList.remove("visible");
             }
 
-            if (categories.length === 0) {
-                alert("Please select at least one type of opportunity you are looking for.");
-                return;
+            // Interests
+            const interestsError = document.getElementById("interestsError");
+            if (selectedInterests.length === 0) {
+                interestsError.classList.add("visible");
+                isValid = false;
+                if (!firstInvalidElem) firstInvalidElem = document.getElementById("customInterestInput");
+            } else {
+                interestsError.classList.remove("visible");
             }
 
-            const profile = {
-                name: name,
-                email: email,
-                education: education,
-                branch: branch,
-                skills: skills,
-                interests: interests,
-                categories: categories
-            };
+            if (firstInvalidElem) {
+                firstInvalidElem.focus();
+                firstInvalidElem.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
 
-            localStorage.setItem(
-                "studentProfile",
-                JSON.stringify(profile)
-            );
+            return isValid;
+        }
 
-            alert(
-                "Profile saved successfully! 🎉"
-            );
+        /* -------------------------------------------------------------
+           7. Initialization & Event Handlers
+           ------------------------------------------------------------- */
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load existing profile from localStorage
+            try {
+                const rawProfile = localStorage.getItem("studentProfile");
+                if (rawProfile) {
+                    const ep = JSON.parse(rawProfile);
+                    if (ep.name) document.getElementById("name").value = ep.name;
+                    if (ep.email) document.getElementById("email").value = ep.email;
+                    if (ep.education) document.getElementById("education").value = ep.education;
+                    if (ep.branch) document.getElementById("branch").value = ep.branch;
+                    if (ep.bio) document.getElementById("bio").value = ep.bio;
 
-            window.location.href = "/dashboard";
+                    if (Array.isArray(ep.skills)) {
+                        selectedSkills = [...ep.skills];
+                    }
+                    if (Array.isArray(ep.interests)) {
+                        selectedInterests = [...ep.interests];
+                    }
 
+                    if (Array.isArray(ep.categories)) {
+                        document.querySelectorAll('input[name="categories"]').forEach(cb => {
+                            if (ep.categories.includes(cb.value)) {
+                                cb.checked = true;
+                                cb.closest(".category-choice-label").classList.add("checked");
+                            }
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading studentProfile", e);
+            }
+
+            // Render tags
+            renderSkillsTags();
+            renderInterestsTags();
+            updateCompletionUI();
+
+            // Real-time input listeners
+            ["name", "email", "education", "branch", "bio"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener("input", () => {
+                        el.classList.remove("has-error");
+                        const err = document.getElementById(`${id}Error`);
+                        if (err) err.classList.remove("visible");
+                        updateCompletionUI();
+                    });
+                    el.addEventListener("change", updateCompletionUI);
+                }
+            });
+
+            // Category checkboxes
+            document.querySelectorAll('input[name="categories"]').forEach(cb => {
+                cb.addEventListener("change", () => {
+                    const label = cb.closest(".category-choice-label");
+                    if (label) {
+                        if (cb.checked) label.classList.add("checked");
+                        else label.classList.remove("checked");
+                    }
+                    updateCompletionUI();
+                });
+            });
+
+            // Skills: Custom Input + Enter
+            const customSkillInput = document.getElementById("customSkillInput");
+            const btnAddSkill = document.getElementById("btnAddSkill");
+            if (btnAddSkill && customSkillInput) {
+                btnAddSkill.addEventListener("click", () => {
+                    addSkill(customSkillInput.value);
+                    customSkillInput.value = "";
+                });
+                customSkillInput.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        addSkill(customSkillInput.value);
+                        customSkillInput.value = "";
+                    }
+                });
+            }
+
+            // Skills: Suggestion Pills
+            document.querySelectorAll("#skillsSuggestions .tag-suggest-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const val = btn.getAttribute("data-value");
+                    if (selectedSkills.some(s => s.toLowerCase() === val.toLowerCase())) {
+                        removeSkill(val);
+                    } else {
+                        addSkill(val);
+                    }
+                });
+            });
+
+            // Interests: Custom Input + Enter
+            const customInterestInput = document.getElementById("customInterestInput");
+            const btnAddInterest = document.getElementById("btnAddInterest");
+            if (btnAddInterest && customInterestInput) {
+                btnAddInterest.addEventListener("click", () => {
+                    addInterest(customInterestInput.value);
+                    customInterestInput.value = "";
+                });
+                customInterestInput.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        addInterest(customInterestInput.value);
+                        customInterestInput.value = "";
+                    }
+                });
+            }
+
+            // Interests: Suggestion Pills
+            document.querySelectorAll("#interestsSuggestions .tag-suggest-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const val = btn.getAttribute("data-value");
+                    if (selectedInterests.some(i => i.toLowerCase() === val.toLowerCase())) {
+                        removeInterest(val);
+                    } else {
+                        addInterest(val);
+                    }
+                });
+            });
+
+            // Form Submit Listener
+            const form = document.getElementById("studentProfileForm");
+            if (form) {
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    if (!validateForm()) {
+                        return;
+                    }
+
+                    const profile = getProfileValues();
+
+                    try {
+                        localStorage.setItem("studentProfile", JSON.stringify(profile));
+
+                        // Show success banner
+                        const statusBanner = document.getElementById("profileSaveStatus");
+                        const statusText = document.getElementById("saveStatusText");
+                        if (statusBanner && statusText) {
+                            statusText.textContent = "Profile saved successfully! 🎉 Your personalized recommendations are now updated.";
+                            statusBanner.className = "profile-save-status success";
+                            statusBanner.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                        }
+
+                        // Update navbar button if set
+                        const navBtn = document.getElementById("navProfileBtn");
+                        if (navBtn && profile.name) {
+                            navBtn.textContent = profile.name.split(" ")[0];
+                        }
+
+                        updateCompletionUI();
+                    } catch (err) {
+                        console.error("Error saving profile to localStorage", err);
+                        const statusBanner = document.getElementById("profileSaveStatus");
+                        const statusText = document.getElementById("saveStatusText");
+                        if (statusBanner && statusText) {
+                            statusText.textContent = "Failed to save profile. Please check browser storage settings.";
+                            statusBanner.className = "profile-save-status error";
+                        }
+                    }
+                });
+            }
         });
-
     </script>
-
 
 </body>
 

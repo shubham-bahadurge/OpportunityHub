@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Explore Opportunities | OpportunityHub</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body class="opportunities-page">
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav class="dashboard-navbar">
+
+    <div class="logo">
+        🚀 OpportunityHub
+    </div>
+
+
+    <div class="dashboard-nav">
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+
+        <a href="/opportunities"
+           class="active">
+            Opportunities
+        </a>
+
+
+        <a href="/profile">
+            Profile
+        </a>
+
+
+        <div class="user-avatar"
+             id="userAvatar">
+
+            S
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="opportunities-container">
+
+
+    <!-- HEADER -->
+
+    <section class="opportunities-header">
+
+        <div>
+
+            <p class="panel-label">
+                DISCOVER
+            </p>
+
+
+            <h1>
+                Explore Opportunities 🚀
+            </h1>
+
+
+            <p>
+                Find internships, hackathons, courses,
+                scholarships and more.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         SEARCH + FILTER
+    ========================= -->
+
+    <section class="search-section">
+
+
+        <!-- SEARCH -->
+
+        <div class="search-box">
+
+            <span>
+                🔎
+            </span>
+
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search opportunities, skills or organizations..."
+            >
+
+        </div>
+
+
+
+        <!-- FILTER BUTTONS -->
+
+        <div class="filter-row">
+
+
+            <button
+                class="filter-btn active"
+                data-category="All">
+
+                All
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="Internship">
+
+                💼 Internships
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="Hackathon">
+
+                🏆 Hackathons
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="Course">
+
+                📚 Courses
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="Certification">
+
+                📜 Certifications
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="Scholarship">
+
+                💰 Scholarships
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="Competition">
+
+                🥇 Competitions
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-category="Workshop">
+
+                🎤 Workshops
+
+            </button>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         RESULT HEADER
+    ========================= -->
+
+    <div class="results-header">
+
+
+        <div>
+
+            <strong id="resultCount">
+                Loading...
+            </strong>
+
+            <span>
+                opportunities found
+            </span>
+
+        </div>
+
+
+        <select id="sortSelect">
+
+            <option value="match">
+                Best Match
+            </option>
+
+            <option value="deadline">
+                Deadline
+            </option>
+
+            <option value="name">
+                Name
+            </option>
+
+        </select>
+
+    </div>
+
+
+
+    <!-- =========================
+         OPPORTUNITY GRID
+    ========================= -->
+
+    <section
+        class="opportunities-grid"
+        id="opportunitiesGrid">
+
+        <div class="loading-message">
+
+            Loading opportunities...
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+
+/* ==========================================
+   VARIABLES
+========================================== */
+
+let allOpportunities = [];
+
+let selectedCategory = "All";
+
+
+
+/* ==========================================
+   GET STUDENT PROFILE
+========================================== */
+
+const savedProfile =
+    localStorage.getItem("studentProfile");
+
+
+if (!savedProfile) {
+
+    window.location.href = "/profile";
+
+}
+
+
+const profile =
+    JSON.parse(savedProfile);
+
+
+
+/* ==========================================
+   USER AVATAR
+========================================== */
+
+if (profile.name) {
+
+    document.getElementById("userAvatar")
+        .textContent =
+        profile.name
+            .charAt(0)
+            .toUpperCase();
+
+}
+
+
+
+/* ==========================================
+   LOAD OPPORTUNITIES
+========================================== */
+
+fetch(
+    "/api/recommendations",
+    {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(profile)
+
+    }
+)
+
+
+.then(
+    response => response.json()
+)
+
+
+.then(
+    data => {
+
+        allOpportunities = data;
+
+        renderOpportunities();
+
+    }
+)
+
+
+.catch(
+    error => {
+
+        console.error(error);
+
+
+        document.getElementById(
+            "opportunitiesGrid"
+        ).innerHTML = `
+
+            <div class="empty-state">
+
+                <h3>
+                    Unable to load opportunities
+                </h3>
+
+                <p>
+                    Please refresh the page and try again.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+);
+
+
+
+/* ==========================================
+   RENDER OPPORTUNITIES
+========================================== */
+
+function renderOpportunities() {
+
+
+    /* SEARCH TEXT */
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const searchText =
+        searchInput.value
+            .toLowerCase()
+            .trim();
+
+
+
+    /* FILTER */
+
+    let filtered =
+        allOpportunities.filter(
+            function(opportunity) {
+
+
+                /* CATEGORY */
+
+                const categoryMatch =
+                    selectedCategory === "All" ||
+                    opportunity.category ===
+                    selectedCategory;
+
+
+
+                /* SEARCH */
+
+                const searchableText = [
+
+                    opportunity.title,
+
+                    opportunity.category,
+
+                    opportunity.organization,
+
+                    opportunity.description,
+
+                    ...opportunity.skills,
+
+                    ...opportunity.interests
+
+                ]
+                .join(" ")
+                .toLowerCase();
+
+
+
+                const searchMatch =
+                    searchableText.includes(
+                        searchText
+                    );
+
+
+
+                return (
+                    categoryMatch &&
+                    searchMatch
+                );
+
+            }
+        );
+
+
+
+    /* ======================================
+       SORT
+    ====================================== */
+
+    const sortSelect =
+        document.getElementById(
+            "sortSelect"
+        );
+
+
+    const sortType =
+        sortSelect.value;
+
+
+
+    if (sortType === "match") {
+
+        filtered.sort(
+            function(a, b) {
+
+                return b.score - a.score;
+
+            }
+        );
+
+    }
+
+
+
+    else if (sortType === "name") {
+
+        filtered.sort(
+            function(a, b) {
+
+                return a.title.localeCompare(
+                    b.title
+                );
+
+            }
+        );
+
+    }
+
+
+
+    else if (sortType === "deadline") {
+
+        filtered.sort(
+            function(a, b) {
+
+                return new Date(a.deadline)
+                    - new Date(b.deadline);
+
+            }
+        );
+
+    }
+
+
+
+    /* ======================================
+       RESULT COUNT
+    ====================================== */
+
+    document.getElementById(
+        "resultCount"
+    ).textContent =
+        filtered.length;
+
+
+
+    /* ======================================
+       GRID
+    ====================================== */
+
+    const grid =
+        document.getElementById(
+            "opportunitiesGrid"
+        );
+
+
+    grid.innerHTML = "";
+
+
+
+    /* ======================================
+       NO RESULTS
+    ====================================== */
+
+    if (filtered.length === 0) {
+
+        grid.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    🔎
+                </div>
+
+                <h3>
+                    No opportunities found
+                </h3>
+
+                <p>
+                    Try another search or category.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    /* ======================================
+       CREATE CARDS
+    ====================================== */
+
+    filtered.forEach(
+        function(opportunity) {
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "explore-card";
+
+
+
+            /* ==================================
+               CARD HTML
+            ================================== */
+
+            card.innerHTML = `
+
+                <div class="explore-card-top">
+
+
+                    <div class="explore-icon">
+
+                        ${opportunity.icon}
+
+                    </div>
+
+
+                    <button
+                        class="bookmark-btn"
+                        type="button">
+
+                        🔖
+
+                    </button>
+
+
+                </div>
+
+
+
+                <div class="explore-badges">
+
+
+                    <span class="category-badge">
+
+                        ${opportunity.category}
+
+                    </span>
+
+
+                    <span class="match-badge">
+
+                        ${opportunity.score}%
+                        Match
+
+                    </span>
+
+
+                </div>
+
+
+
+                <h3>
+
+                    ${opportunity.title}
+
+                </h3>
+
+
+
+                <p class="organization">
+
+                    ${opportunity.organization}
+
+                </p>
+
+
+
+                <p class="explore-description">
+
+                    ${opportunity.description}
+
+                </p>
+
+
+
+                <div class="opportunity-tags">
+
+
+                    ${
+                        opportunity.skills
+                            .map(
+                                function(skill) {
+
+                                    return `
+                                        <span>
+                                            ${skill}
+                                        </span>
+                                    `;
+
+                                }
+                            )
+                            .join("")
+                    }
+
+
+                </div>
+
+
+
+                <div class="explore-info">
+
+
+                    <span>
+
+                        📅
+                        ${opportunity.deadline}
+
+                    </span>
+
+
+                    <span>
+
+                        🌐
+                        ${opportunity.mode}
+
+                    </span>
+
+
+                </div>
+
+
+
+                <!-- ==========================
+                     VIEW DETAILS LINK
+                =========================== -->
+
+                <a
+                    href="/opportunity/${opportunity.id}"
+                    class="view-details-btn">
+
+                    View Details →
+
+                </a>
+
+
+            `;
+
+
+
+            /* ADD CARD */
+
+            grid.appendChild(card);
+
+
+        }
+    );
+
+}
+
+
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+document.getElementById(
+    "searchInput"
+)
+.addEventListener(
+    "input",
+    function() {
+
+        renderOpportunities();
+
+    }
+);
+
+
+
+/* ==========================================
+   SORT
+========================================== */
+
+document.getElementById(
+    "sortSelect"
+)
+.addEventListener(
+    "change",
+    function() {
+
+        renderOpportunities();
+
+    }
+);
+
+
+
+/* ==========================================
+   CATEGORY FILTER
+========================================== */
+
+document.querySelectorAll(
+    ".filter-btn"
+)
+.forEach(
+    function(button) {
+
+
+        button.addEventListener(
+            "click",
+            function() {
+
+
+                /* Remove active */
+
+                document.querySelectorAll(
+                    ".filter-btn"
+                )
+                .forEach(
+                    function(btn) {
+
+                        btn.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+
+
+                /* Add active */
+
+                button.classList.add(
+                    "active"
+                );
+
+
+
+                /* Get category */
+
+                selectedCategory =
+                    button.dataset.category;
+
+
+
+                /* Re-render */
+
+                renderOpportunities();
+
+            }
+        );
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>

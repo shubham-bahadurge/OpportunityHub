@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create Profile | OpportunityHub</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body class="profile-page">
+
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🚀 OpportunityHub
+        </div>
+
+        <a href="/" class="back-link">
+            ← Home
+        </a>
+
+    </nav>
+
+
+    <!-- PROFILE CONTAINER -->
+
+    <main class="profile-container">
+
+        <div class="profile-heading">
+
+            <span class="profile-badge">
+                🎯 Personalize Your Experience
+            </span>
+
+            <h1>
+                Tell Us About Yourself
+            </h1>
+
+            <p>
+                We'll use your profile to find opportunities
+                that match your skills and interests.
+            </p>
+
+        </div>
+
+
+        <!-- PROFILE FORM -->
+
+        <form id="profileForm" class="profile-form">
+
+
+            <!-- BASIC INFORMATION -->
+
+            <section class="form-section">
+
+                <h2>👤 Basic Information</h2>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="name">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            placeholder="Enter your name"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="Enter your email"
+                            required>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- EDUCATION -->
+
+            <section class="form-section">
+
+                <h2>🎓 Education</h2>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="education">
+                            Education
+                        </label>
+
+                        <select id="education">
+
+                            <option value="">
+                                Select education
+                            </option>
+
+                            <option>
+                                Diploma
+                            </option>
+
+                            <option>
+                                B.E.
+                            </option>
+
+                            <option>
+                                B.Tech
+                            </option>
+
+                            <option>
+                                M.E.
+                            </option>
+
+                            <option>
+                                M.Tech
+                            </option>
+
+                            <option>
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="branch">
+                            Branch / Specialization
+                        </label>
+
+                        <input
+                            type="text"
+                            id="branch"
+                            placeholder="e.g. AI & ML">
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- SKILLS -->
+
+            <section class="form-section">
+
+                <h2>💻 Your Skills</h2>
+
+                <p class="section-description">
+                    Select the skills you currently have.
+                </p>
+
+
+                <div class="checkbox-grid">
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="skills"
+                            value="Python">
+
+                        <span>🐍 Python</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="skills"
+                            value="JavaScript">
+
+                        <span>⚡ JavaScript</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="skills"
+                            value="HTML/CSS">
+
+                        <span>🌐 HTML/CSS</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="skills"
+                            value="Machine Learning">
+
+                        <span>🤖 Machine Learning</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="skills"
+                            value="Data Science">
+
+                        <span>📊 Data Science</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="skills"
+                            value="SQL">
+
+                        <span>🗄️ SQL</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="skills"
+                            value="Java">
+
+                        <span>☕ Java</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="skills"
+                            value="C++">
+
+                        <span>⚙️ C++</span>
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- INTERESTS -->
+
+            <section class="form-section">
+
+                <h2>❤️ Your Interests</h2>
+
+                <p class="section-description">
+                    Choose the areas you are interested in.
+                </p>
+
+
+                <div class="checkbox-grid">
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="interests"
+                            value="Artificial Intelligence">
+
+                        <span>🤖 Artificial Intelligence</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="interests"
+                            value="Web Development">
+
+                        <span>🌐 Web Development</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="interests"
+                            value="Data Science">
+
+                        <span>📊 Data Science</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="interests"
+                            value="Cybersecurity">
+
+                        <span>🔐 Cybersecurity</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="interests"
+                            value="Cloud Computing">
+
+                        <span>☁️ Cloud Computing</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="interests"
+                            value="Entrepreneurship">
+
+                        <span>🚀 Entrepreneurship</span>
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- PREFERRED OPPORTUNITIES -->
+
+            <section class="form-section">
+
+                <h2>🎯 What Are You Looking For?</h2>
+
+                <p class="section-description">
+                    Select the types of opportunities you want.
+                </p>
+
+
+                <div class="checkbox-grid">
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="categories"
+                            value="Internship">
+
+                        <span>💼 Internships</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="categories"
+                            value="Hackathon">
+
+                        <span>🏆 Hackathons</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="categories"
+                            value="Course">
+
+                        <span>📚 Courses</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="categories"
+                            value="Certification">
+
+                        <span>📜 Certifications</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="categories"
+                            value="Scholarship">
+
+                        <span>💰 Scholarships</span>
+
+                    </label>
+
+
+                    <label class="checkbox-card">
+
+                        <input
+                            type="checkbox"
+                            name="categories"
+                            value="Competition">
+
+                        <span>🥇 Competitions</span>
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- SUBMIT -->
+
+            <div class="form-submit">
+
+                <button
+                    type="submit"
+                    class="primary-btn">
+
+                    Create My Profile 🚀
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </main>
+
+
+    <script>
+
+        const form =
+            document.getElementById("profileForm");
+
+
+        form.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+
+            const name =
+                document.getElementById("name").value;
+
+
+            const email =
+                document.getElementById("email").value;
+
+
+            const education =
+                document.getElementById("education").value;
+
+
+            const branch =
+                document.getElementById("branch").value;
+
+
+            const skills =
+                [...document.querySelectorAll(
+                    'input[name="skills"]:checked'
+                )].map(item => item.value);
+
+
+            const interests =
+                [...document.querySelectorAll(
+                    'input[name="interests"]:checked'
+                )].map(item => item.value);
+
+
+            const categories =
+                [...document.querySelectorAll(
+                    'input[name="categories"]:checked'
+                )].map(item => item.value);
+
+
+            const profile = {
+
+                name: name,
+
+                email: email,
+
+                education: education,
+
+                branch: branch,
+
+                skills: skills,
+
+                interests: interests,
+
+                categories: categories
+
+            };
+
+
+            localStorage.setItem(
+                "studentProfile",
+                JSON.stringify(profile)
+            );
+
+
+            alert(
+                "Profile created successfully! 🎉"
+            );
+
+
+            window.location.href = "/dashboard";
+
+        });
+
+    </script>
+
+
+</body>
+
+</html>

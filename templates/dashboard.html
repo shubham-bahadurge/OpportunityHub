@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | OpportunityHub</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body class="dashboard-page">
+
+
+<!-- NAVBAR -->
+
+<nav class="dashboard-navbar">
+
+    <div class="logo">
+        🚀 OpportunityHub
+    </div>
+
+    <div class="dashboard-nav">
+
+        <a href="/dashboard" class="active">
+            Dashboard
+        </a>
+
+        <a href="/opportunities">
+            Opportunities
+        </a>
+
+        <a href="/profile">
+            Profile
+        </a>
+
+        <div class="user-avatar" id="userAvatar">
+            S
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- DASHBOARD -->
+
+<main class="dashboard-container">
+
+
+    <!-- WELCOME -->
+
+    <section class="welcome-section">
+
+        <div>
+
+            <p class="welcome-small">
+                Welcome back 👋
+            </p>
+
+            <h1 id="welcomeName">
+                Student
+            </h1>
+
+            <p class="welcome-text">
+                Here are opportunities selected for your
+                skills and interests.
+            </p>
+
+        </div>
+
+
+        <a href="/opportunities"
+           class="primary-btn dashboard-explore-btn">
+
+            🔎 Explore Opportunities
+
+        </a>
+
+    </section>
+
+
+
+    <!-- STAT CARDS -->
+
+    <section class="dashboard-stats">
+
+
+        <div class="dashboard-stat">
+
+            <div class="stat-icon purple">
+                🎯
+            </div>
+
+            <div>
+
+                <h3 id="recommendedCount">
+                    0
+                </h3>
+
+                <p>Recommended</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-stat">
+
+            <div class="stat-icon blue">
+                💼
+            </div>
+
+            <div>
+
+                <h3 id="internshipCount">
+                    0
+                </h3>
+
+                <p>Internships</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-stat">
+
+            <div class="stat-icon orange">
+                🏆
+            </div>
+
+            <div>
+
+                <h3 id="hackathonCount">
+                    0
+                </h3>
+
+                <p>Hackathons</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-stat">
+
+            <div class="stat-icon green">
+                🔖
+            </div>
+
+            <div>
+
+                <h3>
+                    0
+                </h3>
+
+                <p>Saved</p>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- MAIN GRID -->
+
+    <section class="dashboard-grid">
+
+
+        <!-- RECOMMENDATIONS -->
+
+        <div class="recommendations-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <p class="panel-label">
+                        PERSONALIZED FOR YOU
+                    </p>
+
+                    <h2>
+                        Recommended Opportunities 🎯
+                    </h2>
+
+                </div>
+
+                <a href="/opportunities">
+                    View All →
+                </a>
+
+            </div>
+
+
+            <!-- DYNAMIC OPPORTUNITIES -->
+
+            <div id="recommendations">
+
+                <p>
+                    Loading personalized opportunities...
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="dashboard-sidebar">
+
+
+            <!-- PROFILE CARD -->
+
+            <div class="sidebar-card profile-summary">
+
+                <div class="profile-avatar"
+                     id="profileAvatar">
+                    S
+                </div>
+
+                <h3 id="profileName">
+                    Student
+                </h3>
+
+                <p id="profileEducation">
+                    Student
+                </p>
+
+                <a href="/profile">
+                    Edit Profile →
+                </a>
+
+            </div>
+
+
+
+            <!-- MATCH CARD -->
+
+            <div class="sidebar-card">
+
+                <div class="panel-label">
+                    YOUR PROFILE
+                </div>
+
+                <h3>
+                    Opportunity Match
+                </h3>
+
+
+                <div class="match-score">
+
+                    <div class="score-circle">
+
+                        <span id="profileScore">
+                            0%
+                        </span>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Profile Ready
+                        </strong>
+
+                        <p>
+                            Your profile is being used
+                            to personalize opportunities.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SKILLS -->
+
+            <div class="sidebar-card">
+
+                <div class="panel-label">
+                    YOUR SKILLS
+                </div>
+
+                <div class="skills-list"
+                     id="skillsList">
+                </div>
+
+            </div>
+
+
+        </aside>
+
+    </section>
+
+</main>
+
+
+
+<script>
+
+
+/* ==========================================
+   GET STUDENT PROFILE
+========================================== */
+
+
+const savedProfile =
+    localStorage.getItem("studentProfile");
+
+
+if (!savedProfile) {
+
+    window.location.href = "/profile";
+
+}
+
+
+const profile =
+    JSON.parse(savedProfile);
+
+
+
+/* ==========================================
+   DISPLAY PROFILE INFORMATION
+========================================== */
+
+
+document.getElementById("welcomeName")
+    .textContent =
+    profile.name || "Student";
+
+
+document.getElementById("profileName")
+    .textContent =
+    profile.name || "Student";
+
+
+document.getElementById("profileEducation")
+    .textContent =
+    `${profile.education || "Student"} • ${profile.branch || ""}`;
+
+
+
+/* ==========================================
+   AVATAR
+========================================== */
+
+
+if (profile.name) {
+
+    const firstLetter =
+        profile.name
+            .charAt(0)
+            .toUpperCase();
+
+
+    document.getElementById("userAvatar")
+        .textContent =
+        firstLetter;
+
+
+    document.getElementById("profileAvatar")
+        .textContent =
+        firstLetter;
+
+}
+
+
+
+/* ==========================================
+   DISPLAY SKILLS
+========================================== */
+
+
+const skillsList =
+    document.getElementById("skillsList");
+
+
+if (profile.skills &&
+    profile.skills.length > 0) {
+
+
+    profile.skills.forEach(
+        function(skill) {
+
+            const span =
+                document.createElement("span");
+
+            span.textContent =
+                skill;
+
+            skillsList.appendChild(span);
+
+        }
+    );
+
+}
+
+
+
+/* ==========================================
+   SEND PROFILE TO FLASK
+========================================== */
+
+
+fetch("/api/recommendations", {
+
+    method: "POST",
+
+    headers: {
+
+        "Content-Type":
+            "application/json"
+
+    },
+
+    body: JSON.stringify(profile)
+
+})
+
+
+.then(response =>
+    response.json()
+)
+
+
+.then(data => {
+
+
+    console.log(
+        "Recommendations:",
+        data
+    );
+
+
+    displayRecommendations(
+        data
+    );
+
+
+})
+
+
+.catch(error => {
+
+    console.error(error);
+
+    document.getElementById(
+        "recommendations"
+    ).innerHTML = `
+
+        <p>
+            Unable to load recommendations.
+        </p>
+
+    `;
+
+});
+
+
+
+/* ==========================================
+   DISPLAY RECOMMENDATIONS
+========================================== */
+
+
+function displayRecommendations(
+    opportunities
+) {
+
+
+    const container =
+        document.getElementById(
+            "recommendations"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (
+        !opportunities ||
+        opportunities.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <p>
+                No matching opportunities found.
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    /*
+     * Statistics
+     */
+
+
+    const internships =
+        opportunities.filter(
+            item =>
+                item.category ===
+                "Internship"
+        ).length;
+
+
+    const hackathons =
+        opportunities.filter(
+            item =>
+                item.category ===
+                "Hackathon"
+        ).length;
+
+
+    document.getElementById(
+        "recommendedCount"
+    ).textContent =
+        opportunities.length;
+
+
+    document.getElementById(
+        "internshipCount"
+    ).textContent =
+        internships;
+
+
+    document.getElementById(
+        "hackathonCount"
+    ).textContent =
+        hackathons;
+
+
+
+    /*
+     * Profile score
+     */
+
+
+    if (opportunities.length > 0) {
+
+        document.getElementById(
+            "profileScore"
+        ).textContent =
+            opportunities[0].score + "%";
+
+    }
+
+
+
+    /*
+     * Show top 5
+     */
+
+
+    opportunities
+        .slice(0, 5)
+        .forEach(
+            function(opportunity) {
+
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "opportunity-card";
+
+
+                card.innerHTML = `
+
+                    <div class="opportunity-icon">
+
+                        ${opportunity.icon}
+
+                    </div>
+
+
+                    <div class="opportunity-content">
+
+
+                        <div class="opportunity-top">
+
+                            <span class="category-badge">
+
+                                ${opportunity.category}
+
+                            </span>
+
+
+                            <span class="match-badge">
+
+                                ${opportunity.score}%
+                                Match
+
+                            </span>
+
+                        </div>
+
+
+                        <h3>
+
+                            ${opportunity.title}
+
+                        </h3>
+
+
+                        <p>
+
+                            ${opportunity.description}
+
+                        </p>
+
+
+                        <div class="opportunity-tags">
+
+                            ${
+                                opportunity.skills
+                                .map(
+                                    skill =>
+                                        `<span>${skill}</span>`
+                                )
+                                .join("")
+                            }
+
+                        </div>
+
+
+                        <div class="opportunity-bottom">
+
+                            <span>
+
+                                📅
+                                ${opportunity.deadline}
+
+                            </span>
+
+
+                            <span>
+
+                                🌐
+                                ${opportunity.mode}
+
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <button
+                        class="bookmark-btn">
+
+                        🔖
+
+                    </button>
+
+                `;
+
+
+                container.appendChild(card);
+
+            }
+        );
+
+}
+
+</script>
+
+
+</body>
+
+</html>

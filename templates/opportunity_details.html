@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ opportunity.title }} | OpportunityHub</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="opportunity-details-page">
+
+    <!-- NAVBAR -->
+    <nav class="dashboard-navbar">
+
+        <div class="logo">
+            🚀 OpportunityHub
+        </div>
+
+        <div class="dashboard-nav">
+
+            <a href="/dashboard">
+                Dashboard
+            </a>
+
+            <a href="/opportunities" class="active">
+                Opportunities
+            </a>
+
+            <a href="/saved">
+                Saved
+            </a>
+
+            <a href="/profile">
+                Profile
+            </a>
+
+            <div class="user-avatar">
+                S
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- MAIN -->
+    <main class="details-container">
+
+        <!-- BACK -->
+        <a href="/opportunities"
+           class="back-opportunities">
+
+            ← Back to Opportunities
+
+        </a>
+
+
+        <!-- HERO -->
+        <section class="details-hero">
+
+            <div class="details-icon">
+                {{ opportunity.icon }}
+            </div>
+
+            <div class="details-heading">
+
+                <div class="details-badges">
+
+                    <span class="category-badge">
+                        {{ opportunity.category }}
+                    </span>
+
+                    <span class="match-badge">
+                        Opportunity
+                    </span>
+
+                </div>
+
+                <h1>
+                    {{ opportunity.title }}
+                </h1>
+
+                <p class="organization-large">
+                    {{ opportunity.organization }}
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- CONTENT -->
+        <section class="details-grid">
+
+            <!-- LEFT -->
+            <div class="details-main">
+
+                <!-- ABOUT -->
+                <div class="details-card">
+
+                    <h2>
+                        About This Opportunity
+                    </h2>
+
+                    <p class="details-description">
+                        {{ opportunity.description }}
+                    </p>
+
+                </div>
+
+
+                <!-- SKILLS -->
+                <div class="details-card">
+
+                    <h2>
+                        💻 Skills Required
+                    </h2>
+
+                    <div class="details-skills">
+
+                        {% for skill in opportunity.skills %}
+
+                            <span>
+                                {{ skill }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- INTERESTS -->
+                <div class="details-card">
+
+                    <h2>
+                        🎯 Related Interests
+                    </h2>
+
+                    <div class="details-skills">
+
+                        {% for interest in opportunity.interests %}
+
+                            <span>
+                                {{ interest }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ELIGIBILITY -->
+                <div class="details-card">
+
+                    <h2>
+                        🎓 Eligibility
+                    </h2>
+
+                    <div class="details-skills">
+
+                        {% for education in opportunity.education %}
+
+                            <span>
+                                {{ education }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+            <aside class="details-sidebar">
+
+                <div class="details-card apply-card">
+
+                    <div class="apply-score">
+
+                        <span>
+                            Opportunity Type
+                        </span>
+
+                        <strong>
+                            {{ opportunity.category }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-info">
+
+                        <div>
+
+                            <span>
+                                📅 Deadline
+                            </span>
+
+                            <strong>
+                                {{ opportunity.deadline }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                🌐 Mode
+                            </span>
+
+                            <strong>
+                                {{ opportunity.mode }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                📍 Location
+                            </span>
+
+                            <strong>
+                                {{ opportunity.location }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                🏢 Organization
+                            </span>
+
+                            <strong>
+                                {{ opportunity.organization }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- APPLY -->
+                    <a href="{{ opportunity.apply_url }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="apply-now-btn">
+
+                        🔗 Apply Now
+
+                    </a>
+
+
+                    <!-- SAVE -->
+                    <button
+                        type="button"
+                        class="save-opportunity-btn"
+                        onclick="saveOpportunity()">
+
+                        🔖 Save Opportunity
+
+                    </button>
+
+                </div>
+
+
+                <!-- INFO -->
+                <div class="details-card trust-card">
+
+                    <strong>
+                        💡 Before You Apply
+                    </strong>
+
+                    <p>
+                        Check the official opportunity page
+                        for the latest eligibility requirements,
+                        deadline and application instructions.
+                    </p>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+
+    <!-- SIMPLE JAVASCRIPT -->
+    <script>
+
+        function saveOpportunity() {
+
+            alert("Opportunity saved! 🔖");
+
+        }
+
+    </script>
+
+</body>
+
+</html>

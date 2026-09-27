@@ -2,1004 +2,657 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explore Opportunities | OpportunityHub</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 
 <body class="opportunities-page">
 
+    <!-- =================================================================
+         1. NAVBAR (Consistent with Homepage design system)
+         ================================================================= -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
+            </a>
 
-<!-- =========================
-     NAVBAR
-========================= -->
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
 
-<nav class="dashboard-navbar">
-
-    <div class="logo" style="cursor: pointer;" onclick="window.location.href='/'">
-        🚀 OpportunityHub
-    </div>
-
-
-    <div class="dashboard-nav">
-
-        <a href="/dashboard">
-            Dashboard
-        </a>
-
-
-        <a href="/opportunities"
-           class="active">
-            Opportunities
-        </a>
-
-
-        <a href="/saved">
-            Saved
-        </a>
-
-
-        <a href="/profile">
-            Profile
-        </a>
-
-
-        <div class="user-avatar"
-             id="userAvatar">
-
-            S
-
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/opportunities" class="active">Opportunities</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/saved">Saved</a>
+                <a href="/profile">Profile</a>
+                <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
+            </div>
         </div>
-
-    </div>
-
-</nav>
-
-
-
-<!-- =========================
-     MAIN
-========================= -->
-
-<main class="opportunities-container">
-
-
-    <!-- HEADER -->
-
-    <section class="opportunities-header">
-
-        <div>
-
-            <p class="panel-label">
-                DISCOVER
-            </p>
-
-
-            <h1>
-                Explore Opportunities 🚀
-            </h1>
-
-
-            <p>
-                Find internships, hackathons, courses,
-                scholarships and more.
-            </p>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================
-         SEARCH + FILTER
-    ========================= -->
-
-    <section class="search-section">
-
-
-        <!-- SEARCH -->
-
-        <div class="search-box">
-
-            <span>
-                🔎
-            </span>
-
-
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search opportunities, skills or organizations..."
-            >
-
-        </div>
-
-
-
-        <!-- FILTER BUTTONS -->
-
-        <div class="filter-row">
-
-
-            <button
-                class="filter-btn active"
-                data-category="All">
-
-                All
-
-            </button>
-
-
-            <button
-                class="filter-btn"
-                data-category="Internship">
-
-                💼 Internships
-
-            </button>
-
-
-            <button
-                class="filter-btn"
-                data-category="Hackathon">
-
-                🏆 Hackathons
-
-            </button>
-
-
-            <button
-                class="filter-btn"
-                data-category="Course">
-
-                📚 Courses
-
-            </button>
-
-
-            <button
-                class="filter-btn"
-                data-category="Certification">
-
-                📜 Certifications
-
-            </button>
-
-
-            <button
-                class="filter-btn"
-                data-category="Scholarship">
-
-                💰 Scholarships
-
-            </button>
-
-
-            <button
-                class="filter-btn"
-                data-category="Competition">
-
-                🥇 Competitions
-
-            </button>
-
-
-            <button
-                class="filter-btn"
-                data-category="Workshop">
-
-                🎤 Workshops
-
-            </button>
-
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================
-         RESULT HEADER
-    ========================= -->
-
-    <div class="results-header">
-
-
-        <div>
-
-            <strong id="resultCount">
-                Loading...
-            </strong>
-
-            <span>
-                opportunities found
-            </span>
-
-        </div>
-
-
-        <select id="sortSelect">
-
-            <option value="match">
-                Best Match
-            </option>
-
-            <option value="deadline">
-                Deadline
-            </option>
-
-            <option value="name">
-                Name
-            </option>
-
-        </select>
-
-    </div>
-
-
-
-    <!-- =========================
-         OPPORTUNITY GRID
-    ========================= -->
-
-    <section
-        class="opportunities-grid"
-        id="opportunitiesGrid">
-
-        <div class="loading-message">
-
-            Loading opportunities...
-
-        </div>
-
-    </section>
-
-
-</main>
-
-
-
-<!-- =========================
-     JAVASCRIPT
-========================= -->
-
-<script>
-
-
-/* ==========================================
-   VARIABLES
-========================================== */
-
-let allOpportunities = [];
-
-let selectedCategory = "All";
-
-
-
-/* ==========================================
-   GET STUDENT PROFILE
-========================================== */
-
-const savedProfile =
-    localStorage.getItem("studentProfile");
-
-const profile =
-    savedProfile ? JSON.parse(savedProfile) : {
-        name: "Student",
-        education: "",
-        skills: [],
-        interests: [],
-        categories: []
-    };
-
-
-
-/* ==========================================
-   USER AVATAR & URL PARAMETERS
-========================================== */
-
-if (profile.name && profile.name !== "Student") {
-
-    const userAvatar =
-        document.getElementById("userAvatar");
-
-    if (userAvatar) {
-        userAvatar.textContent =
-            profile.name
-                .charAt(0)
-                .toUpperCase();
-    }
-
-}
-
-const urlParams =
-    new URLSearchParams(window.location.search);
-
-const catParam =
-    urlParams.get("category");
-
-if (catParam) {
-
-    selectedCategory = catParam;
-
-    document.querySelectorAll(
-        ".filter-btn"
-    ).forEach(
-        function(btn) {
-
-            if (btn.dataset.category.toLowerCase() === catParam.toLowerCase()) {
-
-                btn.classList.add("active");
-
-            } else {
-
-                btn.classList.remove("active");
-
-            }
-
-        }
-    );
-
-}
-
-
-
-/* ==========================================
-   TOGGLE SAVE OPPORTUNITY
-========================================== */
-
-function toggleSaveOpportunity(id) {
-
-    const opp =
-        allOpportunities.find(
-            item => item.id === id
-        );
-
-    if (!opp) return;
-
-    let saved =
-        JSON.parse(
-            localStorage.getItem("savedOpportunities") || "[]"
-        );
-
-    const index =
-        saved.findIndex(
-            item => item.id === id
-        );
-
-    if (index >= 0) {
-
-        saved.splice(index, 1);
-
-        alert(`Removed "${opp.title}" from saved opportunities.`);
-
-    } else {
-
-        saved.push(opp);
-
-        alert(`Saved "${opp.title}"! 🔖`);
-
-    }
-
-    localStorage.setItem(
-        "savedOpportunities",
-        JSON.stringify(saved)
-    );
-
-    renderOpportunities();
-
-}
-
-
-
-/* ==========================================
-   LOAD OPPORTUNITIES
-========================================== */
-
-fetch(
-    "/api/recommendations",
-    {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify(profile)
-
-    }
-)
-
-
-.then(
-    response => response.json()
-)
-
-
-.then(
-    data => {
-
-        allOpportunities = data;
-
-        renderOpportunities();
-
-    }
-)
-
-
-.catch(
-    error => {
-
-        console.error(error);
-
-
-        document.getElementById(
-            "opportunitiesGrid"
-        ).innerHTML = `
-
-            <div class="empty-state">
-
-                <h3>
-                    Unable to load opportunities
-                </h3>
-
-                <p>
-                    Please refresh the page and try again.
+    </nav>
+
+
+    <!-- =================================================================
+         2. PAGE HEADER
+         ================================================================= -->
+    <header class="opportunities-hero">
+        <div class="container">
+            <div class="opportunities-header">
+                <span class="eyebrow-badge">🎯 DISCOVER & MATCH</span>
+                <h1>Explore Opportunities</h1>
+                <p class="subtitle">
+                    Find internships, hackathons, scholarships, courses, certifications and more.
                 </p>
+            </div>
+        </div>
+    </header>
 
+
+    <!-- =================================================================
+         3. MAIN CONTENT: SEARCH, FILTERS, RESULTS & CARDS
+         ================================================================= -->
+    <main class="opportunities-container">
+
+        <!-- FILTER PANEL WRAPPER -->
+        <div class="filter-panel-wrapper">
+
+            <!-- 2. LARGE SEARCH BAR -->
+            <div class="search-box-large">
+                <span class="search-icon">🔎</span>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search opportunities, skills, companies..."
+                    autocomplete="off"
+                >
+                <button
+                    id="clearSearchBtn"
+                    class="clear-search-btn"
+                    style="display: none;"
+                    onclick="clearSearch()"
+                    title="Clear search">✕</button>
             </div>
 
-        `;
-
-    }
-);
-
-
-
-function getDeadlineStatus(deadlineStr) {
-    if (!deadlineStr) return { label: "Open", className: "open", days: 0 };
-    const deadlineDate = new Date(deadlineStr);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    deadlineDate.setHours(0, 0, 0, 0);
-    const diffTime = deadlineDate - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) {
-        return { label: "Expired", className: "closed", days: diffDays };
-    } else if (diffDays === 0) {
-        return { label: "Closing Today", className: "urgent", days: diffDays };
-    } else if (diffDays <= 3) {
-        return { label: `Closing Soon (${diffDays}d)`, className: "urgent", days: diffDays };
-    } else if (diffDays <= 7) {
-        return { label: `Upcoming (${diffDays}d)`, className: "soon", days: diffDays };
-    } else {
-        return { label: `Open (${diffDays}d)`, className: "open", days: diffDays };
-    }
-}
-
-function resetFilters() {
-    selectedCategory = "All";
-    const searchInput = document.getElementById("searchInput");
-    if (searchInput) searchInput.value = "";
-    document.querySelectorAll(".filter-btn").forEach(btn => {
-        if (btn.dataset.category === "All") {
-            btn.classList.add("active");
-        } else {
-            btn.classList.remove("active");
-        }
-    });
-    renderOpportunities();
-}
-
-/* ==========================================
-   RENDER OPPORTUNITIES
-========================================== */
-
-function renderOpportunities() {
-
-
-    /* SEARCH TEXT */
-
-    const searchInput =
-        document.getElementById(
-            "searchInput"
-        );
-
-
-    const searchText =
-        searchInput.value
-            .toLowerCase()
-            .trim();
-
-
-
-    /* FILTER */
-
-    let filtered =
-        allOpportunities.filter(
-            function(opportunity) {
-
-
-                /* CATEGORY */
-
-                const categoryMatch =
-                    selectedCategory === "All" ||
-                    opportunity.category ===
-                    selectedCategory;
-
-
-
-                /* SEARCH */
-
-                const searchableText = [
-
-                    opportunity.title,
-
-                    opportunity.category,
-
-                    opportunity.organization,
-
-                    opportunity.description,
-
-                    ...opportunity.skills,
-
-                    ...opportunity.interests
-
-                ]
-                .join(" ")
-                .toLowerCase();
-
-
-
-                const searchMatch =
-                    searchableText.includes(
-                        searchText
-                    );
-
-
-
-                return (
-                    categoryMatch &&
-                    searchMatch
-                );
-
-            }
-        );
-
-
-
-    /* ======================================
-       SORT
-    ====================================== */
-
-    const sortSelect =
-        document.getElementById(
-            "sortSelect"
-        );
-
-
-    const sortType =
-        sortSelect.value;
-
-
-
-    if (sortType === "match") {
-
-        filtered.sort(
-            function(a, b) {
-
-                return b.score - a.score;
-
-            }
-        );
-
-    }
-
-
-
-    else if (sortType === "name") {
-
-        filtered.sort(
-            function(a, b) {
-
-                return a.title.localeCompare(
-                    b.title
-                );
-
-            }
-        );
-
-    }
-
-
-
-    else if (sortType === "deadline") {
-
-        filtered.sort(
-            function(a, b) {
-
-                return new Date(a.deadline)
-                    - new Date(b.deadline);
-
-            }
-        );
-
-    }
-
-
-
-    /* ======================================
-       RESULT COUNT
-    ====================================== */
-
-    document.getElementById(
-        "resultCount"
-    ).textContent =
-        filtered.length;
-
-
-
-    /* ======================================
-       GRID
-    ====================================== */
-
-    const grid =
-        document.getElementById(
-            "opportunitiesGrid"
-        );
-
-
-    grid.innerHTML = "";
-
-
-
-    /* ======================================
-       NO RESULTS
-    ====================================== */
-
-    if (filtered.length === 0) {
-
-        grid.innerHTML = `
-
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    🔎
+            <!-- QUICK CATEGORY PILLS -->
+            <div class="category-pills-row" id="categoryPills">
+                <button class="cat-pill-btn active" data-category="All">All Categories</button>
+                <button class="cat-pill-btn" data-category="Internship">💼 Internships</button>
+                <button class="cat-pill-btn" data-category="Hackathon">🏆 Hackathons</button>
+                <button class="cat-pill-btn" data-category="Course">📚 Courses</button>
+                <button class="cat-pill-btn" data-category="Certification">📜 Certifications</button>
+                <button class="cat-pill-btn" data-category="Scholarship">💰 Scholarships</button>
+                <button class="cat-pill-btn" data-category="Competition">🥇 Competitions</button>
+                <button class="cat-pill-btn" data-category="Workshop">🛠️ Workshops</button>
+            </div>
+
+            <!-- 3. ADVANCED FILTER CONTROLS -->
+            <div class="advanced-filters-row">
+                <div class="filter-control">
+                    <label for="skillFilter">Skills</label>
+                    <select id="skillFilter">
+                        <option value="All">All Skills</option>
+                        <option value="Python">Python</option>
+                        <option value="Machine Learning">Machine Learning</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="HTML/CSS">HTML/CSS</option>
+                        <option value="SQL">SQL</option>
+                    </select>
                 </div>
 
-                <h3>
-                    No opportunities found
-                </h3>
+                <div class="filter-control">
+                    <label for="modeFilter">Mode</label>
+                    <select id="modeFilter">
+                        <option value="All">All Modes</option>
+                        <option value="Remote">Remote</option>
+                        <option value="Online">Online</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
 
-                <p>
-                    Try adjusting your search keywords or switching category filters.
-                </p>
+                <div class="filter-control">
+                    <label for="educationFilter">Education</label>
+                    <select id="educationFilter">
+                        <option value="All">All Education</option>
+                        <option value="Diploma">Diploma</option>
+                        <option value="B.E.">B.E.</option>
+                        <option value="B.Tech">B.Tech</option>
+                        <option value="M.E.">M.E.</option>
+                        <option value="M.Tech">M.Tech</option>
+                    </select>
+                </div>
 
-                <button class="filter-btn active" style="margin-top: 14px; cursor: pointer; display: inline-block;" onclick="resetFilters()">
-                    Clear Filters
-                </button>
+                <div class="filter-control">
+                    <label for="deadlineFilter">Deadline</label>
+                    <select id="deadlineFilter">
+                        <option value="All">All Deadlines</option>
+                        <option value="closing_soon">Closing Soon (≤ 7 Days)</option>
+                        <option value="upcoming">Upcoming (≤ 14 Days)</option>
+                        <option value="active">Active / Open</option>
+                    </select>
+                </div>
 
-            </div>
+                <div class="filter-control">
+                    <label for="matchFilter">Min Match Score</label>
+                    <select id="matchFilter">
+                        <option value="0">All Match Scores</option>
+                        <option value="80">80%+ Match</option>
+                        <option value="60">60%+ Match</option>
+                        <option value="40">40%+ Match</option>
+                        <option value="20">20%+ Match</option>
+                    </select>
+                </div>
 
-        `;
-
-        return;
-
-    }
-
-
-
-    const saved =
-        JSON.parse(
-            localStorage.getItem("savedOpportunities") || "[]"
-        );
-
-    const savedIds = new Set(saved.map(item => item.id));
-
-    filtered.forEach(
-        function(opportunity) {
-
-            const isSaved = savedIds.has(opportunity.id);
-            const deadline = getDeadlineStatus(opportunity.deadline);
-
-            const matchedTags = [
-                ...(opportunity.matched_skills || []),
-                ...(opportunity.matched_interests || [])
-            ];
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "explore-card";
-
-
-
-            /* ==================================
-               CARD HTML
-            ================================== */
-
-            card.innerHTML = `
-
-                <div class="explore-card-top">
-
-
-                    <div class="explore-icon">
-
-                        ${opportunity.icon}
-
-                    </div>
-
-
-                    <button
-                        class="bookmark-btn ${isSaved ? 'saved' : ''}"
-                        type="button"
-                        title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
-                        onclick="toggleSaveOpportunity(${opportunity.id})">
-
-                        ${isSaved ? '❤️' : '🔖'}
-
+                <div>
+                    <button type="button" class="reset-filters-btn" onclick="resetFilters()">
+                        <span>↺</span> Clear Filters
                     </button>
+                </div>
+            </div>
+
+        </div>
 
 
+        <!-- 4 & 9. RESULTS COUNT & SORT BAR -->
+        <div class="results-header-bar">
+            <div>
+                <span id="resultCount" class="results-count-text">Loading opportunities...</span>
+            </div>
+
+            <div class="sort-control-wrap">
+                <label for="sortSelect">Sort By:</label>
+                <select id="sortSelect">
+                    <option value="match">Best Match</option>
+                    <option value="deadline">Deadline</option>
+                    <option value="newest">Newest</option>
+                    <option value="name">Alphabetical (A-Z)</option>
+                </select>
+            </div>
+        </div>
+
+
+        <!-- 5 & 10. OPPORTUNITY CARDS (3-col Desktop, 2-col Tablet, 1-col Mobile) -->
+        <section class="opportunities-grid" id="opportunitiesGrid">
+            <div class="loading-message">
+                <div class="empty-icon">⏳</div>
+                <h3>Loading curated opportunities...</h3>
+                <p>Matching roles with your student profile.</p>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- =================================================================
+         11. PROFESSIONAL FOOTER (Matching Homepage)
+         ================================================================= -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-logo">
+                        🚀 OpportunityHub
+                    </a>
+                    <p class="footer-desc">
+                        One Platform. Every Opportunity. Dedicated to helping students discover, match, and apply for high-value career opportunities.
+                    </p>
+                    <span class="footer-badge">Hackathon 2026 Finalist</span>
                 </div>
 
-
-
-                <div class="explore-badges">
-
-
-                    <span class="category-badge">
-
-                        ${opportunity.category}
-
-                    </span>
-
-
-                    <span class="match-badge">
-
-                        ${opportunity.score}%
-                        Match
-
-                    </span>
-
-                    <span class="deadline-badge ${deadline.className}">
-
-                        📅 ${deadline.label}
-
-                    </span>
-
+                <div>
+                    <h4 class="footer-heading">Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/opportunities">Opportunities</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/saved">Saved Opportunities</a></li>
+                        <li><a href="/profile">Student Profile</a></li>
+                    </ul>
                 </div>
 
+                <div>
+                    <h4 class="footer-heading">Categories</h4>
+                    <ul class="footer-links">
+                        <li><a href="/opportunities?category=Internship">Internships</a></li>
+                        <li><a href="/opportunities?category=Hackathon">Hackathons</a></li>
+                        <li><a href="/opportunities?category=Scholarship">Scholarships</a></li>
+                        <li><a href="/opportunities?category=Certification">Certifications</a></li>
+                        <li><a href="/opportunities?category=Competition">Competitions</a></li>
+                        <li><a href="/opportunities?category=Workshop">Workshops</a></li>
+                        <li><a href="/opportunities?category=Course">Courses</a></li>
+                    </ul>
+                </div>
 
-
-                <h3>
-
-                    ${opportunity.title}
-
-                </h3>
-
-
-
-                <p class="organization">
-
-                    ${opportunity.organization}
-
-                </p>
-
-
-
-                <p class="explore-description">
-
-                    ${opportunity.description}
-
-                </p>
-
-                ${matchedTags.length > 0 ? `
-                    <div class="match-reasons-summary">
-                        <span>✓</span> Matches: ${matchedTags.join(", ")}
+                <div>
+                    <h4 class="footer-heading">Project Information</h4>
+                    <div class="footer-team-box">
+                        <div class="footer-team-name">Team Godlike</div>
+                        <p class="footer-team-desc">
+                            Built for Hackathon 2026 using Python Flask, lightweight local persistence, and smart matching algorithms.
+                        </p>
                     </div>
-                ` : ""}
-
-                ${opportunity.missing_skills && opportunity.missing_skills.length > 0 ? `
-                    <div class="skill-gap-alert">
-                        💡 <strong>Skill Gap:</strong> Learn ${opportunity.missing_skills.join(", ")}
-                    </div>
-                ` : (profile.skills && profile.skills.length > 0 ? `
-                    <div class="skill-gap-alert complete">
-                        ✓ You have all required skills!
-                    </div>
-                ` : "")}
-
-                <div class="opportunity-tags">
-
-
-                    ${
-                        opportunity.skills
-                            .map(
-                                function(skill) {
-
-                                    return `
-                                        <span>
-                                            ${skill}
-                                        </span>
-                                    `;
-
-                                }
-                            )
-                            .join("")
-                    }
-
-
                 </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2026 OpportunityHub. Designed and built with ❤️ by Team Godlike.</span>
+                <span>All opportunities curated for student success.</span>
+            </div>
+        </div>
+    </footer>
 
 
-
-                <div class="explore-info">
-
-
-                    <span>
-
-                        📅
-                        ${opportunity.deadline}
-
-                    </span>
-
-
-                    <span>
-
-                        🌐
-                        ${opportunity.mode}
-
-                    </span>
-
-
-                </div>
-
-
-
-                <!-- ==========================
-                     VIEW DETAILS LINK
-                =========================== -->
-
-                <a
-                    href="/opportunity/${opportunity.id}"
-                    class="view-details-btn">
-
-                    View Details →
-
-                </a>
-
-
-            `;
-
-
-
-            /* ADD CARD */
-
-            grid.appendChild(card);
-
-
+    <!-- =================================================================
+         JAVASCRIPT FUNCTIONALITY
+         ================================================================= -->
+    <script>
+        /* -------------------------------------------------------------
+           1. Mobile Nav Toggle & Profile Badge
+           ------------------------------------------------------------- */
+        const mobileToggle = document.getElementById("mobileToggle");
+        const navLinks = document.getElementById("navLinks");
+        if (mobileToggle && navLinks) {
+            mobileToggle.addEventListener("click", () => {
+                navLinks.classList.toggle("open");
+            });
         }
-    );
 
-}
+        const savedProfileRaw = localStorage.getItem("studentProfile");
+        const profile = savedProfileRaw ? JSON.parse(savedProfileRaw) : {
+            name: "Student",
+            education: "B.Tech",
+            skills: ["Python", "Machine Learning", "Data Science"],
+            interests: ["Artificial Intelligence", "Data Science"],
+            categories: ["Internship", "Hackathon"]
+        };
 
-
-
-/* ==========================================
-   SEARCH
-========================================== */
-
-document.getElementById(
-    "searchInput"
-)
-.addEventListener(
-    "input",
-    function() {
-
-        renderOpportunities();
-
-    }
-);
-
-
-
-/* ==========================================
-   SORT
-========================================== */
-
-document.getElementById(
-    "sortSelect"
-)
-.addEventListener(
-    "change",
-    function() {
-
-        renderOpportunities();
-
-    }
-);
-
-
-
-/* ==========================================
-   CATEGORY FILTER
-========================================== */
-
-document.querySelectorAll(
-    ".filter-btn"
-)
-.forEach(
-    function(button) {
-
-
-        button.addEventListener(
-            "click",
-            function() {
-
-
-                /* Remove active */
-
-                document.querySelectorAll(
-                    ".filter-btn"
-                )
-                .forEach(
-                    function(btn) {
-
-                        btn.classList.remove(
-                            "active"
-                        );
-
-                    }
-                );
-
-
-
-                /* Add active */
-
-                button.classList.add(
-                    "active"
-                );
-
-
-
-                /* Get category */
-
-                selectedCategory =
-                    button.dataset.category;
-
-
-
-                /* Re-render */
-
-                renderOpportunities();
-
+        if (savedProfileRaw && profile.name && profile.name !== "Student") {
+            const navBtn = document.getElementById("navProfileBtn");
+            if (navBtn) {
+                navBtn.textContent = profile.name.split(" ")[0];
             }
-        );
+        }
 
-    }
-);
+        /* -------------------------------------------------------------
+           2. Variables & URL Category Parameters
+           ------------------------------------------------------------- */
+        let allOpportunities = [];
+        let selectedCategory = "All";
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const catParam = urlParams.get("category");
+        if (catParam) {
+            selectedCategory = catParam;
+            document.querySelectorAll(".cat-pill-btn").forEach(btn => {
+                if (btn.dataset.category.toLowerCase() === catParam.toLowerCase()) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+            });
+        }
 
-</script>
+        /* -------------------------------------------------------------
+           3. Deadline Calculation Helper
+           ------------------------------------------------------------- */
+        function getDeadlineStatus(deadlineStr) {
+            if (!deadlineStr) return { label: "Open", className: "open", days: 999 };
+            const deadlineDate = new Date(deadlineStr);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            deadlineDate.setHours(0, 0, 0, 0);
+            const diffTime = deadlineDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+            if (diffDays < 0) {
+                return { label: "Expired", className: "urgent", days: diffDays };
+            } else if (diffDays === 0) {
+                return { label: "Closing Today", className: "urgent", days: diffDays };
+            } else if (diffDays <= 3) {
+                return { label: `Closing Soon (${diffDays}d)`, className: "urgent", days: diffDays };
+            } else if (diffDays <= 7) {
+                return { label: `Upcoming (${diffDays}d)`, className: "soon", days: diffDays };
+            } else {
+                return { label: `Due ${deadlineStr}`, className: "open", days: diffDays };
+            }
+        }
+
+        /* -------------------------------------------------------------
+           4. Bookmark / Saved Storage Helper (Persistence)
+           ------------------------------------------------------------- */
+        function getSavedList() {
+            try {
+                return JSON.parse(localStorage.getItem("savedOpportunities")) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function toggleSaveOpportunity(id) {
+            const numericId = Number(id);
+            const opp = allOpportunities.find(item => Number(item.id) === numericId);
+            if (!opp) return;
+
+            let saved = getSavedList();
+            const index = saved.findIndex(item => {
+                return (typeof item === "object" ? Number(item.id) : Number(item)) === numericId;
+            });
+
+            if (index >= 0) {
+                saved.splice(index, 1);
+            } else {
+                saved.push(opp);
+            }
+
+            localStorage.setItem("savedOpportunities", JSON.stringify(saved));
+            renderOpportunities();
+        }
+
+        /* -------------------------------------------------------------
+           5. Load Opportunities from /api/recommendations
+           ------------------------------------------------------------- */
+        fetch("/api/recommendations", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(profile)
+        })
+        .then(response => response.json())
+        .then(data => {
+            allOpportunities = Array.isArray(data) ? data : [];
+            renderOpportunities();
+        })
+        .catch(error => {
+            console.error("Error loading recommendations:", error);
+            const grid = document.getElementById("opportunitiesGrid");
+            if (grid) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <h3>Unable to load opportunities</h3>
+                        <p>Please refresh the page and try again.</p>
+                    </div>
+                `;
+            }
+        });
+
+        /* -------------------------------------------------------------
+           6. Search Clear Helper
+           ------------------------------------------------------------- */
+        function clearSearch() {
+            const searchInput = document.getElementById("searchInput");
+            if (searchInput) {
+                searchInput.value = "";
+                document.getElementById("clearSearchBtn").style.display = "none";
+                renderOpportunities();
+            }
+        }
+
+        /* -------------------------------------------------------------
+           7. Reset Filters Helper
+           ------------------------------------------------------------- */
+        function resetFilters() {
+            selectedCategory = "All";
+            const searchInput = document.getElementById("searchInput");
+            if (searchInput) searchInput.value = "";
+
+            const clearBtn = document.getElementById("clearSearchBtn");
+            if (clearBtn) clearBtn.style.display = "none";
+
+            document.getElementById("skillFilter").value = "All";
+            document.getElementById("modeFilter").value = "All";
+            document.getElementById("educationFilter").value = "All";
+            document.getElementById("deadlineFilter").value = "All";
+            document.getElementById("matchFilter").value = "0";
+            document.getElementById("sortSelect").value = "match";
+
+            document.querySelectorAll(".cat-pill-btn").forEach(btn => {
+                if (btn.dataset.category === "All") {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+            });
+
+            renderOpportunities();
+        }
+
+        /* -------------------------------------------------------------
+           8. Render Opportunities Grid (Search, Filter, Sort, Count)
+           ------------------------------------------------------------- */
+        function renderOpportunities() {
+            const searchInput = document.getElementById("searchInput");
+            const searchText = (searchInput ? searchInput.value : "").toLowerCase().trim();
+
+            const clearBtn = document.getElementById("clearSearchBtn");
+            if (clearBtn) {
+                clearBtn.style.display = searchText.length > 0 ? "inline-flex" : "none";
+            }
+
+            const skillVal = document.getElementById("skillFilter").value;
+            const modeVal = document.getElementById("modeFilter").value;
+            const eduVal = document.getElementById("educationFilter").value;
+            const deadlineVal = document.getElementById("deadlineFilter").value;
+            const minScore = Number(document.getElementById("matchFilter").value) || 0;
+
+            /* Filter Pipeline */
+            let filtered = allOpportunities.filter(function(opportunity) {
+                // Category Filter
+                if (selectedCategory !== "All" && opportunity.category.toLowerCase() !== selectedCategory.toLowerCase()) {
+                    return false;
+                }
+
+                // Search Filter
+                if (searchText) {
+                    const searchable = [
+                        opportunity.title,
+                        opportunity.category,
+                        opportunity.organization,
+                        opportunity.description,
+                        opportunity.mode,
+                        opportunity.location,
+                        ...(opportunity.skills || []),
+                        ...(opportunity.interests || [])
+                    ].join(" ").toLowerCase();
+
+                    if (!searchable.includes(searchText)) {
+                        return false;
+                    }
+                }
+
+                // Skill Filter
+                if (skillVal !== "All") {
+                    const hasSkill = (opportunity.skills || []).some(s => s.toLowerCase() === skillVal.toLowerCase());
+                    if (!hasSkill) return false;
+                }
+
+                // Mode Filter
+                if (modeVal !== "All") {
+                    if ((opportunity.mode || "").toLowerCase() !== modeVal.toLowerCase()) {
+                        return false;
+                    }
+                }
+
+                // Education Filter
+                if (eduVal !== "All") {
+                    const hasEdu = (opportunity.education || []).some(e => e.toLowerCase() === eduVal.toLowerCase());
+                    if (!hasEdu) return false;
+                }
+
+                // Deadline Filter
+                if (deadlineVal !== "All") {
+                    const status = getDeadlineStatus(opportunity.deadline);
+                    if (deadlineVal === "closing_soon" && (status.days < 0 || status.days > 7)) {
+                        return false;
+                    }
+                    if (deadlineVal === "upcoming" && (status.days < 0 || status.days > 14)) {
+                        return false;
+                    }
+                    if (deadlineVal === "active" && status.days < 0) {
+                        return false;
+                    }
+                }
+
+                // Minimum Match Score Filter
+                const score = opportunity.score !== undefined ? opportunity.score : (opportunity.match_score || 0);
+                if (score < minScore) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            /* Sort Pipeline */
+            const sortType = document.getElementById("sortSelect").value;
+            if (sortType === "match") {
+                filtered.sort((a, b) => (b.score !== undefined ? b.score : b.match_score || 0) - (a.score !== undefined ? a.score : a.match_score || 0));
+            } else if (sortType === "deadline") {
+                filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+            } else if (sortType === "newest") {
+                filtered.sort((a, b) => Number(b.id) - Number(a.id));
+            } else if (sortType === "name") {
+                filtered.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+            }
+
+            /* Result Count */
+            const resultCountEl = document.getElementById("resultCount");
+            if (resultCountEl) {
+                resultCountEl.textContent = `Showing ${filtered.length} ${filtered.length === 1 ? 'opportunity' : 'opportunities'}`;
+            }
+
+            /* Grid Container */
+            const grid = document.getElementById("opportunitiesGrid");
+            grid.innerHTML = "";
+
+            /* 8. Empty State */
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔎</div>
+                        <h3>No opportunities found</h3>
+                        <p>Try changing your search keywords or adjusting your filter criteria.</p>
+                        <button class="clear-filters-btn" onclick="resetFilters()">
+                            Clear Filters
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            /* Saved Check */
+            const saved = getSavedList();
+            const savedIds = new Set(saved.map(item => typeof item === "object" ? Number(item.id) : Number(item)));
+
+            /* Render Cards */
+            filtered.forEach(function(opportunity) {
+                const isSaved = savedIds.has(Number(opportunity.id));
+                const deadline = getDeadlineStatus(opportunity.deadline);
+                const scoreVal = opportunity.score !== undefined ? opportunity.score : (opportunity.match_score !== undefined ? opportunity.match_score : 90);
+
+                const matchedTags = [
+                    ...(opportunity.matched_skills || []),
+                    ...(opportunity.matched_interests || [])
+                ];
+
+                const card = document.createElement("div");
+                card.className = "explore-card";
+
+                const skillsHtml = (opportunity.skills || []).map(skill => `<span class="skill-pill">${skill}</span>`).join("");
+
+                card.innerHTML = `
+                    <div>
+                        <!-- Card Top Bar: Badges + Bookmark -->
+                        <div class="explore-card-top">
+                            <div class="explore-card-badges">
+                                <span class="category-badge">${opportunity.category}</span>
+                                <span class="match-badge">${scoreVal}% Match</span>
+                            </div>
+
+                            <button
+                                class="bookmark-btn ${isSaved ? 'saved' : ''}"
+                                type="button"
+                                title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
+                                onclick="toggleSaveOpportunity(${opportunity.id})">
+                                ${isSaved ? '❤️' : '🔖'}
+                            </button>
+                        </div>
+
+                        <!-- Title & Organization -->
+                        <h3>${opportunity.title}</h3>
+                        <div class="organization">${opportunity.organization}</div>
+
+                        <!-- Description -->
+                        <p class="explore-description">${opportunity.description}</p>
+
+                        <!-- Personalized Match Highlights (Hackathon feature) -->
+                        ${matchedTags.length > 0 ? `
+                            <div class="match-reasons-summary">
+                                <span>✓</span> Matches: ${matchedTags.slice(0, 3).join(", ")}
+                            </div>
+                        ` : ""}
+
+                        <!-- Skills Gap Insights -->
+                        ${opportunity.missing_skills && opportunity.missing_skills.length > 0 ? `
+                            <div class="skill-gap-alert">
+                                💡 <strong>Skill Gap:</strong> Learn ${opportunity.missing_skills.slice(0, 2).join(", ")}
+                            </div>
+                        ` : (profile.skills && profile.skills.length > 0 ? `
+                            <div class="skill-gap-alert complete">
+                                ✓ You have all key skills!
+                            </div>
+                        ` : "")}
+
+                        <!-- Skills Tags -->
+                        <div class="opportunity-tags">
+                            ${skillsHtml}
+                        </div>
+                    </div>
+
+                    <!-- Card Footer: Meta Info & View Details Button -->
+                    <div>
+                        <div class="explore-info">
+                            <span class="deadline-badge ${deadline.className}">📅 ${deadline.label}</span>
+                            <span>🌐 ${opportunity.mode}</span>
+                        </div>
+
+                        <a href="/opportunity/${opportunity.id}" class="view-details-btn">
+                            View Opportunity →
+                        </a>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        /* -------------------------------------------------------------
+           9. Event Listeners for Instant Reactive Filtering
+           ------------------------------------------------------------- */
+        document.getElementById("searchInput").addEventListener("input", renderOpportunities);
+        document.getElementById("sortSelect").addEventListener("change", renderOpportunities);
+        document.getElementById("skillFilter").addEventListener("change", renderOpportunities);
+        document.getElementById("modeFilter").addEventListener("change", renderOpportunities);
+        document.getElementById("educationFilter").addEventListener("change", renderOpportunities);
+        document.getElementById("deadlineFilter").addEventListener("change", renderOpportunities);
+        document.getElementById("matchFilter").addEventListener("change", renderOpportunities);
+
+        /* Category Filter Buttons */
+        document.querySelectorAll(".cat-pill-btn").forEach(function(button) {
+            button.addEventListener("click", function() {
+                document.querySelectorAll(".cat-pill-btn").forEach(btn => btn.classList.remove("active"));
+                button.classList.add("active");
+                selectedCategory = button.dataset.category;
+                renderOpportunities();
+            });
+        });
+    </script>
 
 </body>
 

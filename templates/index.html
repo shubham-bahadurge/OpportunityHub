@@ -4,317 +4,475 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>OpportunityHub | One Platform. Every Opportunity.</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <title>OpportunityHub | Discover Opportunities Made For You</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-
+    <!-- =================================================================
+         1. NAVBAR
+         ================================================================= -->
     <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="logo" onclick="window.location.href='/'">
+                🚀 OpportunityHub
+            </div>
 
-        <div class="logo" style="cursor: pointer;" onclick="window.location.href='/'">
-            🚀 OpportunityHub
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <div class="nav-links" id="navLinks">
+                <a href="/" class="active">Home</a>
+                <a href="#features">Features</a>
+                <a href="/opportunities">Opportunities</a>
+                <a href="#about">About</a>
+                <button class="login-btn" id="loginNavBtn" onclick="handleLoginClick()">Login</button>
+            </div>
         </div>
-
-        <div class="nav-links">
-            <a href="#features">Features</a>
-            <a href="/opportunities">Opportunities</a>
-            <a href="#about">About</a>
-            <button class="login-btn" onclick="handleLoginClick()">Login</button>
-        </div>
-
     </nav>
 
 
-    <!-- HERO SECTION -->
-
+    <!-- =================================================================
+         2. HERO SECTION
+         ================================================================= -->
     <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <div class="badge">
+                    🎯 Built for Students
+                </div>
 
-        <div class="hero-content">
+                <h1>
+                    Discover Opportunities
+                    <span>Made For You.</span>
+                </h1>
 
-            <div class="badge">
-                🎯 Built for Students
+                <p>
+                    Find internships, hackathons, scholarships, courses,
+                    certifications and competitions tailored to your skills and
+                    career ambitions — all in one platform.
+                </p>
+
+                <div class="hero-buttons">
+                    <button class="primary-btn" onclick="window.location.href='/profile'">
+                        🚀 Get Started
+                    </button>
+
+                    <button class="secondary-btn" onclick="window.location.href='/opportunities'">
+                        Explore Opportunities
+                    </button>
+                </div>
+
+                <div class="hero-highlights">
+                    <div class="highlight-item">
+                        <span class="check-icon">✓</span>
+                        <span>100% Free for Students</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="check-icon">✓</span>
+                        <span>Real-Time Skill Matching</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="check-icon">✓</span>
+                        <span>Direct Application Portals</span>
+                    </div>
+                </div>
             </div>
 
-            <h1>
-                Discover Opportunities
-                <span>Made For You.</span>
-            </h1>
+            <!-- RIGHT: Professional visual opportunity/recommendation card -->
+            <div class="hero-card">
+                <div class="card-header">
+                    <span class="card-badge">🎯 Recommended For You</span>
+                    <span class="match">95% Match</span>
+                </div>
 
-            <p>
-                Find internships, hackathons, scholarships, courses,
-                certifications and competitions — all in one place.
-            </p>
+                <h3>AI / ML Internship</h3>
+                <div class="card-org">Tech Innovation Labs</div>
 
-            <div class="hero-buttons">
+                <p>
+                    Work on real-world Artificial Intelligence and Machine Learning projects.
+                </p>
 
-                <button class="primary-btn" onclick="window.location.href='/profile'">
-                    🚀 Get Started
-                </button>
+                <div class="card-tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">Machine Learning</span>
+                    <span class="tag">Data Science</span>
+                </div>
 
-                <button class="secondary-btn" onclick="window.location.href='/opportunities'">
-                    Explore Opportunities
-                </button>
+                <div class="card-info">
+                    <span>💼 Internship</span>
+                    <span>🌐 Remote</span>
+                    <span>📅 Due Oct 10, 2026</span>
+                </div>
 
+                <a href="/opportunity/1" class="apply-btn">
+                    View Opportunity →
+                </a>
+
+                <div class="floating-insight">
+                    <span>💡</span>
+                    <span><strong>Skill Match:</strong> 3/3 key skills matched</span>
+                </div>
             </div>
-
         </div>
-
-
-        <!-- HERO CARD -->
-
-        <div class="hero-card">
-
-            <div class="card-header">
-
-                <span>🎯 Recommended For You</span>
-
-                <span class="match">
-                    95% Match
-                </span>
-
-            </div>
-
-            <h3>AI / ML Internship</h3>
-
-            <p>
-                Python • Machine Learning • AI
-            </p>
-
-            <div class="card-info">
-
-                <span>💼 Internship</span>
-                <span>🌐 Remote</span>
-
-            </div>
-
-            <div class="deadline">
-                📅 Deadline: 10 October 2026
-            </div>
-
-            <button class="apply-btn" onclick="window.location.href='/opportunity/1'">
-                View Opportunity →
-            </button>
-
-        </div>
-
     </section>
 
 
-    <!-- STATS -->
-
+    <!-- =================================================================
+         3. STATS SECTION (Truthful: 10+, 7+, 🎯, 100%)
+         ================================================================= -->
     <section class="stats">
+        <div class="container stats-grid">
+            <div class="stat-item">
+                <div class="stat-icon">🎯</div>
+                <h2>10+</h2>
+                <p class="stat-label">Opportunities</p>
+                <p class="stat-desc">Curated student opportunities</p>
+            </div>
 
-        <div>
-            <h2>500+</h2>
-            <p>Opportunities</p>
+            <div class="stat-item">
+                <div class="stat-icon">📂</div>
+                <h2>7+</h2>
+                <p class="stat-label">Categories</p>
+                <p class="stat-desc">Tech, Data, AI & more tracks</p>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-icon">🧠</div>
+                <h2>🎯</h2>
+                <p class="stat-label">Personalized Matching</p>
+                <p class="stat-desc">Intelligent skill-based scoring</p>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-icon">🌟</div>
+                <h2>100%</h2>
+                <p class="stat-label">Student Focused</p>
+                <p class="stat-desc">Free & verified opportunities</p>
+            </div>
         </div>
-
-        <div>
-            <h2>7+</h2>
-            <p>Categories</p>
-        </div>
-
-        <div>
-            <h2>🎯</h2>
-            <p>Personalized Matching</p>
-        </div>
-
-        <div>
-            <h2>100%</h2>
-            <p>Student Focused</p>
-        </div>
-
     </section>
 
 
-    <!-- FEATURES -->
-
+    <!-- =================================================================
+         4. WHY OPPORTUNITYHUB / FEATURES
+         ================================================================= -->
     <section class="section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <span>WHY OPPORTUNITYHUB?</span>
+                <h2>Everything Students Need In One Place.</h2>
+                <p>Discover how OpportunityHub makes discovering and qualifying for your dream opportunities effortless.</p>
+            </div>
 
-        <div class="section-title">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🎯</div>
+                    <h3>Personalized Recommendations</h3>
+                    <p>Discover opportunities based on your skills, interests, and degree level with accurate real-time scoring.</p>
+                </div>
 
-            <span>WHY OPPORTUNITYHUB?</span>
+                <div class="feature-card">
+                    <div class="icon">🔎</div>
+                    <h3>Smart Search</h3>
+                    <p>Quickly search, filter, and sort opportunities by category, skill keywords, and remote/hybrid work modes.</p>
+                </div>
 
-            <h2>
-                Everything Students Need
-                <br>
-                In One Place.
-            </h2>
+                <div class="feature-card">
+                    <div class="icon">🧠</div>
+                    <h3>Skill Gap Analysis</h3>
+                    <p>Understand which skills you already have and which key skills you need to build for top opportunities.</p>
+                </div>
 
+                <div class="feature-card">
+                    <div class="icon">🔖</div>
+                    <h3>Save Opportunities</h3>
+                    <p>Bookmark high-value opportunities in one click and track your personal application pipeline anytime.</p>
+                </div>
+            </div>
         </div>
-
-
-        <div class="feature-grid">
-
-            <div class="feature-card">
-
-                <div class="icon">🎯</div>
-
-                <h3>Personalized Recommendations</h3>
-
-                <p>
-                    Discover opportunities based on your
-                    skills, interests and education.
-                </p>
-
-            </div>
-
-
-            <div class="feature-card">
-
-                <div class="icon">🔎</div>
-
-                <h3>Smart Search</h3>
-
-                <p>
-                    Quickly search and filter opportunities
-                    by category, skill and mode.
-                </p>
-
-            </div>
-
-
-            <div class="feature-card">
-
-                <div class="icon">🧠</div>
-
-                <h3>Skill Gap Analysis</h3>
-
-                <p>
-                    Understand which skills you need to
-                    improve for your dream opportunities.
-                </p>
-
-            </div>
-
-
-            <div class="feature-card">
-
-                <div class="icon">🔖</div>
-
-                <h3>Save Opportunities</h3>
-
-                <p>
-                    Bookmark opportunities and easily
-                    return to them later.
-                </p>
-
-            </div>
-
-        </div>
-
     </section>
 
 
-    <!-- CATEGORIES -->
-
+    <!-- =================================================================
+         5. CATEGORIES SECTION
+         ================================================================= -->
     <section class="section categories" id="categories">
+        <div class="container">
+            <div class="section-title">
+                <span>EXPLORE BY TRACK</span>
+                <h2>Find Your Next Opportunity</h2>
+                <p>Browse through our curated tracks and jump directly to what fits your career goals.</p>
+            </div>
 
-        <div class="section-title">
+            <div class="category-grid">
+                <a href="/opportunities?category=Internship" class="category-card">
+                    <div class="category-icon">💼</div>
+                    <div class="category-info">
+                        <h3>Internships</h3>
+                        <p>3 Opportunities</p>
+                        <span class="category-arrow">Explore →</span>
+                    </div>
+                </a>
 
-            <span>EXPLORE</span>
+                <a href="/opportunities?category=Hackathon" class="category-card">
+                    <div class="category-icon">🏆</div>
+                    <div class="category-info">
+                        <h3>Hackathons</h3>
+                        <p>1 Opportunity</p>
+                        <span class="category-arrow">Explore →</span>
+                    </div>
+                </a>
 
-            <h2>
-                Find Your Next Opportunity
-            </h2>
+                <a href="/opportunities?category=Scholarship" class="category-card">
+                    <div class="category-icon">💰</div>
+                    <div class="category-info">
+                        <h3>Scholarships</h3>
+                        <p>1 Opportunity</p>
+                        <span class="category-arrow">Explore →</span>
+                    </div>
+                </a>
 
+                <a href="/opportunities?category=Certification" class="category-card">
+                    <div class="category-icon">📜</div>
+                    <div class="category-info">
+                        <h3>Certifications</h3>
+                        <p>1 Opportunity</p>
+                        <span class="category-arrow">Explore →</span>
+                    </div>
+                </a>
+
+                <a href="/opportunities?category=Competition" class="category-card">
+                    <div class="category-icon">🥇</div>
+                    <div class="category-info">
+                        <h3>Competitions</h3>
+                        <p>2 Opportunities</p>
+                        <span class="category-arrow">Explore →</span>
+                    </div>
+                </a>
+
+                <a href="/opportunities?category=Workshop" class="category-card">
+                    <div class="category-icon">🛠️</div>
+                    <div class="category-info">
+                        <h3>Workshops</h3>
+                        <p>1 Opportunity</p>
+                        <span class="category-arrow">Explore →</span>
+                    </div>
+                </a>
+
+                <a href="/opportunities?category=Course" class="category-card">
+                    <div class="category-icon">📚</div>
+                    <div class="category-info">
+                        <h3>Courses</h3>
+                        <p>1 Opportunity</p>
+                        <span class="category-arrow">Explore →</span>
+                    </div>
+                </a>
+            </div>
         </div>
-
-
-        <div class="category-grid">
-
-            <div class="category-card" onclick="window.location.href='/opportunities?category=Internship'" style="cursor: pointer;">
-                💼
-                <h3>Internships</h3>
-                <p>120+ opportunities</p>
-            </div>
-
-            <div class="category-card" onclick="window.location.href='/opportunities?category=Hackathon'" style="cursor: pointer;">
-                🏆
-                <h3>Hackathons</h3>
-                <p>80+ opportunities</p>
-            </div>
-
-            <div class="category-card" onclick="window.location.href='/opportunities?category=Course'" style="cursor: pointer;">
-                📚
-                <h3>Courses</h3>
-                <p>150+ opportunities</p>
-            </div>
-
-            <div class="category-card" onclick="window.location.href='/opportunities?category=Scholarship'" style="cursor: pointer;">
-                💰
-                <h3>Scholarships</h3>
-                <p>50+ opportunities</p>
-            </div>
-
-            <div class="category-card" onclick="window.location.href='/opportunities?category=Competition'" style="cursor: pointer;">
-                🥇
-                <h3>Competitions</h3>
-                <p>60+ opportunities</p>
-            </div>
-
-            <div class="category-card" onclick="window.location.href='/opportunities?category=Certification'" style="cursor: pointer;">
-                📜
-                <h3>Certifications</h3>
-                <p>100+ opportunities</p>
-            </div>
-
-        </div>
-
     </section>
 
 
-    <!-- ABOUT -->
+    <!-- =================================================================
+         6. FEATURED OPPORTUNITIES SECTION
+         ================================================================= -->
+    <section class="section featured-section" id="featured">
+        <div class="container">
+            <div class="section-title">
+                <span>TOP PICKS</span>
+                <h2>Featured Opportunities</h2>
+                <p>Handpicked high-impact opportunities with live personalized match insights.</p>
+            </div>
 
+            <div class="featured-grid" id="featuredGrid">
+                <!-- Opportunity 1 -->
+                <div class="featured-card">
+                    <div class="featured-card-top">
+                        <div class="featured-card-header">
+                            <span class="cat-pill">Internship</span>
+                            <button class="save-btn" onclick="toggleSave(1, this)" title="Save opportunity">🔖</button>
+                        </div>
+                        <h3>AI / ML Internship</h3>
+                        <div class="org-name">Tech Innovation Labs</div>
+                        <p class="desc">Work on real-world Artificial Intelligence and Machine Learning projects.</p>
+                        <div class="skills">
+                            <span class="skill-pill">Python</span>
+                            <span class="skill-pill">Machine Learning</span>
+                            <span class="skill-pill">Data Science</span>
+                        </div>
+                    </div>
+                    <div class="featured-card-bottom">
+                        <div class="featured-meta">
+                            <span>🌐 Remote</span>
+                            <span>📅 Due 2026-10-10</span>
+                        </div>
+                        <a href="/opportunity/1" class="featured-view-btn">View Opportunity →</a>
+                    </div>
+                </div>
+
+                <!-- Opportunity 2 -->
+                <div class="featured-card">
+                    <div class="featured-card-top">
+                        <div class="featured-card-header">
+                            <span class="cat-pill">Hackathon</span>
+                            <button class="save-btn" onclick="toggleSave(2, this)" title="Save opportunity">🔖</button>
+                        </div>
+                        <h3>AI Innovation Hackathon 2026</h3>
+                        <div class="org-name">Innovation Community</div>
+                        <p class="desc">Build innovative solutions using Artificial Intelligence and emerging technologies.</p>
+                        <div class="skills">
+                            <span class="skill-pill">Python</span>
+                            <span class="skill-pill">Machine Learning</span>
+                            <span class="skill-pill">JavaScript</span>
+                        </div>
+                    </div>
+                    <div class="featured-card-bottom">
+                        <div class="featured-meta">
+                            <span>🌐 Online</span>
+                            <span>📅 Due 2026-10-15</span>
+                        </div>
+                        <a href="/opportunity/2" class="featured-view-btn">View Opportunity →</a>
+                    </div>
+                </div>
+
+                <!-- Opportunity 3 -->
+                <div class="featured-card">
+                    <div class="featured-card-top">
+                        <div class="featured-card-header">
+                            <span class="cat-pill">Certification</span>
+                            <button class="save-btn" onclick="toggleSave(3, this)" title="Save opportunity">🔖</button>
+                        </div>
+                        <h3>Machine Learning Certification</h3>
+                        <div class="org-name">LearnTech Academy</div>
+                        <p class="desc">Learn Machine Learning fundamentals and build practical projects.</p>
+                        <div class="skills">
+                            <span class="skill-pill">Python</span>
+                            <span class="skill-pill">Machine Learning</span>
+                        </div>
+                    </div>
+                    <div class="featured-card-bottom">
+                        <div class="featured-meta">
+                            <span>🌐 Online</span>
+                            <span>📅 Due 2026-10-20</span>
+                        </div>
+                        <a href="/opportunity/3" class="featured-view-btn">View Opportunity →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="featured-all-wrap">
+                <a href="/opportunities" class="view-all-btn">
+                    <span>View All 10 Opportunities</span>
+                    <span>→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- =================================================================
+         7. FINAL CTA / ABOUT
+         ================================================================= -->
     <section class="about" id="about">
-
-        <div>
-
-            <span>OUR MISSION</span>
-
-            <h2>
-                Stop Searching.
-                Start Discovering.
-            </h2>
-
-            <p>
-                OpportunityHub brings valuable student opportunities
-                together and helps students discover the ones that
-                match their goals.
-            </p>
-
-            <button class="primary-btn" onclick="window.location.href='/profile'">
-                Start Your Journey 🚀
-            </button>
-
+        <div class="container">
+            <div class="cta-box">
+                <span class="eyebrow">OUR MISSION</span>
+                <h2>Stop Searching. Start Discovering.</h2>
+                <p>
+                    OpportunityHub brings valuable student opportunities together and helps you discover the ones that match your goals.
+                </p>
+                <div class="cta-buttons">
+                    <button class="cta-primary" onclick="window.location.href='/profile'">
+                        🚀 Start Your Journey
+                    </button>
+                    <button class="cta-secondary" onclick="window.location.href='/opportunities'">
+                        Explore Opportunities
+                    </button>
+                </div>
+            </div>
         </div>
-
     </section>
 
 
-    <!-- FOOTER -->
-
+    <!-- =================================================================
+         8. MULTI-COLUMN FOOTER
+         ================================================================= -->
     <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-logo">
+                        🚀 OpportunityHub
+                    </a>
+                    <p class="footer-desc">
+                        One Platform. Every Opportunity. Dedicated to helping students discover, match, and apply for high-value career opportunities.
+                    </p>
+                    <span class="footer-badge">Hackathon 2026 Finalist</span>
+                </div>
 
-        <h3 style="cursor: pointer;" onclick="window.location.href='/'">🚀 OpportunityHub</h3>
+                <div>
+                    <h4 class="footer-heading">Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="/opportunities">Opportunities</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/saved">Saved Opportunities</a></li>
+                        <li><a href="/profile">Student Profile</a></li>
+                    </ul>
+                </div>
 
-        <p>
-            One Platform. Every Opportunity.
-        </p>
+                <div>
+                    <h4 class="footer-heading">Categories</h4>
+                    <ul class="footer-links">
+                        <li><a href="/opportunities?category=Internship">Internships</a></li>
+                        <li><a href="/opportunities?category=Hackathon">Hackathons</a></li>
+                        <li><a href="/opportunities?category=Scholarship">Scholarships</a></li>
+                        <li><a href="/opportunities?category=Certification">Certifications</a></li>
+                        <li><a href="/opportunities?category=Competition">Competitions</a></li>
+                        <li><a href="/opportunities?category=Workshop">Workshops</a></li>
+                        <li><a href="/opportunities?category=Course">Courses</a></li>
+                    </ul>
+                </div>
 
-        <p class="copyright">
-            © 2026 OpportunityHub
-        </p>
+                <div>
+                    <h4 class="footer-heading">Project Information</h4>
+                    <div class="footer-team-box">
+                        <div class="footer-team-name">Team Godlike</div>
+                        <p class="footer-team-desc">
+                            Built for Hackathon 2026 using Python Flask, lightweight local persistence, and smart matching algorithms.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
+            <div class="footer-bottom">
+                <span>© 2026 OpportunityHub. Designed and built with ❤️ by Team Godlike.</span>
+                <span>All opportunities curated for student success.</span>
+            </div>
+        </div>
     </footer>
 
+
+    <!-- =================================================================
+         SCRIPTS: Navigation, LocalStorage, and Recommendations
+         ================================================================= -->
     <script>
+        // 1. Mobile Menu Toggle
+        const mobileToggle = document.getElementById("mobileToggle");
+        const navLinks = document.getElementById("navLinks");
+        if (mobileToggle && navLinks) {
+            mobileToggle.addEventListener("click", () => {
+                navLinks.classList.toggle("open");
+            });
+        }
+
+        // 2. Login / Dashboard State
         function handleLoginClick() {
             if (localStorage.getItem("studentProfile")) {
                 window.location.href = "/dashboard";
@@ -322,6 +480,141 @@
                 window.location.href = "/profile";
             }
         }
+
+        const savedProfileRaw = localStorage.getItem("studentProfile");
+        if (savedProfileRaw) {
+            try {
+                const profileObj = JSON.parse(savedProfileRaw);
+                const btn = document.getElementById("loginNavBtn");
+                if (btn && profileObj && profileObj.name) {
+                    btn.textContent = profileObj.name.split(" ")[0] || "Dashboard";
+                    btn.title = "Go to Dashboard";
+                }
+            } catch (e) {}
+        }
+
+        // 3. Save / Unsave Helper
+        function getSavedList() {
+            try {
+                return JSON.parse(localStorage.getItem("savedOpportunities")) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function toggleSave(id, btn) {
+            let saved = getSavedList();
+            const numericId = Number(id);
+            const index = saved.indexOf(numericId);
+
+            if (index > -1) {
+                saved.splice(index, 1);
+                btn.classList.remove("saved");
+                btn.title = "Save opportunity";
+                btn.innerHTML = "🔖";
+            } else {
+                saved.push(numericId);
+                btn.classList.add("saved");
+                btn.title = "Unsave opportunity";
+                btn.innerHTML = "❤️";
+            }
+            localStorage.setItem("savedOpportunities", JSON.stringify(saved));
+        }
+
+        function syncInitialSavedIcons() {
+            const saved = getSavedList();
+            document.querySelectorAll(".save-btn").forEach(btn => {
+                const onclickAttr = btn.getAttribute("onclick") || "";
+                const match = onclickAttr.match(/toggleSave\((\d+)/);
+                if (match) {
+                    const id = Number(match[1]);
+                    if (saved.includes(id)) {
+                        btn.classList.add("saved");
+                        btn.title = "Unsave opportunity";
+                        btn.innerHTML = "❤️";
+                    } else {
+                        btn.classList.remove("saved");
+                        btn.title = "Save opportunity";
+                        btn.innerHTML = "🔖";
+                    }
+                }
+            });
+        }
+
+        // 4. Hydrate Featured Cards from /api/recommendations
+        async function loadFeaturedRecommendations() {
+            try {
+                const profilePayload = savedProfileRaw ? JSON.parse(savedProfileRaw) : {
+                    name: "Student",
+                    education: "B.Tech",
+                    skills: ["Python", "Machine Learning", "Data Science"],
+                    interests: ["Artificial Intelligence", "Data Science"],
+                    categories: ["Internship", "Hackathon"]
+                };
+
+                const res = await fetch("/api/recommendations", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(profilePayload)
+                });
+
+                if (!res.ok) return;
+
+                const data = await res.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    renderFeatured(data.slice(0, 3));
+                }
+            } catch (err) {
+                console.warn("Could not fetch recommendations, using default featured cards:", err);
+            }
+        }
+
+        function renderFeatured(opportunities) {
+            const grid = document.getElementById("featuredGrid");
+            if (!grid) return;
+            const saved = getSavedList();
+
+            grid.innerHTML = opportunities.map(opp => {
+                const isSaved = saved.includes(Number(opp.id));
+                const scoreVal = opp.score !== undefined ? opp.score : opp.match_score;
+                const matchTag = scoreVal !== undefined
+                    ? `<span class="match" style="margin-left: 8px; font-size: 11px; padding: 2px 8px;">${scoreVal}% Match</span>`
+                    : "";
+                const skillsHtml = (opp.skills || []).slice(0, 3).map(s => `<span class="skill-pill">${s}</span>`).join("");
+
+                return `
+                    <div class="featured-card">
+                        <div class="featured-card-top">
+                            <div class="featured-card-header">
+                                <div>
+                                    <span class="cat-pill">${opp.category || 'General'}</span>
+                                    ${matchTag}
+                                </div>
+                                <button class="save-btn ${isSaved ? 'saved' : ''}" onclick="toggleSave(${opp.id}, this)" title="${isSaved ? 'Unsave opportunity' : 'Save opportunity'}">
+                                    ${isSaved ? '❤️' : '🔖'}
+                                </button>
+                            </div>
+                            <h3>${opp.title}</h3>
+                            <div class="org-name">${opp.organization || ''}</div>
+                            <p class="desc">${opp.description || ''}</p>
+                            <div class="skills">${skillsHtml}</div>
+                        </div>
+                        <div class="featured-card-bottom">
+                            <div class="featured-meta">
+                                <span>🌐 ${opp.mode || 'Online'}</span>
+                                <span>📅 Due ${opp.deadline || 'Open'}</span>
+                            </div>
+                            <a href="/opportunity/${opp.id}" class="featured-view-btn">View Opportunity →</a>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            syncInitialSavedIcons();
+            loadFeaturedRecommendations();
+        });
     </script>
 
 </body>

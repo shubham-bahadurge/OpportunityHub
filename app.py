@@ -19,7 +19,7 @@ def profile():
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    return render_template("dashboard.html", opportunities=opportunities)
 @app.route("/opportunities")
 def opportunities_page():
     return render_template("opportunities.html")

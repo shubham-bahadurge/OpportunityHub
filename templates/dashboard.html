@@ -127,103 +127,201 @@
         </section>
 
 
-        <!-- APPLICATION TRACKER & RECRUITMENT PIPELINE SECTION -->
-        <section class="dash-pipeline-card" id="dashboardTrackerSection" aria-label="Application Tracker Overview">
-            <div class="dash-pipeline-header">
+        <!-- APPLICATION ANALYTICS SECTION -->
+        <section class="analytics-section" id="applicationAnalyticsSection" aria-label="Application Analytics">
+            <div class="analytics-header">
                 <div>
-                    <div class="dash-panel-eyebrow">RECRUITMENT PIPELINE</div>
-                    <h2 class="dash-panel-title" style="margin: 0; font-size: 20px;">
-                        📋 Application Tracker
+                    <div class="dash-panel-eyebrow">RECRUITMENT INTELLIGENCE</div>
+                    <h2 class="analytics-title">
+                        📊 Application Analytics
                     </h2>
-                    <p class="dash-panel-sub" style="margin-top: 4px;">
-                        Monitor your opportunities across all 6 recruitment stages in real time.
+                    <p class="analytics-subtitle">
+                        Real-time analytics and tracking insights across your recruitment pipeline.
                     </p>
                 </div>
-                <a href="/applications" class="dash-panel-link" style="font-weight: 700;">
+                <a href="/applications" class="dash-panel-link" style="font-weight: 700; font-size: 14px;">
                     Open Full Tracker →
                 </a>
             </div>
 
-            <!-- 6-Stage Count Cards Grid -->
-            <div class="tracker-stats-grid" style="margin-bottom: 20px;">
-                <a href="/applications?filter=Saved" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
-                    <div class="tracker-stat-icon">🔖</div>
-                    <div class="tracker-stat-val" id="dashCountSaved">0</div>
-                    <div class="tracker-stat-label">Saved</div>
-                </a>
-
-                <a href="/applications?filter=Applied" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
-                    <div class="tracker-stat-icon">📨</div>
-                    <div class="tracker-stat-val" id="dashCountApplied">0</div>
-                    <div class="tracker-stat-label">Applied</div>
-                </a>
-
-                <a href="/applications?filter=Shortlisted" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
-                    <div class="tracker-stat-icon">🌟</div>
-                    <div class="tracker-stat-val" id="dashCountShortlisted">0</div>
-                    <div class="tracker-stat-label">Shortlisted</div>
-                </a>
-
-                <a href="/applications?filter=Interview" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
-                    <div class="tracker-stat-icon">🎙️</div>
-                    <div class="tracker-stat-val" id="dashCountInterview">0</div>
-                    <div class="tracker-stat-label">Interview</div>
-                </a>
-
-                <a href="/applications?filter=Selected" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
-                    <div class="tracker-stat-icon">🎉</div>
-                    <div class="tracker-stat-val" id="dashCountSelected">0</div>
-                    <div class="tracker-stat-label">Selected</div>
-                </a>
-
-                <a href="/applications?filter=Rejected" class="tracker-stat-card" style="text-decoration: none; color: inherit;">
-                    <div class="tracker-stat-icon">⛔</div>
-                    <div class="tracker-stat-val" id="dashCountRejected">0</div>
-                    <div class="tracker-stat-label">Rejected</div>
+            <!-- Empty State (Shown when 0 applications are tracked) -->
+            <div class="analytics-empty-card" id="analyticsEmptyState" style="display: none;">
+                <div class="analytics-empty-icon">📊</div>
+                <h3 class="analytics-empty-title">No Tracked Applications Yet</h3>
+                <p class="analytics-empty-text">
+                    Start applying to opportunities or save them to your tracker. As you track your applications, deep recruitment pipeline progression, upcoming deadlines, and skill gap insights will automatically appear here.
+                </p>
+                <a href="/opportunities" class="primary-btn" style="display: inline-flex; align-items: center; gap: 8px;">
+                    Explore Opportunities →
                 </a>
             </div>
 
-            <!-- Visual Pipeline Progress Bar / Track -->
-            <div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Active Recruitment Pipeline</span>
-                    <span style="font-size: 12px; font-weight: 800; color: #4f46e5;" id="dashActivePipelineCount">0 Active in Pipeline</span>
+            <!-- Active Data Container (Shown when >= 1 application is tracked) -->
+            <div id="analyticsDataContainer">
+
+                <!-- 1. APPLICATION OVERVIEW KPI CARDS -->
+                <div class="analytics-kpi-grid">
+                    <a href="/applications" class="analytics-kpi-card" title="View all tracked applications">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Total Applications</span>
+                            <span class="analytics-kpi-icon" style="background: #eef2ff; color: #4338ca;">📋</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="analyticsTotalCount">0</div>
+                        <div class="analytics-kpi-sub">In pipeline</div>
+                    </a>
+
+                    <a href="/applications?filter=Applied" class="analytics-kpi-card" title="View applied opportunities">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Applied</span>
+                            <span class="analytics-kpi-icon" style="background: #e0f2fe; color: #0369a1;">📨</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountApplied">0</div>
+                        <div class="analytics-kpi-sub">Submitted</div>
+                    </a>
+
+                    <a href="/applications?filter=Shortlisted" class="analytics-kpi-card" title="View shortlisted opportunities">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Shortlisted</span>
+                            <span class="analytics-kpi-icon" style="background: #fef3c7; color: #b45309;">🌟</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountShortlisted">0</div>
+                        <div class="analytics-kpi-sub">Under review</div>
+                    </a>
+
+                    <a href="/applications?filter=Interview" class="analytics-kpi-card" title="View scheduled interviews">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Interviews</span>
+                            <span class="analytics-kpi-icon" style="background: #ede9fe; color: #6d28d9;">🎙️</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountInterview">0</div>
+                        <div class="analytics-kpi-sub">In progress</div>
+                    </a>
+
+                    <a href="/applications?filter=Selected" class="analytics-kpi-card" title="View selected offers">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Selected</span>
+                            <span class="analytics-kpi-icon" style="background: #ecfdf5; color: #047857;">🎉</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountSelected">0</div>
+                        <div class="analytics-kpi-sub">Offers received</div>
+                    </a>
+
+                    <a href="/applications?filter=Rejected" class="analytics-kpi-card" title="View archived applications">
+                        <div class="analytics-kpi-top">
+                            <span class="analytics-kpi-label">Rejected</span>
+                            <span class="analytics-kpi-icon" style="background: #ffe4e6; color: #be123c;">⛔</span>
+                        </div>
+                        <div class="analytics-kpi-val" id="dashCountRejected">0</div>
+                        <div class="analytics-kpi-sub">Archived</div>
+                    </a>
                 </div>
 
-                <div class="dash-pipeline-track">
-                    <div class="dash-pipeline-node">
-                        <span>🔖 Saved</span>
-                        <span class="dash-pipeline-count" id="pipeCountSaved">0</span>
+                <!-- Hidden element for backward compatibility with Saved count if referenced -->
+                <span id="dashCountSaved" style="display: none;">0</span>
+
+                <!-- 2. APPLICATION PIPELINE PROGRESS -->
+                <div class="analytics-card" style="margin-bottom: 24px;">
+                    <div class="analytics-card-header">
+                        <div>
+                            <div class="dash-panel-eyebrow">CONVERSION FUNNEL</div>
+                            <h3 class="analytics-card-title">Recruitment Pipeline Progress</h3>
+                            <p class="analytics-card-subtitle">Saved → Applied → Shortlisted → Interview → Selected</p>
+                        </div>
+                        <span class="analytics-pill-badge" id="pipelineActiveSummary">0 Active in Pipeline</span>
                     </div>
 
-                    <span class="dash-pipeline-arrow">➔</span>
-
-                    <div class="dash-pipeline-node">
-                        <span>📨 Applied</span>
-                        <span class="dash-pipeline-count" id="pipeCountApplied">0</span>
-                    </div>
-
-                    <span class="dash-pipeline-arrow">➔</span>
-
-                    <div class="dash-pipeline-node">
-                        <span>🌟 Shortlisted</span>
-                        <span class="dash-pipeline-count" id="pipeCountShortlisted">0</span>
-                    </div>
-
-                    <span class="dash-pipeline-arrow">➔</span>
-
-                    <div class="dash-pipeline-node">
-                        <span>🎙️ Interview</span>
-                        <span class="dash-pipeline-count" id="pipeCountInterview">0</span>
-                    </div>
-
-                    <span class="dash-pipeline-arrow">➔</span>
-
-                    <div class="dash-pipeline-node">
-                        <span>🎉 Selected</span>
-                        <span class="dash-pipeline-count" id="pipeCountSelected" style="background: #ecfdf5; color: #065f46; border-color: #a7f3d0;">0</span>
+                    <div class="analytics-pipeline-container">
+                        <div class="analytics-pipeline-steps" id="analyticsPipelineSteps">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                        <div class="analytics-pipeline-bar-wrapper">
+                            <div class="analytics-pipeline-bar-fill" id="analyticsPipelineBarFill" style="width: 0%;"></div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- 3 & 4. 2-COLUMN: STATUS BREAKDOWN + TOP MATCHED APPLICATIONS -->
+                <div class="analytics-grid-2col" style="margin-bottom: 24px;">
+                    <!-- 3. Status Breakdown -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <div>
+                                <div class="dash-panel-eyebrow">STAGE DISTRIBUTION</div>
+                                <h3 class="analytics-card-title">Application Status Breakdown</h3>
+                                <p class="analytics-card-subtitle">Active distribution across recruitment stages</p>
+                            </div>
+                        </div>
+                        <div class="analytics-segmented-bar" id="analyticsStatusBar">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                        <div class="analytics-status-list" id="analyticsStatusList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- 4. Top Matched Applications -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <div>
+                                <div class="dash-panel-eyebrow">PERSONAL COMPATIBILITY</div>
+                                <h3 class="analytics-card-title">Top Matched Applications</h3>
+                                <p class="analytics-card-subtitle">Tracked opportunities sorted by match score</p>
+                            </div>
+                        </div>
+                        <div class="analytics-list-container" id="analyticsTopMatchesList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5 & 6. 2-COLUMN: UPCOMING DEADLINES + SKILLS TO IMPROVE -->
+                <div class="analytics-grid-2col" style="margin-bottom: 24px;">
+                    <!-- 5. Upcoming Deadlines -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <div>
+                                <div class="dash-panel-eyebrow">TIMELINES &amp; DEADLINES</div>
+                                <h3 class="analytics-card-title">Upcoming Deadlines</h3>
+                                <p class="analytics-card-subtitle">Tracked applications sorted by nearest closing date</p>
+                            </div>
+                            <span class="analytics-pill-badge" id="upcomingDeadlinesCount">0 Upcoming</span>
+                        </div>
+                        <div class="analytics-list-container" id="analyticsDeadlinesList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- 6. Skills To Improve -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-header">
+                            <div>
+                                <div class="dash-panel-eyebrow">SKILL GAP ANALYSIS</div>
+                                <h3 class="analytics-card-title">Skills To Improve</h3>
+                                <p class="analytics-card-subtitle">Most frequently missing skills across tracked roles</p>
+                            </div>
+                            <span class="analytics-pill-badge" id="skillGapsSummaryCount">0 Skills</span>
+                        </div>
+                        <div class="analytics-list-container" id="analyticsSkillGapList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. RECENT APPLICATION ACTIVITY -->
+                <div class="analytics-card" style="margin-bottom: 28px;">
+                    <div class="analytics-card-header">
+                        <div>
+                            <div class="dash-panel-eyebrow">AUDIT LOG</div>
+                            <h3 class="analytics-card-title">Recent Application Activity</h3>
+                            <p class="analytics-card-subtitle">Timeline of actual tracker events and status transitions</p>
+                        </div>
+                        <span class="analytics-pill-badge" id="recentActivityCount">0 Events</span>
+                    </div>
+                    <div class="analytics-timeline" id="analyticsTimelineList">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -453,6 +551,7 @@
         /* -------------------------------------------------------------
            1. Global State
            ------------------------------------------------------------- */
+        let catalogOpportunities = {{ opportunities | tojson if opportunities is defined else '[]' }};
         let currentOpportunities = [];
         let currentStudentProfile = null;
 
@@ -593,8 +692,75 @@
             }
         }
 
-        function updateTrackerPipelineUI() {
+        function formatRelativeTime(isoStr) {
+            if (!isoStr) return "Recently";
+            try {
+                const date = new Date(isoStr);
+                if (isNaN(date.getTime())) return "Recently";
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                if (diffMins < 1) return "Just now";
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffHours < 24) return `${diffHours}h ago`;
+                if (diffDays === 1) return "Yesterday";
+                if (diffDays < 7) return `${diffDays}d ago`;
+                return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            } catch (e) {
+                return "Recently";
+            }
+        }
+
+        function getOppById(oppId) {
+            const idNum = Number(oppId);
+            let found = catalogOpportunities.find(o => Number(o.id) === idNum);
+            if (!found && Array.isArray(currentOpportunities)) {
+                found = currentOpportunities.find(o => Number(o.id) === idNum);
+            }
+            if (found) return found;
+            return {
+                id: idNum,
+                title: `Opportunity #${idNum}`,
+                organization: "OpportunityHub Partner",
+                category: "Opportunity",
+                deadline: "",
+                skills: [],
+                missing_skills: [],
+                score: 80
+            };
+        }
+
+        const STATUS_CONFIG = {
+            Saved: { label: "Saved", icon: "🔖", color: "#6366f1", bg: "#eef2ff", border: "#c7d2fe" },
+            Applied: { label: "Applied", icon: "📨", color: "#0284c7", bg: "#e0f2fe", border: "#bae6fd" },
+            Shortlisted: { label: "Shortlisted", icon: "🌟", color: "#d97706", bg: "#fef3c7", border: "#fde68a" },
+            Interview: { label: "Interview", icon: "🎙️", color: "#7c3aed", bg: "#ede9fe", border: "#ddd6fe" },
+            Selected: { label: "Selected", icon: "🎉", color: "#059669", bg: "#ecfdf5", border: "#a7f3d0" },
+            Rejected: { label: "Rejected", icon: "⛔", color: "#e11d48", bg: "#ffe4e6", border: "#fecdd3" }
+        };
+
+        function updateDashboardAnalytics() {
             const tracker = getTrackerData();
+            const trackedEntries = Object.entries(tracker);
+            const totalCount = trackedEntries.length;
+
+            const emptyState = document.getElementById("analyticsEmptyState");
+            const dataContainer = document.getElementById("analyticsDataContainer");
+
+            // Empty state check (do not render fake zero-filled charts)
+            if (totalCount === 0) {
+                if (emptyState) emptyState.style.display = "block";
+                if (dataContainer) dataContainer.style.display = "none";
+                return;
+            }
+
+            if (emptyState) emptyState.style.display = "none";
+            if (dataContainer) dataContainer.style.display = "block";
+
+            // Stage counts
             const counts = {
                 Saved: 0,
                 Applied: 0,
@@ -604,47 +770,373 @@
                 Rejected: 0
             };
 
-            Object.values(tracker).forEach(item => {
+            trackedEntries.forEach(([id, item]) => {
                 const st = item.status;
                 if (counts[st] !== undefined) {
                     counts[st]++;
                 }
             });
 
-            // Update 6-stage metric counts
-            const elSaved = document.getElementById("dashCountSaved");
+            // 1. OVERVIEW KPI CARDS
+            const elTotal = document.getElementById("analyticsTotalCount");
             const elApplied = document.getElementById("dashCountApplied");
             const elShortlisted = document.getElementById("dashCountShortlisted");
             const elInterview = document.getElementById("dashCountInterview");
             const elSelected = document.getElementById("dashCountSelected");
             const elRejected = document.getElementById("dashCountRejected");
+            const elSaved = document.getElementById("dashCountSaved");
 
-            if (elSaved) elSaved.textContent = counts.Saved;
+            if (elTotal) elTotal.textContent = totalCount;
             if (elApplied) elApplied.textContent = counts.Applied;
             if (elShortlisted) elShortlisted.textContent = counts.Shortlisted;
             if (elInterview) elInterview.textContent = counts.Interview;
             if (elSelected) elSelected.textContent = counts.Selected;
             if (elRejected) elRejected.textContent = counts.Rejected;
+            if (elSaved) elSaved.textContent = counts.Saved;
 
-            // Update visual pipeline track nodes
-            const pipeSaved = document.getElementById("pipeCountSaved");
-            const pipeApplied = document.getElementById("pipeCountApplied");
-            const pipeShortlisted = document.getElementById("pipeCountShortlisted");
-            const pipeInterview = document.getElementById("pipeCountInterview");
-            const pipeSelected = document.getElementById("pipeCountSelected");
+            // 2. RECRUITMENT PIPELINE PROGRESS
+            const pipelineStages = ["Saved", "Applied", "Shortlisted", "Interview", "Selected"];
+            const pipelineStepsElem = document.getElementById("analyticsPipelineSteps");
+            const pipelineBarFill = document.getElementById("analyticsPipelineBarFill");
+            const pipelineSummary = document.getElementById("pipelineActiveSummary");
 
-            if (pipeSaved) pipeSaved.textContent = counts.Saved;
-            if (pipeApplied) pipeApplied.textContent = counts.Applied;
-            if (pipeShortlisted) pipeShortlisted.textContent = counts.Shortlisted;
-            if (pipeInterview) pipeInterview.textContent = counts.Interview;
-            if (pipeSelected) pipeSelected.textContent = counts.Selected;
+            // Weighted conversion funnel progress
+            const weights = { Saved: 20, Applied: 40, Shortlisted: 60, Interview: 80, Selected: 100 };
+            const activeCount = counts.Saved + counts.Applied + counts.Shortlisted + counts.Interview + counts.Selected;
 
-            // Total in active pipeline (Saved + Applied + Shortlisted + Interview + Selected)
-            const activePipelineTotal = counts.Saved + counts.Applied + counts.Shortlisted + counts.Interview + counts.Selected;
-            const elActiveTotal = document.getElementById("dashActivePipelineCount");
-            if (elActiveTotal) {
-                elActiveTotal.textContent = `${activePipelineTotal} Active in Pipeline`;
+            let overallProgress = 0;
+            if (activeCount > 0) {
+                const totalScore = (counts.Saved * weights.Saved) +
+                                   (counts.Applied * weights.Applied) +
+                                   (counts.Shortlisted * weights.Shortlisted) +
+                                   (counts.Interview * weights.Interview) +
+                                   (counts.Selected * weights.Selected);
+                overallProgress = Math.min(100, Math.round(totalScore / activeCount));
             }
+
+            if (pipelineSummary) {
+                pipelineSummary.textContent = `${activeCount} Active in Pipeline (${overallProgress}% Progress)`;
+            }
+
+            if (pipelineBarFill) {
+                pipelineBarFill.style.width = `${overallProgress}%`;
+            }
+
+            if (pipelineStepsElem) {
+                pipelineStepsElem.innerHTML = pipelineStages.map((stage, idx) => {
+                    const cfg = STATUS_CONFIG[stage] || { icon: '📋' };
+                    const stageCount = counts[stage];
+                    const pct = totalCount > 0 ? Math.round((stageCount / totalCount) * 100) : 0;
+                    const isActive = stageCount > 0;
+
+                    return `
+                        <div class="analytics-pipeline-step ${isActive ? 'active' : ''}">
+                            <div class="analytics-step-circle">${idx + 1}</div>
+                            <div class="analytics-step-label">${cfg.icon} ${stage}</div>
+                            <div class="analytics-step-count">${stageCount}</div>
+                            <div class="analytics-step-pct">${pct}% of total</div>
+                        </div>
+                    `;
+                }).join("");
+            }
+
+            // Build tracked opportunities details list
+            const studentSkills = ((currentStudentProfile && currentStudentProfile.skills) || []).map(s => String(s).toLowerCase().trim());
+
+            const trackedOpps = trackedEntries.map(([id, item]) => {
+                const opp = getOppById(id);
+
+                // Calculate match score
+                let score = 80;
+                if (typeof opp.score === 'number') {
+                    score = opp.score;
+                } else if (opp.skills && opp.skills.length > 0 && studentSkills.length > 0) {
+                    const matched = opp.skills.filter(s => studentSkills.includes(s.toLowerCase().trim()));
+                    score = Math.min(100, Math.max(50, Math.round((matched.length / opp.skills.length) * 50) + 50));
+                }
+
+                // Resolve missing skills
+                let missing = [];
+                if (Array.isArray(opp.missing_skills) && opp.missing_skills.length > 0) {
+                    missing = opp.missing_skills;
+                } else if (Array.isArray(opp.skills) && studentSkills.length > 0) {
+                    missing = opp.skills.filter(s => !studentSkills.includes(s.toLowerCase().trim()));
+                }
+
+                return {
+                    id: Number(id),
+                    title: opp.title || `Opportunity #${id}`,
+                    organization: opp.organization || "OpportunityHub Partner",
+                    category: opp.category || "General",
+                    deadline: opp.deadline || "",
+                    score: score,
+                    missing_skills: missing,
+                    status: item.status || "Saved",
+                    appliedDate: item.appliedDate || "",
+                    notes: item.notes || "",
+                    updatedAt: item.updatedAt || ""
+                };
+            });
+
+            // 3. APPLICATION STATUS BREAKDOWN (Only include statuses that exist in user's data)
+            const statusBar = document.getElementById("analyticsStatusBar");
+            const statusList = document.getElementById("analyticsStatusList");
+            const activeStatuses = Object.keys(counts).filter(st => counts[st] > 0);
+
+            if (statusBar) {
+                if (activeStatuses.length === 0) {
+                    statusBar.innerHTML = `<div class="analytics-status-segment" style="width: 100%; background: #e2e8f0;"></div>`;
+                } else {
+                    statusBar.innerHTML = activeStatuses.map(st => {
+                        const pct = ((counts[st] / totalCount) * 100).toFixed(1);
+                        const cfg = STATUS_CONFIG[st] || { color: '#64748b' };
+                        return `<div class="analytics-status-segment" style="width: ${pct}%; background-color: ${cfg.color};" title="${st}: ${counts[st]} (${pct}%)"></div>`;
+                    }).join("");
+                }
+            }
+
+            if (statusList) {
+                if (activeStatuses.length === 0) {
+                    statusList.innerHTML = `<div class="analytics-mini-empty">No active statuses recorded.</div>`;
+                } else {
+                    statusList.innerHTML = activeStatuses.map(st => {
+                        const count = counts[st];
+                        const pct = Math.round((count / totalCount) * 100);
+                        const cfg = STATUS_CONFIG[st] || { icon: '📋', color: '#64748b', bg: '#f1f5f9', border: '#e2e8f0' };
+                        return `
+                            <div class="analytics-status-item">
+                                <div class="analytics-status-left">
+                                    <span class="analytics-status-dot" style="background-color: ${cfg.color};"></span>
+                                    <span>${cfg.icon} ${st}</span>
+                                </div>
+                                <div class="analytics-status-right">
+                                    <span class="analytics-status-count">${count} ${count === 1 ? 'role' : 'roles'}</span>
+                                    <span class="analytics-status-pct" style="background: ${cfg.bg}; color: ${cfg.color}; border: 1px solid ${cfg.border};">${pct}%</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+
+            // 4. TOP MATCHED APPLICATIONS (Sorted by match score descending, top 3-5)
+            const topMatchesContainer = document.getElementById("analyticsTopMatchesList");
+            if (topMatchesContainer) {
+                const sortedByMatch = [...trackedOpps].sort((a, b) => b.score - a.score);
+                const topPicks = sortedByMatch.slice(0, 5);
+
+                if (topPicks.length === 0) {
+                    topMatchesContainer.innerHTML = `<div class="analytics-mini-empty">No tracked applications yet.</div>`;
+                } else {
+                    topMatchesContainer.innerHTML = topPicks.map(app => {
+                        const cfg = STATUS_CONFIG[app.status] || { icon: '📋', color: '#475569', bg: '#f1f5f9', border: '#e2e8f0' };
+                        return `
+                            <a href="/opportunity/${app.id}" class="analytics-top-item" title="View details for ${app.title}">
+                                <div style="min-width: 0;">
+                                    <div class="analytics-top-title">${app.title}</div>
+                                    <div class="analytics-top-org">🏢 ${app.organization} • <span style="color: #4f46e5; font-weight: 600;">${app.category}</span></div>
+                                </div>
+                                <div class="analytics-top-badges">
+                                    <span class="match-badge" style="font-size: 11px; padding: 3px 8px;">${app.score}% Match</span>
+                                    <span class="status-badge" style="background: ${cfg.bg}; color: ${cfg.color}; border: 1px solid ${cfg.border}; font-size: 11px; padding: 3px 8px;">
+                                        ${cfg.icon} ${app.status}
+                                    </span>
+                                </div>
+                            </a>
+                        `;
+                    }).join("");
+                }
+            }
+
+            // 5. UPCOMING DEADLINES (Tracked, non-expired, sorted nearest first)
+            const deadlinesContainer = document.getElementById("analyticsDeadlinesList");
+            const deadlinesBadge = document.getElementById("upcomingDeadlinesCount");
+
+            const upcomingList = trackedOpps
+                .map(app => {
+                    const statusInfo = getDeadlineStatus(app.deadline);
+                    return { ...app, deadlineInfo: statusInfo };
+                })
+                .filter(app => app.deadline && app.deadlineInfo.days >= 0);
+
+            upcomingList.sort((a, b) => a.deadlineInfo.days - b.deadlineInfo.days);
+
+            if (deadlinesBadge) {
+                deadlinesBadge.textContent = `${upcomingList.length} Upcoming`;
+            }
+
+            if (deadlinesContainer) {
+                if (upcomingList.length === 0) {
+                    deadlinesContainer.innerHTML = `<div class="analytics-mini-empty">🎉 No upcoming deadlines for your tracked applications.</div>`;
+                } else {
+                    deadlinesContainer.innerHTML = upcomingList.slice(0, 5).map(app => {
+                        let badgeType = "open";
+                        if (app.deadlineInfo.days <= 3) badgeType = "urgent";
+                        else if (app.deadlineInfo.days <= 7) badgeType = "soon";
+
+                        const cfg = STATUS_CONFIG[app.status] || { icon: '📋', color: '#475569', bg: '#f1f5f9', border: '#e2e8f0' };
+
+                        return `
+                            <div class="analytics-deadline-item">
+                                <div class="analytics-deadline-left" style="min-width: 0;">
+                                    <div class="analytics-deadline-title">
+                                        <a href="/opportunity/${app.id}">${app.title}</a>
+                                    </div>
+                                    <div class="analytics-deadline-org">
+                                        🏢 ${app.organization} • 📅 ${app.deadline}
+                                    </div>
+                                </div>
+                                <div class="analytics-deadline-right">
+                                    <span class="analytics-days-badge ${badgeType}">${app.deadlineInfo.label}</span>
+                                    <span class="status-badge" style="background: ${cfg.bg}; color: ${cfg.color}; border: 1px solid ${cfg.border}; font-size: 11px; padding: 2px 7px;">
+                                        ${cfg.icon} ${app.status}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+
+            // 6. SKILL GAP ANALYTICS (Frequency of missing skills across tracked roles)
+            const skillGapContainer = document.getElementById("analyticsSkillGapList");
+            const skillGapBadge = document.getElementById("skillGapsSummaryCount");
+
+            const skillFrequency = {};
+            trackedOpps.forEach(app => {
+                if (Array.isArray(app.missing_skills)) {
+                    app.missing_skills.forEach(s => {
+                        if (typeof s === 'string' && s.trim().length > 0) {
+                            const trimmed = s.trim();
+                            skillFrequency[trimmed] = (skillFrequency[trimmed] || 0) + 1;
+                        }
+                    });
+                }
+            });
+
+            const sortedSkills = Object.entries(skillFrequency).sort((a, b) => b[1] - a[1]);
+
+            if (skillGapBadge) {
+                skillGapBadge.textContent = `${sortedSkills.length} Skills`;
+            }
+
+            if (skillGapContainer) {
+                if (sortedSkills.length === 0) {
+                    skillGapContainer.innerHTML = `
+                        <div class="analytics-mini-empty">
+                            ✨ You possess all key skills for your tracked opportunities, or complete your profile skills to see gaps.
+                        </div>
+                    `;
+                } else {
+                    const maxFreq = sortedSkills[0][1];
+                    skillGapContainer.innerHTML = sortedSkills.slice(0, 5).map(([skill, count]) => {
+                        const pct = Math.max(15, Math.round((count / maxFreq) * 100));
+                        return `
+                            <div class="analytics-skill-item">
+                                <div class="analytics-skill-header">
+                                    <span class="analytics-skill-name">
+                                        <span>💡</span> ${skill}
+                                    </span>
+                                    <span class="analytics-skill-count">Needed in ${count} ${count === 1 ? 'role' : 'roles'}</span>
+                                </div>
+                                <div class="analytics-skill-bar-track">
+                                    <div class="analytics-skill-bar-fill" style="width: ${pct}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+
+            // 7. RECENT APPLICATION ACTIVITY TIMELINE
+            const timelineContainer = document.getElementById("analyticsTimelineList");
+            const timelineBadge = document.getElementById("recentActivityCount");
+
+            const events = [];
+            trackedOpps.forEach(app => {
+                const updatedDate = app.updatedAt ? new Date(app.updatedAt) : new Date(0);
+
+                // Applied Event
+                if (app.appliedDate) {
+                    const appliedDateObj = new Date(app.appliedDate);
+                    events.push({
+                        time: isNaN(appliedDateObj.getTime()) ? updatedDate : appliedDateObj,
+                        icon: "📨",
+                        iconBg: "#e0f2fe",
+                        actionText: `Submitted application for <a href="/opportunity/${app.id}">${app.title}</a>`,
+                        meta: `Status: Applied`
+                    });
+                }
+
+                // Stage Progression Event
+                if (["Shortlisted", "Interview", "Selected", "Rejected"].includes(app.status)) {
+                    const cfg = STATUS_CONFIG[app.status] || { icon: '📋', bg: '#f1f5f9' };
+                    events.push({
+                        time: updatedDate,
+                        icon: cfg.icon,
+                        iconBg: cfg.bg,
+                        actionText: `Progressed to <strong>${app.status}</strong> for <a href="/opportunity/${app.id}">${app.title}</a>`,
+                        meta: `Recruitment milestone`
+                    });
+                } else if (app.status === "Saved" && !app.appliedDate) {
+                    events.push({
+                        time: updatedDate,
+                        icon: "🔖",
+                        iconBg: "#eef2ff",
+                        actionText: `Bookmarked <a href="/opportunity/${app.id}">${app.title}</a> to application tracker`,
+                        meta: `Saved opportunity`
+                    });
+                }
+
+                // Notes Event
+                if (app.notes && app.notes.trim().length > 0) {
+                    events.push({
+                        time: updatedDate,
+                        icon: "📝",
+                        iconBg: "#fef3c7",
+                        actionText: `Updated private notes for <a href="/opportunity/${app.id}">${app.title}</a>`,
+                        meta: `Personal notes logged`
+                    });
+                }
+            });
+
+            // Sort newest events first
+            events.sort((a, b) => b.time - a.time);
+
+            if (timelineBadge) {
+                timelineBadge.textContent = `${events.length} Events`;
+            }
+
+            if (timelineContainer) {
+                if (events.length === 0) {
+                    timelineContainer.innerHTML = `<div class="analytics-mini-empty">No activity recorded yet. Start applying or bookmarking opportunities!</div>`;
+                } else {
+                    timelineContainer.innerHTML = events.slice(0, 6).map(evt => {
+                        const isoStr = evt.time instanceof Date && !isNaN(evt.time.getTime()) ? evt.time.toISOString() : "";
+                        return `
+                            <div class="analytics-timeline-item">
+                                <div class="analytics-timeline-icon" style="background: ${evt.iconBg};">
+                                    ${evt.icon}
+                                </div>
+                                <div class="analytics-timeline-body">
+                                    <div class="analytics-timeline-text">
+                                        ${evt.actionText}
+                                    </div>
+                                    <div class="analytics-timeline-meta">
+                                        <span>🕒 ${formatRelativeTime(isoStr)}</span>
+                                        <span>•</span>
+                                        <span>${evt.meta}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+        }
+
+        function updateTrackerPipelineUI() {
+            updateDashboardAnalytics();
         }
 
         /* -------------------------------------------------------------
@@ -679,8 +1171,8 @@
             if (completionElem) completionElem.textContent = `${completionPct}%`;
             if (progressFillElem) progressFillElem.style.width = `${completionPct}%`;
 
-            // 5. Update Application Tracker Pipeline
-            updateTrackerPipelineUI();
+            // 5. Update Application Tracker Pipeline & Analytics
+            updateDashboardAnalytics();
         }
 
         /* -------------------------------------------------------------
@@ -1157,7 +1649,18 @@
                 const data = await response.json();
                 currentOpportunities = Array.isArray(data) ? data : [];
 
+                // Merge scored recommendation data into catalogOpportunities
+                currentOpportunities.forEach(rec => {
+                    const existing = catalogOpportunities.find(o => Number(o.id) === Number(rec.id));
+                    if (existing) {
+                        Object.assign(existing, rec);
+                    } else {
+                        catalogOpportunities.push(rec);
+                    }
+                });
+
                 updateKPIs();
+                updateDashboardAnalytics();
                 renderRecommendedCards(currentOpportunities);
                 renderSavedPreview();
 

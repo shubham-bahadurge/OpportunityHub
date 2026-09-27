@@ -23,11 +23,11 @@
                     <span class="logo-icon">🚀</span>
                     <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
                 </a>
-                <div class="admin-portal-badge">ADMIN PORTAL</div>
+                <div class="admin-portal-badge">ADMIN PANEL</div>
             </div>
 
             <nav class="admin-sidebar-nav">
-                <div class="admin-nav-group-label">Core Management</div>
+                <div class="admin-nav-group-label">Admin Panel</div>
 
                 <button type="button" class="admin-nav-link active" data-tab="overviewTab" onclick="switchAdminTab('overviewTab')">
                     <span class="admin-nav-icon">📊</span>
@@ -42,7 +42,7 @@
 
                 <button type="button" class="admin-nav-link" data-tab="studentsTab" onclick="switchAdminTab('studentsTab')">
                     <span class="admin-nav-icon">👥</span>
-                    <span>Student Overview</span>
+                    <span>Students</span>
                 </button>
 
                 <button type="button" class="admin-nav-link" data-tab="applicationsTab" onclick="switchAdminTab('applicationsTab')">
@@ -51,21 +51,21 @@
                     <span class="admin-nav-count" id="sidebarAppCount">0</span>
                 </button>
 
-                <div class="admin-nav-group-label" style="margin-top: 20px;">System &amp; Links</div>
+                <button type="button" class="admin-nav-link" data-tab="activityTab" onclick="switchAdminTab('activityTab')">
+                    <span class="admin-nav-icon">⚡</span>
+                    <span>Activity</span>
+                </button>
+
+                <div class="admin-nav-group-label" style="margin-top: 16px;">System</div>
 
                 <button type="button" class="admin-nav-link" data-tab="settingsTab" onclick="switchAdminTab('settingsTab')">
                     <span class="admin-nav-icon">⚙️</span>
-                    <span>System Settings</span>
+                    <span>Settings</span>
                 </button>
-
-                <a href="/dashboard" class="admin-nav-link" target="_blank" rel="noopener">
-                    <span class="admin-nav-icon">🎓</span>
-                    <span>Student View ↗</span>
-                </a>
 
                 <a href="/logout" class="admin-nav-link admin-nav-logout">
                     <span class="admin-nav-icon">🚪</span>
-                    <span>Sign Out</span>
+                    <span>Logout</span>
                 </a>
             </nav>
 
@@ -73,8 +73,8 @@
                 <div class="admin-user-info">
                     <div class="admin-user-avatar">A</div>
                     <div class="admin-user-meta">
-                        <div class="admin-user-name">{{ current_user.name if current_user else 'Administrator' }}</div>
-                        <div class="admin-user-email">Administrator Account</div>
+                        <div class="admin-user-name">Administrator</div>
+                        <div class="admin-user-email">admin@opportunityhub.com</div>
                     </div>
                 </div>
             </div>
@@ -92,12 +92,19 @@
                         ☰
                     </button>
                     <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                            <span style="font-size: 15px; font-weight: 800; color: #0f172a;">Opportunity<span class="gradient-text">Hub</span></span>
+                            <span class="admin-portal-badge">ADMIN PANEL</span>
+                        </div>
                         <h1 class="admin-page-title" id="adminSectionTitle">Administrative Dashboard</h1>
                         <p class="admin-page-subtitle">Real-time catalog control, student session inspection, and application tracking.</p>
                     </div>
                 </div>
 
                 <div class="admin-topbar-right">
+                    <div style="font-size: 13px; font-weight: 600; color: #475569; background: #f1f5f9; padding: 6px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <span>📧 admin@opportunityhub.com</span>
+                    </div>
                     <button type="button" class="primary-btn" onclick="openAddModal()" style="padding: 9px 18px; font-size: 13px;">
                         <span>➕ Add Opportunity</span>
                     </button>
@@ -122,38 +129,38 @@
                 <div class="admin-kpi-grid">
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-header">
-                            <span class="admin-kpi-label">Active Opportunities</span>
+                            <span class="admin-kpi-label">Total Opportunities</span>
                             <span class="admin-kpi-icon" style="background: #eef2ff; color: #4338ca;">💼</span>
                         </div>
                         <div class="admin-kpi-value" id="kpiTotalOpps">0</div>
-                        <div class="admin-kpi-sub">Curated across all categories</div>
+                        <div class="admin-kpi-sub">Curated in catalog</div>
                     </div>
 
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-header">
-                            <span class="admin-kpi-label">Total Categories</span>
-                            <span class="admin-kpi-icon" style="background: #f0fdf4; color: #15803d;">📁</span>
+                            <span class="admin-kpi-label">Active Opportunities</span>
+                            <span class="admin-kpi-icon" style="background: #f0fdf4; color: #15803d;">⚡</span>
                         </div>
-                        <div class="admin-kpi-value" id="kpiTotalCats">0</div>
-                        <div class="admin-kpi-sub">Internships, Hackathons, etc.</div>
+                        <div class="admin-kpi-value" id="kpiActiveOpps">0</div>
+                        <div class="admin-kpi-sub">Currently open for application</div>
                     </div>
 
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-header">
-                            <span class="admin-kpi-label">Current Demo Student</span>
+                            <span class="admin-kpi-label">Total Students</span>
                             <span class="admin-kpi-icon" style="background: #fef3c7; color: #b45309;">👤</span>
                         </div>
-                        <div class="admin-kpi-value" id="kpiStudentName" style="font-size: 18px; line-height: 1.3;">Demo Student</div>
-                        <div class="admin-kpi-sub" id="kpiStudentStatus">Active in browser session</div>
+                        <div class="admin-kpi-value" id="kpiTotalStudents">1</div>
+                        <div class="admin-kpi-sub" id="kpiStudentStatus">Demo Student (student@opportunityhub.com)</div>
                     </div>
 
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-header">
-                            <span class="admin-kpi-label">Tracked Applications</span>
+                            <span class="admin-kpi-label">Total Applications</span>
                             <span class="admin-kpi-icon" style="background: #e0f2fe; color: #0369a1;">📨</span>
                         </div>
                         <div class="admin-kpi-value" id="kpiTotalApps">0</div>
-                        <div class="admin-kpi-sub" id="kpiAppsSub">In browser pipeline</div>
+                        <div class="admin-kpi-sub" id="kpiAppsSub">Current Demo Applications</div>
                     </div>
                 </div>
 
@@ -259,18 +266,18 @@
 
             </section>
 
-            <!-- TAB 3: STUDENT OVERVIEW -->
+            <!-- TAB 3: CURRENT DEMO STUDENT -->
             <section class="admin-tab-content" id="studentsTab">
 
                 <div class="admin-panel-card">
                     <div class="admin-panel-header">
                         <div>
-                            <h2 class="admin-panel-title">Current Demo Student Profile</h2>
+                            <h2 class="admin-panel-title">Current Demo Student</h2>
                             <p class="admin-panel-sub">
-                                Data detected from active browser session (<code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">localStorage.studentProfile</code>).
+                                Demo student account (<code>student@opportunityhub.com</code>) active in local browser session.
                             </p>
                         </div>
-                        <span class="role-badge role-student" style="font-size: 12px; padding: 4px 10px;">Browser Local Session</span>
+                        <span class="role-badge role-student" style="font-size: 12px; padding: 4px 10px;">student@opportunityhub.com</span>
                     </div>
 
                     <div id="studentOverviewContainer">
@@ -280,18 +287,18 @@
 
             </section>
 
-            <!-- TAB 4: APPLICATIONS OVERVIEW -->
+            <!-- TAB 4: CURRENT DEMO STUDENT APPLICATIONS -->
             <section class="admin-tab-content" id="applicationsTab">
 
                 <div class="admin-panel-card">
                     <div class="admin-panel-header">
                         <div>
-                            <h2 class="admin-panel-title">Application Pipeline Overview</h2>
+                            <h2 class="admin-panel-title">Current Demo Student Applications</h2>
                             <p class="admin-panel-sub">
-                                Applications recorded in the current browser session (<code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">localStorage.applicationTracker</code>).
+                                Applications submitted and tracked by the current demo student (<code>localStorage.applicationTracker</code>).
                             </p>
                         </div>
-                        <span class="role-badge role-admin" style="font-size: 12px; padding: 4px 10px;">Demo Tracker Data</span>
+                        <span class="role-badge role-admin" style="font-size: 12px; padding: 4px 10px;">Demo Pipeline</span>
                     </div>
 
                     <div id="adminApplicationsContainer">
@@ -301,8 +308,78 @@
 
             </section>
 
-            <!-- TAB 5: SYSTEM & SETTINGS -->
+            <!-- TAB 5: ADMIN ACTIVITY AUDIT LOG -->
+            <section class="admin-tab-content" id="activityTab">
+
+                <div class="admin-panel-card">
+                    <div class="admin-panel-header">
+                        <div>
+                            <h2 class="admin-panel-title">Admin Activity Audit Log</h2>
+                            <p class="admin-panel-sub">
+                                Real actions logged during administrative sessions (Opportunity additions, modifications, and deletions). No synthetic logs.
+                            </p>
+                        </div>
+                        <button type="button" class="admin-clear-log-btn" onclick="clearAdminActivityLog()">
+                            Clear Log
+                        </button>
+                    </div>
+
+                    <div class="admin-activity-timeline" id="adminActivityListTab">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- TAB 6: SYSTEM & SETTINGS -->
             <section class="admin-tab-content" id="settingsTab">
+
+                <div class="admin-panel-card" style="margin-bottom: 24px;">
+                    <div class="admin-panel-header">
+                        <div>
+                            <h2 class="admin-panel-title">Platform &amp; System Configuration</h2>
+                            <p class="admin-panel-sub">Manage platform parameters, access policies, and matching defaults.</p>
+                        </div>
+                        <span class="role-badge role-admin" style="font-size: 12px; padding: 4px 10px;">Admin Settings</span>
+                    </div>
+
+                    <form id="adminSettingsForm" onsubmit="handleSaveSettings(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 10px;">
+                        <div class="admin-form-group">
+                            <label class="form-label" for="settingPlatformTitle">Platform Title</label>
+                            <input type="text" id="settingPlatformTitle" class="form-input" value="OpportunityHub" required>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="form-label" for="settingAllowReg">Allow New Student Registrations</label>
+                            <select id="settingAllowReg" class="admin-select" style="width: 100%;">
+                                <option value="true" selected>Enabled (Open Student Access)</option>
+                                <option value="false">Disabled (Invite Only)</option>
+                            </select>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="form-label" for="settingDefaultRole">Default New Account Role</label>
+                            <select id="settingDefaultRole" class="admin-select" style="width: 100%;">
+                                <option value="student" selected>Student</option>
+                            </select>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label class="form-label" for="settingCuration">Opportunity Curation Policy</label>
+                            <select id="settingCuration" class="admin-select" style="width: 100%;">
+                                <option value="manual" selected>Admin Verification Required</option>
+                                <option value="instant">Instant Auto-Publish</option>
+                            </select>
+                        </div>
+
+                        <div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; margin-top: 6px;">
+                            <button type="submit" class="primary-btn" style="padding: 10px 22px; font-size: 13px;">
+                                💾 Save Platform Settings
+                            </button>
+                            <span id="settingsSaveFeedback" style="font-size: 13px; font-weight: 600; color: #10b981; display: none;">✓ Settings successfully updated</span>
+                        </div>
+                    </form>
+                </div>
 
                 <div class="admin-panel-card" style="margin-bottom: 24px;">
                     <h2 class="admin-panel-title">Hackathon MVP Prototype Architecture</h2>
@@ -316,7 +393,7 @@
 
                         <div class="admin-setting-item">
                             <div class="admin-setting-label">Authentication System</div>
-                            <div class="admin-setting-val">Flask Server-Side Session + Role-Based Access Control</div>
+                            <div class="admin-setting-val">Flask Server-Side Session + Strict Role-Based Access Control</div>
                         </div>
 
                         <div class="admin-setting-item">
@@ -479,8 +556,12 @@
         }
 
         function renderAdminActivity() {
-            const container = document.getElementById("adminActivityList");
-            if (!container) return;
+            const containers = [
+                document.getElementById("adminActivityList"),
+                document.getElementById("adminActivityListTab")
+            ].filter(Boolean);
+
+            if (containers.length === 0) return;
 
             let list = [];
             try {
@@ -491,16 +572,18 @@
             }
 
             if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="admin-empty-state" style="padding: 24px;">
-                        <span>📋</span>
-                        <p>No actions logged yet in this session. Add, edit, or delete an opportunity to create entries.</p>
-                    </div>
-                `;
+                containers.forEach(c => {
+                    c.innerHTML = `
+                        <div class="admin-empty-state" style="padding: 24px;">
+                            <span>📋</span>
+                            <p>No actions logged yet in this session. Add, edit, or delete an opportunity to create entries.</p>
+                        </div>
+                    `;
+                });
                 return;
             }
 
-            container.innerHTML = list.map(item => {
+            const html = list.map(item => {
                 const d = new Date(item.timestamp);
                 const timeStr = isNaN(d.getTime()) ? "Recently" : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + " · " + d.toLocaleDateString([], { month: 'short', day: 'numeric' });
                 return `
@@ -513,6 +596,8 @@
                     </div>
                 `;
             }).join("");
+
+            containers.forEach(c => { c.innerHTML = html; });
         }
 
         function clearAdminActivityLog() {
@@ -535,9 +620,10 @@
             const titleMap = {
                 overviewTab: "Administrative Dashboard",
                 opportunitiesTab: "Opportunity Catalog Management",
-                studentsTab: "Student Overview (Local Session)",
-                applicationsTab: "Application Pipeline (Local Session)",
-                settingsTab: "System Architecture & Settings"
+                studentsTab: "Current Demo Student",
+                applicationsTab: "Current Demo Student Applications",
+                activityTab: "Admin Activity Audit Log",
+                settingsTab: "Platform & System Configuration"
             };
 
             const titleElem = document.getElementById("adminSectionTitle");
@@ -553,6 +639,7 @@
             if (tabId === "studentsTab") renderStudentOverview();
             if (tabId === "applicationsTab") renderApplicationsOverview();
             if (tabId === "opportunitiesTab") filterAdminOpportunities();
+            if (tabId === "activityTab") renderAdminActivity();
         }
 
         function toggleAdminSidebar() {
@@ -564,30 +651,23 @@
            4. Render Overview & KPIs
            ------------------------------------------------------------- */
         function renderOverview() {
-            // Opportunities Count
+            // Total Opportunities
             const elTotalOpps = document.getElementById("kpiTotalOpps");
             const sidebarOppCount = document.getElementById("sidebarOppCount");
             if (elTotalOpps) elTotalOpps.textContent = activeOpportunities.length;
             if (sidebarOppCount) sidebarOppCount.textContent = activeOpportunities.length;
 
-            // Categories Count
-            const categories = new Set(activeOpportunities.map(o => o.category).filter(Boolean));
-            const elTotalCats = document.getElementById("kpiTotalCats");
-            if (elTotalCats) elTotalCats.textContent = categories.size;
+            // Active Opportunities (deadlines open or >= today)
+            const todayStr = new Date().toISOString().split("T")[0];
+            const activeCount = activeOpportunities.filter(o => !o.deadline || o.deadline >= todayStr).length;
+            const elActiveOpps = document.getElementById("kpiActiveOpps");
+            if (elActiveOpps) elActiveOpps.textContent = activeCount;
 
-            // Student Status
-            let studentName = "None Recorded";
-            try {
-                const rawProfile = localStorage.getItem("studentProfile");
-                if (rawProfile) {
-                    const prof = JSON.parse(rawProfile);
-                    if (prof && prof.name) studentName = prof.name;
-                }
-            } catch (e) {}
-            const elStudent = document.getElementById("kpiStudentName");
-            if (elStudent) elStudent.textContent = studentName;
+            // Total Students
+            const elTotalStudents = document.getElementById("kpiTotalStudents");
+            if (elTotalStudents) elTotalStudents.textContent = "1";
 
-            // Applications Count
+            // Total Applications
             let appCount = 0;
             try {
                 const rawApps = localStorage.getItem("applicationTracker");
@@ -975,9 +1055,61 @@
             `;
         }
 
+        /* -------------------------------------------------------------
+           9. System Settings Persistence
+           ------------------------------------------------------------- */
+        function loadAdminSettings() {
+            try {
+                const raw = localStorage.getItem("adminSettings");
+                if (raw) {
+                    const settings = JSON.parse(raw);
+                    if (settings.title) {
+                        const el = document.getElementById("settingPlatformTitle");
+                        if (el) el.value = settings.title;
+                    }
+                    if (settings.allowReg !== undefined) {
+                        const el = document.getElementById("settingAllowReg");
+                        if (el) el.value = settings.allowReg ? "true" : "false";
+                    }
+                    if (settings.defaultRole) {
+                        const el = document.getElementById("settingDefaultRole");
+                        if (el) el.value = settings.defaultRole;
+                    }
+                    if (settings.curation) {
+                        const el = document.getElementById("settingCuration");
+                        if (el) el.value = settings.curation;
+                    }
+                }
+            } catch (e) {
+                console.error("Error loading admin settings", e);
+            }
+        }
+
+        function handleSaveSettings(e) {
+            e.preventDefault();
+            const title = document.getElementById("settingPlatformTitle")?.value || "OpportunityHub";
+            const allowReg = document.getElementById("settingAllowReg")?.value === "true";
+            const defaultRole = document.getElementById("settingDefaultRole")?.value || "student";
+            const curation = document.getElementById("settingCuration")?.value || "manual";
+
+            const settings = { title, allowReg, defaultRole, curation, updatedAt: new Date().toISOString() };
+            try {
+                localStorage.setItem("adminSettings", JSON.stringify(settings));
+                logAdminActivity(`Updated platform settings: "${title}" (Registration: ${allowReg ? 'Open' : 'Restricted'})`, "⚙️");
+                const feedback = document.getElementById("settingsSaveFeedback");
+                if (feedback) {
+                    feedback.style.display = "inline";
+                    setTimeout(() => { feedback.style.display = "none"; }, 3500);
+                }
+            } catch (err) {
+                console.error("Failed to save settings", err);
+            }
+        }
+
         // Initialize on load
         document.addEventListener("DOMContentLoaded", () => {
             loadAdminOpportunities();
+            loadAdminSettings();
             renderOverview();
             filterAdminOpportunities();
         });

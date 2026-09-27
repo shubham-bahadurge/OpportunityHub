@@ -47,11 +47,19 @@ def login_required(role=None):
             user = session.get("user")
             if not user:
                 return redirect(url_for("login", next=request.path))
-            if role and user.get("role") != role:
-                if user.get("role") == "student" and role == "admin":
-                    # Student attempting to access admin portal
-                    return redirect(url_for("dashboard"))
-                return redirect(url_for("login"))
+            user_role = user.get("role")
+            if role:
+                if user_role != role:
+                    if user_role == "student" and role == "admin":
+                        # Student attempting to access admin portal
+                        return redirect(url_for("student_panel"))
+                    elif user_role == "admin" and role == "student":
+                        # Admin attempting to access student portal
+                        return redirect(url_for("admin_panel"))
+                    return redirect(url_for("login"))
+            else:
+                if user_role == "admin":
+                    return redirect(url_for("admin_panel"))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -88,10 +96,12 @@ def login():
 
             next_url = request.args.get("next")
             if not next_url or not next_url.startswith("/") or next_url.startswith("//"):
-                next_url = url_for("admin_panel") if user_record["role"] == "admin" else url_for("dashboard")
+                next_url = url_for("admin_panel") if user_record["role"] == "admin" else url_for("student_panel")
             else:
                 if user_record["role"] == "student" and next_url.startswith("/admin"):
-                    next_url = url_for("dashboard")
+                    next_url = url_for("student_panel")
+                elif user_record["role"] == "admin" and (next_url.startswith("/student") or next_url.startswith("/dashboard") or next_url.startswith("/applications") or next_url.startswith("/saved") or next_url.startswith("/profile")):
+                    next_url = url_for("admin_panel")
 
             if request.is_json:
                 return jsonify({"success": True, "redirect": next_url, "user": session["user"]})
@@ -107,7 +117,7 @@ def login():
     if user:
         if user.get("role") == "admin":
             return redirect(url_for("admin_panel"))
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("student_panel"))
 
     return render_template("login.html")
 
@@ -156,26 +166,32 @@ def opportunity_details(opportunity_id):
 # PROTECTED STUDENT ROUTES
 # =====================================================================
 
+@app.route("/student")
+@login_required(role="student")
+def student_panel():
+    return render_template("dashboard.html", opportunities=opportunities)
+
+
 @app.route("/dashboard")
-@login_required()
+@login_required(role="student")
 def dashboard():
     return render_template("dashboard.html", opportunities=opportunities)
 
 
 @app.route("/applications")
-@login_required()
+@login_required(role="student")
 def applications_page():
     return render_template("applications.html", opportunities=opportunities)
 
 
 @app.route("/saved")
-@login_required()
+@login_required(role="student")
 def saved():
     return render_template("saved.html")
 
 
 @app.route("/profile")
-@login_required()
+@login_required(role="student")
 def profile():
     return render_template("profile.html")
 

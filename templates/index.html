@@ -32,7 +32,7 @@
                 <a href="/applications">Applications</a>
                 <a href="#about">About</a>
                 {% if current_user %}
-                    <a href="{{ '/admin' if current_user.role == 'admin' else '/dashboard' }}" class="login-btn" style="text-decoration: none;">{{ 'Admin' if current_user.role == 'admin' else 'Dashboard' }}</a>
+                    <a href="{{ '/admin' if current_user.role == 'admin' else '/student' }}" class="login-btn" style="text-decoration: none;">{{ 'Admin Panel' if current_user.role == 'admin' else 'Student Panel' }}</a>
                     <a href="/logout" class="nav-logout-btn">Logout</a>
                 {% else %}
                     <a href="/login" class="login-btn" id="loginNavBtn" style="text-decoration: none;">Login</a>

@@ -8,69 +8,143 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-<body class="dashboard-page">
+<body class="dashboard-page student-page">
 
-    <!-- =================================================================
-         1. NAVBAR (Consistent with OpportunityHub design system)
-         ================================================================= -->
-    <nav class="navbar">
-        <div class="container navbar-container">
-            <a href="/" class="logo">
-                <span class="logo-icon">🚀</span>
-                <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
-            </a>
+    <div class="student-shell">
 
-            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
-
-            <div class="nav-links" id="navLinks">
-                <a href="/">Home</a>
-                <a href="/opportunities">Opportunities</a>
-                <a href="/dashboard" class="active">Dashboard</a>
-                <a href="/applications">Applications</a>
-                <a href="/saved">Saved</a>
-                <a href="/profile">Profile</a>
-                <button class="login-btn" id="navProfileBtn" onclick="window.location.href='/profile'">Profile</button>
-                <a href="/logout" class="nav-logout-btn" title="Sign out of OpportunityHub">Logout</a>
+        <!-- =============================================================
+             1. STUDENT PANEL SIDEBAR
+             ============================================================= -->
+        <aside class="student-sidebar" id="studentSidebar">
+            <div class="student-sidebar-header">
+                <a href="/student" class="student-brand">
+                    <span class="logo-icon">🚀</span>
+                    <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
+                </a>
+                <div class="student-portal-badge">STUDENT PANEL</div>
             </div>
-        </div>
-    </nav>
 
+            <nav class="student-sidebar-nav">
+                <div class="student-nav-group-label">Student Panel</div>
 
-    <!-- =================================================================
-         2. DASHBOARD HERO / HEADER
-         ================================================================= -->
-    <header class="dashboard-hero">
-        <div class="container">
-            <div class="dashboard-hero-content">
-                <div class="dashboard-header-text">
-                    <span class="eyebrow-badge">🎓 STUDENT CAREER DASHBOARD</span>
-                    <h1>Welcome back, <span id="welcomeName">Student</span> 👋</h1>
-                    <p class="subtitle">
-                        Here’s what’s happening with your opportunities.
-                    </p>
+                <a href="/student" class="student-nav-link active" id="sidebarLinkDashboard">
+                    <span class="student-nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="/opportunities" class="student-nav-link" id="sidebarLinkOpps">
+                    <span class="student-nav-icon">💼</span>
+                    <span>Discover Opportunities</span>
+                </a>
+
+                <a href="#smartRecommendationsSection" class="student-nav-link" id="sidebarLinkRecs" onclick="smoothScrollToSection('smartRecommendationsSection')">
+                    <span class="student-nav-icon">🎯</span>
+                    <span>Recommended For You</span>
+                </a>
+
+                <a href="/applications" class="student-nav-link" id="sidebarLinkApps">
+                    <span class="student-nav-icon">📨</span>
+                    <span>Applications</span>
+                    <span class="student-nav-count" id="sidebarAppCount">0</span>
+                </a>
+
+                <a href="/saved" class="student-nav-link" id="sidebarLinkSaved">
+                    <span class="student-nav-icon">🔖</span>
+                    <span>Saved</span>
+                    <span class="student-nav-count" id="sidebarSavedCount">0</span>
+                </a>
+
+                <a href="/profile" class="student-nav-link" id="sidebarLinkProfile">
+                    <span class="student-nav-icon">👤</span>
+                    <span>Profile</span>
+                </a>
+
+                <a href="#applicationAnalyticsSection" class="student-nav-link" id="sidebarLinkAnalytics" onclick="smoothScrollToSection('applicationAnalyticsSection')">
+                    <span class="student-nav-icon">📈</span>
+                    <span>Analytics</span>
+                </a>
+
+                <div class="student-nav-group-label" style="margin-top: 16px;">Account</div>
+
+                <a href="/logout" class="student-nav-link student-nav-logout">
+                    <span class="student-nav-icon">🚪</span>
+                    <span>Logout</span>
+                </a>
+            </nav>
+
+            <div class="student-sidebar-footer">
+                <div class="student-user-info">
+                    <div class="student-user-avatar" id="sidebarUserAvatar">S</div>
+                    <div class="student-user-meta">
+                        <div class="student-user-name" id="sidebarUserName">Demo Student</div>
+                        <div class="student-user-email">student@opportunityhub.com</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- =============================================================
+             2. STUDENT MAIN CONTENT AREA
+             ============================================================= -->
+        <div class="student-main">
+
+            <!-- Topbar Header -->
+            <header class="student-topbar">
+                <div class="student-topbar-left">
+                    <button type="button" class="student-mobile-toggle" onclick="toggleStudentSidebar()" aria-label="Toggle navigation">
+                        ☰
+                    </button>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                            <span style="font-size: 15px; font-weight: 800; color: #0f172a;">Opportunity<span class="gradient-text">Hub</span></span>
+                            <span class="student-portal-badge">STUDENT PANEL</span>
+                        </div>
+                        <h1 class="student-topbar-title">Student Dashboard</h1>
+                        <p class="student-topbar-subtitle">Personalized career matching, application pipeline, and growth analytics.</p>
+                    </div>
                 </div>
 
-                <div class="dashboard-hero-actions">
-                    <a href="/opportunities" class="primary-btn">
+                <div class="student-topbar-right">
+                    <div class="student-email-chip">
+                        <span>🎓 student@opportunityhub.com</span>
+                    </div>
+                    <a href="/opportunities" class="primary-btn" style="padding: 9px 18px; font-size: 13px;">
                         <span>🔎 Explore Opportunities</span>
                     </a>
-                    <a href="/profile" class="secondary-btn">
-                        <span>👤 Edit Profile</span>
+                    <a href="/logout" class="student-logout-btn" title="Sign out of Student Panel">
+                        <span>Logout</span>
                     </a>
                 </div>
-            </div>
-        </div>
-    </header>
+            </header>
 
+            <div class="student-content-wrapper">
 
-    <!-- =================================================================
-         3. DASHBOARD MAIN CONTENT
-         ================================================================= -->
-    <main class="dashboard-container">
+                <!-- DASHBOARD HERO / HEADER -->
+                <header class="dashboard-hero">
+                    <div class="container" style="max-width: 100%; padding: 0;">
+                        <div class="dashboard-hero-content">
+                            <div class="dashboard-header-text">
+                                <span class="eyebrow-badge">🎓 STUDENT PANEL</span>
+                                <h1>Welcome back, <span id="welcomeName">Student</span> 👋</h1>
+                                <p class="subtitle">
+                                    Here’s what’s happening with your opportunities.
+                                </p>
+                            </div>
+
+                            <div class="dashboard-hero-actions">
+                                <a href="/opportunities" class="primary-btn">
+                                    <span>🔎 Explore Opportunities</span>
+                                </a>
+                                <a href="/profile" class="secondary-btn">
+                                    <span>👤 Edit Profile</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- DASHBOARD MAIN CONTENT -->
+                <main class="dashboard-container" style="max-width: 100%; padding: 0;">
 
         <!-- 4 KPI STATS CARDS -->
         <section class="kpi-grid" aria-label="Dashboard Overview KPIs">
@@ -495,13 +569,14 @@
         </div>
 
     </main>
+    </div> <!-- Close .student-content-wrapper -->
 
 
     <!-- =================================================================
-         4. PROFESSIONAL FOOTER (Consistent with Homepage & Opportunities)
+         4. PROFESSIONAL FOOTER
          ================================================================= -->
     <footer>
-        <div class="container">
+        <div class="container" style="max-width: 100%;">
             <div class="footer-grid">
                 <div>
                     <a href="/" class="footer-logo">
@@ -514,11 +589,10 @@
                 </div>
 
                 <div>
-                    <h4 class="footer-heading">Navigation</h4>
+                    <h4 class="footer-heading">Student Panel</h4>
                     <ul class="footer-links">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/opportunities">Opportunities</a></li>
-                        <li><a href="/dashboard">Dashboard</a></li>
+                        <li><a href="/student">Dashboard</a></li>
+                        <li><a href="/opportunities">Discover Opportunities</a></li>
                         <li><a href="/applications">Application Tracker</a></li>
                         <li><a href="/saved">Saved Opportunities</a></li>
                         <li><a href="/profile">Student Profile</a></li>
@@ -550,11 +624,14 @@
             </div>
 
             <div class="footer-bottom">
-                <span>© 2026 OpportunityHub. Designed and built with ❤️ by Team Godlike.</span>
-                <span>All opportunities curated for student success.</span>
+                <span>© 2026 OpportunityHub · Student Panel. Dedicated to student success.</span>
+                <span>Logged in as student@opportunityhub.com</span>
             </div>
         </div>
     </footer>
+
+    </div> <!-- Close .student-main -->
+</div> <!-- Close .student-shell -->
 
 
     <!-- =================================================================
@@ -569,15 +646,20 @@
         let currentStudentProfile = null;
 
         /* -------------------------------------------------------------
-           2. Mobile Navigation Toggle
+           2. Student Panel Sidebar & Navigation
            ------------------------------------------------------------- */
-        const mobileToggle = document.getElementById("mobileToggle");
-        const navLinks = document.getElementById("navLinks");
-        if (mobileToggle && navLinks) {
-            mobileToggle.addEventListener("click", () => {
-                navLinks.classList.toggle("active");
-                mobileToggle.classList.toggle("open");
-            });
+        function toggleStudentSidebar() {
+            const sidebar = document.getElementById("studentSidebar");
+            if (sidebar) sidebar.classList.toggle("open");
+        }
+
+        function smoothScrollToSection(sectionId) {
+            const el = document.getElementById(sectionId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            const sidebar = document.getElementById("studentSidebar");
+            if (sidebar) sidebar.classList.remove("open");
         }
 
         /* -------------------------------------------------------------
@@ -1186,6 +1268,20 @@
 
             // 5. Update Application Tracker Pipeline & Analytics
             updateDashboardAnalytics();
+
+            // 6. Update Student Sidebar Counts & Profile
+            const sidebarSaved = document.getElementById("sidebarSavedCount");
+            if (sidebarSaved) sidebarSaved.textContent = getSavedList().length;
+
+            const sidebarApp = document.getElementById("sidebarAppCount");
+            if (sidebarApp) sidebarApp.textContent = Object.keys(getTrackerData()).length;
+
+            if (currentStudentProfile && currentStudentProfile.name) {
+                const sidebarName = document.getElementById("sidebarUserName");
+                if (sidebarName) sidebarName.textContent = currentStudentProfile.name;
+                const sidebarAvatar = document.getElementById("sidebarUserAvatar");
+                if (sidebarAvatar) sidebarAvatar.textContent = currentStudentProfile.name.charAt(0).toUpperCase();
+            }
         }
 
         /* -------------------------------------------------------------

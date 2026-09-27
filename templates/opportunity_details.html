@@ -117,6 +117,22 @@
                 </div>
 
 
+                <!-- 🎯 WHY THIS MATCHES YOU -->
+                <div class="details-card match-card" id="whyMatchesCard">
+
+                    <h2>
+                        🎯 Why This Matches You
+                    </h2>
+
+                    <div id="matchCardContent">
+                        <div class="loading-message" style="font-size: 13px; color: #6b7280; padding: 6px 0;">
+                            Checking profile match...
+                        </div>
+                    </div>
+
+                </div>
+
+
                 <!-- SKILLS -->
                 <div class="details-card">
 
@@ -198,6 +214,19 @@
 
                         <strong>
                             {{ opportunity.category }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="apply-score" style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #e5e7eb;">
+
+                        <span>
+                            Match Score
+                        </span>
+
+                        <strong id="sidebarMatchScore" style="color: #4f46e5; font-size: 22px;">
+                            --%
                         </strong>
 
                     </div>
@@ -298,20 +327,6 @@
                 </div>
 
 
-                <!-- WHY THIS MATCHES YOU -->
-                <div class="details-card match-card" id="whyMatchesCard">
-
-                    <h2>🎯 Why This Matches You</h2>
-
-                    <div id="matchCardContent">
-                        <div class="loading-message" style="font-size: 13px; color: #6b7280; padding: 6px 0;">
-                            Checking profile match...
-                        </div>
-                    </div>
-
-                </div>
-
-
                 <!-- INFO -->
                 <div class="details-card trust-card">
 
@@ -394,18 +409,36 @@
         const matchContent = document.getElementById("matchCardContent");
         const matchBadge = document.getElementById("detailsMatchBadge");
 
-        if (!profile || (!profile.skills?.length && !profile.interests?.length && !profile.education)) {
+        if (!profile || (!profile.skills?.length && !profile.interests?.length && !profile.education && !profile.categories?.length)) {
             if (matchContent) {
                 matchContent.innerHTML = `
-                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px; line-height: 1.5;">
-                        Set up your profile to see personalized match insights, skill gaps, and tailored recommendations.
-                    </p>
-                    <a href="/profile" class="primary-btn" style="display: inline-block; padding: 7px 16px; font-size: 12px; text-decoration: none;">
-                        Set Up Profile →
-                    </a>
+                    <div class="no-profile-notice" style="padding: 10px 0;">
+                        <p style="font-size: 14px; color: #4b5563; margin-bottom: 14px; line-height: 1.6;">
+                            Set up your student profile with your skills, interests, and education to see your personalized match breakdown, overall match score, and skill gap insights for this opportunity.
+                        </p>
+                        <a href="/profile" class="primary-btn" style="display: inline-block; padding: 8px 18px; font-size: 13px; text-decoration: none;">
+                            🚀 Set Up Profile →
+                        </a>
+
+                        <div class="skill-gap-section" style="margin-top: 18px; padding-top: 14px; border-top: 1px solid #e5e7eb;">
+                            <h3 style="font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 6px;">
+                                📈 Skill Gap
+                            </h3>
+                            <p style="font-size: 13px; color: #6b7280; margin: 0;">
+                                Complete your profile to identify which skills you have and which skills to improve for this role.
+                            </p>
+                        </div>
+                    </div>
                 `;
             }
+            const sidebarScore = document.getElementById("sidebarMatchScore");
+            if (sidebarScore) {
+                sidebarScore.textContent = `N/A`;
+            }
         } else {
+            // Immediate rendering using client-side calculation
+            renderWhyMatches(null, profile);
+
             fetch("/api/recommendations", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -425,90 +458,136 @@
         function renderWhyMatches(oppMatch, prof) {
             if (!matchContent) return;
 
-            const userSkills = (prof.skills || []).map(s => s.toLowerCase());
-            const userInterests = (prof.interests || []).map(i => i.toLowerCase());
-            const userEducation = (prof.education || "").toLowerCase();
+            const userSkills = (prof.skills || []).map(s => String(s).toLowerCase().trim());
+            const userInterests = (prof.interests || []).map(i => String(i).toLowerCase().trim());
+            const userEducation = String(prof.education || "").toLowerCase().trim();
 
-            const matchedSkills = oppMatch ? (oppMatch.matched_skills || []) :
-                currentOpportunity.skills.filter(s => userSkills.includes(s.toLowerCase()));
+            const oppSkills = (currentOpportunity.skills || []).map(s => String(s));
+            const oppInterests = (currentOpportunity.interests || []).map(i => String(i));
+            const oppEdu = (currentOpportunity.education || []).map(e => String(e).toLowerCase().trim());
+            const userCategories = (prof.categories || []).map(c => String(c).toLowerCase().trim());
 
-            const missingSkills = oppMatch ? (oppMatch.missing_skills || []) :
-                currentOpportunity.skills.filter(s => !userSkills.includes(s.toLowerCase()));
+            const matchedSkills = oppMatch && oppMatch.matched_skills ? oppMatch.matched_skills :
+                oppSkills.filter(s => userSkills.includes(s.toLowerCase().trim()));
 
-            const matchedInterests = oppMatch ? (oppMatch.matched_interests || []) :
-                currentOpportunity.interests.filter(i => userInterests.includes(i.toLowerCase()));
+            const missingSkills = oppMatch && oppMatch.missing_skills ? oppMatch.missing_skills :
+                oppSkills.filter(s => !userSkills.includes(s.toLowerCase().trim()));
 
-            const eduMatch = oppMatch ? oppMatch.education_match :
-                currentOpportunity.education.some(e => e.toLowerCase() === userEducation || e.toLowerCase() === "all");
+            const matchedInterests = oppMatch && oppMatch.matched_interests ? oppMatch.matched_interests :
+                oppInterests.filter(i => userInterests.includes(i.toLowerCase().trim()));
 
-            const catMatch = oppMatch ? oppMatch.category_match :
-                (prof.categories || []).some(c => c.toLowerCase() === currentOpportunity.category.toLowerCase());
+            const eduMatch = oppMatch ? Boolean(oppMatch.education_match) :
+                (userEducation ? oppEdu.some(e => e === userEducation || e === "all" || e === "any") : false);
 
-            const score = oppMatch ? oppMatch.score :
-                Math.min(100, Math.round((matchedSkills.length * 25) + (matchedInterests.length * 15) + (eduMatch ? 20 : 0) + (catMatch ? 15 : 0)));
+            const catMatch = oppMatch ? Boolean(oppMatch.category_match) :
+                userCategories.includes(String(currentOpportunity.category || "").toLowerCase().trim());
+
+            // Exact formula from matching.py
+            const score = oppMatch && typeof oppMatch.score === "number" ? oppMatch.score :
+                Math.min(100, Math.round(
+                    (oppSkills.length > 0 ? (matchedSkills.length / oppSkills.length) * 40 : 0) +
+                    (oppInterests.length > 0 ? (matchedInterests.length / oppInterests.length) * 30 : 0) +
+                    (catMatch ? 20 : 0) +
+                    (eduMatch ? 10 : 0)
+                ));
 
             if (matchBadge) {
                 matchBadge.textContent = `${score}% Match`;
             }
 
+            const sidebarScore = document.getElementById("sidebarMatchScore");
+            if (sidebarScore) {
+                sidebarScore.textContent = `${score}%`;
+            }
+
             let html = `
-                <div style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 12px;">
-                    🎯 ${score}% Match for Your Profile
+                <div class="match-breakdown-container">
+                    <!-- 5. Overall Match Percentage -->
+                    <div class="match-item highlight" style="margin-bottom: 16px;">
+                        <span style="font-size: 14px;">🎯</span>
+                        <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                            <div>
+                                <strong style="font-size: 14px; color: #111827;">5. Overall Match Percentage</strong>
+                                <p style="margin: 2px 0 0 0; font-size: 12px; color: #6b7280;">Calculated from skills (40%), interests (30%), category (20%) & education (10%)</p>
+                            </div>
+                            <span style="font-size: 18px; font-weight: 800; color: #4f46e5; background: #eef2ff; padding: 4px 14px; border-radius: 20px;">
+                                ${score}% Match
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 1. Matched Skills -->
+                    <div class="match-item">
+                        <span class="${matchedSkills.length > 0 ? '' : 'neutral'}">${matchedSkills.length > 0 ? '✓' : '—'}</span>
+                        <div style="flex: 1;">
+                            <strong style="color: #111827;">1. Matched Skills</strong>
+                            ${matchedSkills.length > 0
+                                ? `<p style="margin-top: 4px;">${matchedSkills.map(s => `<span class="skill-tag-pill">${s}</span>`).join(" ")}</p>`
+                                : `<p style="color: #6b7280; margin-top: 2px; font-size: 13px;">No overlapping skills found with your profile.</p>`
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 2. Matched Interests -->
+                    <div class="match-item">
+                        <span class="${matchedInterests.length > 0 ? '' : 'neutral'}">${matchedInterests.length > 0 ? '✓' : '—'}</span>
+                        <div style="flex: 1;">
+                            <strong style="color: #111827;">2. Matched Interests</strong>
+                            ${matchedInterests.length > 0
+                                ? `<p style="margin-top: 4px;">${matchedInterests.map(i => `<span class="interest-tag-pill">${i}</span>`).join(" ")}</p>`
+                                : `<p style="color: #6b7280; margin-top: 2px; font-size: 13px;">No overlapping interests found with your profile.</p>`
+                            }
+                        </div>
+                    </div>
+
+                    <!-- 3. Category Match -->
+                    <div class="match-item">
+                        <span class="${catMatch ? '' : 'neutral'}">${catMatch ? '✓' : '—'}</span>
+                        <div style="flex: 1;">
+                            <strong style="color: #111827;">3. Category Match</strong>
+                            <p style="margin-top: 2px; font-size: 13px; color: #4b5563;">
+                                ${catMatch
+                                    ? `Matches your preferred opportunity category: <strong>${currentOpportunity.category}</strong>`
+                                    : `Opportunity category is <strong>${currentOpportunity.category}</strong> (not in your preferred categories)`
+                                }
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 4. Education Match -->
+                    <div class="match-item">
+                        <span class="${eduMatch ? '' : 'neutral'}">${eduMatch ? '✓' : '—'}</span>
+                        <div style="flex: 1;">
+                            <strong style="color: #111827;">4. Education Match</strong>
+                            <p style="margin-top: 2px; font-size: 13px; color: #4b5563;">
+                                ${eduMatch
+                                    ? `Your education (<strong>${prof.education || 'All'}</strong>) meets the eligibility criteria.`
+                                    : `Requires: <strong>${(currentOpportunity.education || []).join(", ")}</strong> (Your profile: ${prof.education || 'Not specified'})`
+                                }
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 📈 Skill Gap -->
+                    <div class="skill-gap-section" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+                        <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                            📈 Skill Gap
+                        </h3>
+                        ${missingSkills.length > 0 ? `
+                            <p style="font-size: 13px; font-weight: 700; color: #b45309; margin-bottom: 6px;">
+                                Skills to Improve
+                            </p>
+                            <ul class="skills-to-improve-list">
+                                ${missingSkills.map(s => `<li>${s}</li>`).join("")}
+                            </ul>
+                        ` : `
+                            <div style="background: #ecfdf5; border-left: 4px solid #10b981; color: #047857; padding: 12px 14px; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                                🎉 You have all the key skills for this opportunity!
+                            </div>
+                        `}
+                    </div>
                 </div>
             `;
-
-            if (matchedSkills.length > 0) {
-                html += `
-                    <div class="match-item">
-                        <span>✓</span>
-                        <p><strong>Skills:</strong> Matches your skills in <strong>${matchedSkills.join(", ")}</strong></p>
-                    </div>
-                `;
-            }
-
-            if (matchedInterests.length > 0) {
-                html += `
-                    <div class="match-item">
-                        <span>✓</span>
-                        <p><strong>Interests:</strong> Matches your interest in <strong>${matchedInterests.join(", ")}</strong></p>
-                    </div>
-                `;
-            }
-
-            if (eduMatch) {
-                html += `
-                    <div class="match-item">
-                        <span>✓</span>
-                        <p><strong>Education:</strong> Your education (<strong>${prof.education}</strong>) meets eligibility</p>
-                    </div>
-                `;
-            }
-
-            if (catMatch) {
-                html += `
-                    <div class="match-item">
-                        <span>✓</span>
-                        <p><strong>Category:</strong> Matches your preferred category (<strong>${currentOpportunity.category}</strong>)</p>
-                    </div>
-                `;
-            }
-
-            // Skill Gap
-            if (missingSkills.length > 0) {
-                html += `
-                    <div class="match-item missing" style="margin-top: 4px;">
-                        <span>!</span>
-                        <p><strong style="color: #b45309;">Skill Gap:</strong> Opportunity requires <strong>${missingSkills.join(", ")}</strong></p>
-                    </div>
-                `;
-            } else if (currentOpportunity.skills.length > 0 && userSkills.length > 0) {
-                html += `
-                    <div class="match-item" style="margin-top: 4px;">
-                        <span>✓</span>
-                        <p><strong>Skills Complete:</strong> You have all required skills for this opportunity!</p>
-                    </div>
-                `;
-            }
 
             matchContent.innerHTML = html;
         }

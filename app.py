@@ -48,7 +48,7 @@ def opportunity_details(opportunity_id):
 @app.route("/api/recommendations", methods=["POST"])
 def recommendations():
 
-    student = request.get_json()
+    student = request.get_json(silent=True) or {}
 
     results = []
 
@@ -61,11 +61,11 @@ def recommendations():
 
         opportunity_copy = opportunity.copy()
 
-        opportunity_copy["score"] = match["score"]
+        opportunity_copy["score"] = match.get("score", 0)
 
-        opportunity_copy["matched_skills"] = match["matched_skills"]
+        opportunity_copy["matched_skills"] = match.get("matched_skills", [])
 
-        opportunity_copy["matched_interests"] = match["matched_interests"]
+        opportunity_copy["matched_interests"] = match.get("matched_interests", [])
 
         results.append(opportunity_copy)
 
@@ -84,5 +84,6 @@ def saved():
     return render_template("saved.html")
 
 if __name__ == "__main__":
-
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)

@@ -16,7 +16,7 @@
     <!-- NAVBAR -->
     <nav class="dashboard-navbar">
 
-        <div class="logo">
+        <div class="logo" style="cursor: pointer;" onclick="window.location.href='/'">
             🚀 OpportunityHub
         </div>
 
@@ -38,7 +38,7 @@
                 Profile
             </a>
 
-            <div class="user-avatar">
+            <div class="user-avatar" id="userAvatar">
                 S
             </div>
 
@@ -301,15 +301,57 @@
     </main>
 
 
-    <!-- SIMPLE JAVASCRIPT -->
+    <!-- JAVASCRIPT -->
     <script>
+        const currentOpportunity = {{ opportunity | tojson }};
 
-        function saveOpportunity() {
-
-            alert("Opportunity saved! 🔖");
-
+        // User avatar initialization
+        const savedProfile = localStorage.getItem("studentProfile");
+        if (savedProfile) {
+            try {
+                const profile = JSON.parse(savedProfile);
+                if (profile.name) {
+                    const avatarElem = document.getElementById("userAvatar");
+                    if (avatarElem) {
+                        avatarElem.textContent = profile.name.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
         }
 
+        // Update button state on load
+        function updateSaveButtonState() {
+            const saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
+            const isSaved = saved.some(item => item.id === currentOpportunity.id);
+            const btn = document.querySelector(".save-opportunity-btn");
+            if (btn) {
+                if (isSaved) {
+                    btn.innerHTML = "❤️ Saved";
+                } else {
+                    btn.innerHTML = "🔖 Save Opportunity";
+                }
+            }
+        }
+        updateSaveButtonState();
+
+        function saveOpportunity() {
+            let saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
+            const index = saved.findIndex(item => item.id === currentOpportunity.id);
+
+            if (index >= 0) {
+                saved.splice(index, 1);
+                localStorage.setItem("savedOpportunities", JSON.stringify(saved));
+                updateSaveButtonState();
+                alert(`Removed "${currentOpportunity.title}" from saved opportunities.`);
+            } else {
+                saved.push(currentOpportunity);
+                localStorage.setItem("savedOpportunities", JSON.stringify(saved));
+                updateSaveButtonState();
+                alert(`"${currentOpportunity.title}" saved successfully! 🔖`);
+            }
+        }
     </script>
 
 </body>

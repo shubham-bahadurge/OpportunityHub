@@ -14,12 +14,14 @@ def calculate_match(student, opportunity):
 
     student_skills = [
         skill.lower()
-        for skill in student.get("skills", [])
+        for skill in (student.get("skills") or [])
+        if isinstance(skill, str)
     ]
 
     opportunity_skills = [
         skill.lower()
-        for skill in opportunity.get("skills", [])
+        for skill in (opportunity.get("skills") or [])
+        if isinstance(skill, str)
     ]
 
 
@@ -46,12 +48,14 @@ def calculate_match(student, opportunity):
 
     student_interests = [
         interest.lower()
-        for interest in student.get("interests", [])
+        for interest in (student.get("interests") or [])
+        if isinstance(interest, str)
     ]
 
     opportunity_interests = [
         interest.lower()
-        for interest in opportunity.get("interests", [])
+        for interest in (opportunity.get("interests") or [])
+        if isinstance(interest, str)
     ]
 
 
@@ -78,11 +82,12 @@ def calculate_match(student, opportunity):
 
     preferred_categories = [
         category.lower()
-        for category in student.get("categories", [])
+        for category in (student.get("categories") or [])
+        if isinstance(category, str)
     ]
 
 
-    if opportunity["category"].lower() in preferred_categories:
+    if opportunity.get("category", "").lower() in preferred_categories:
 
         score += 20
 
@@ -94,14 +99,15 @@ def calculate_match(student, opportunity):
     # --------------------------------
 
     student_education = (
-        student.get("education", "")
+        (student.get("education") or "")
         .lower()
     )
 
 
     opportunity_education = [
         education.lower()
-        for education in opportunity.get("education", [])
+        for education in (opportunity.get("education") or [])
+        if isinstance(education, str)
     ]
 
 

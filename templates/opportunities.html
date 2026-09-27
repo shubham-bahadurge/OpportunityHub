@@ -25,7 +25,7 @@
 
 <nav class="dashboard-navbar">
 
-    <div class="logo">
+    <div class="logo" style="cursor: pointer;" onclick="window.location.href='/'">
         🚀 OpportunityHub
     </div>
 
@@ -40,6 +40,11 @@
         <a href="/opportunities"
            class="active">
             Opportunities
+        </a>
+
+
+        <a href="/saved">
+            Saved
         </a>
 
 
@@ -289,30 +294,110 @@ let selectedCategory = "All";
 const savedProfile =
     localStorage.getItem("studentProfile");
 
-
-if (!savedProfile) {
-
-    window.location.href = "/profile";
-
-}
-
-
 const profile =
-    JSON.parse(savedProfile);
+    savedProfile ? JSON.parse(savedProfile) : {
+        name: "Student",
+        education: "",
+        skills: [],
+        interests: [],
+        categories: []
+    };
 
 
 
 /* ==========================================
-   USER AVATAR
+   USER AVATAR & URL PARAMETERS
 ========================================== */
 
-if (profile.name) {
+if (profile.name && profile.name !== "Student") {
 
-    document.getElementById("userAvatar")
-        .textContent =
-        profile.name
-            .charAt(0)
-            .toUpperCase();
+    const userAvatar =
+        document.getElementById("userAvatar");
+
+    if (userAvatar) {
+        userAvatar.textContent =
+            profile.name
+                .charAt(0)
+                .toUpperCase();
+    }
+
+}
+
+const urlParams =
+    new URLSearchParams(window.location.search);
+
+const catParam =
+    urlParams.get("category");
+
+if (catParam) {
+
+    selectedCategory = catParam;
+
+    document.querySelectorAll(
+        ".filter-btn"
+    ).forEach(
+        function(btn) {
+
+            if (btn.dataset.category.toLowerCase() === catParam.toLowerCase()) {
+
+                btn.classList.add("active");
+
+            } else {
+
+                btn.classList.remove("active");
+
+            }
+
+        }
+    );
+
+}
+
+
+
+/* ==========================================
+   TOGGLE SAVE OPPORTUNITY
+========================================== */
+
+function toggleSaveOpportunity(id) {
+
+    const opp =
+        allOpportunities.find(
+            item => item.id === id
+        );
+
+    if (!opp) return;
+
+    let saved =
+        JSON.parse(
+            localStorage.getItem("savedOpportunities") || "[]"
+        );
+
+    const index =
+        saved.findIndex(
+            item => item.id === id
+        );
+
+    if (index >= 0) {
+
+        saved.splice(index, 1);
+
+        alert(`Removed "${opp.title}" from saved opportunities.`);
+
+    } else {
+
+        saved.push(opp);
+
+        alert(`Saved "${opp.title}"! 🔖`);
+
+    }
+
+    localStorage.setItem(
+        "savedOpportunities",
+        JSON.stringify(saved)
+    );
+
+    renderOpportunities();
 
 }
 
@@ -577,13 +662,17 @@ function renderOpportunities() {
 
 
 
-    /* ======================================
-       CREATE CARDS
-    ====================================== */
+    const saved =
+        JSON.parse(
+            localStorage.getItem("savedOpportunities") || "[]"
+        );
+
+    const savedIds = new Set(saved.map(item => item.id));
 
     filtered.forEach(
         function(opportunity) {
 
+            const isSaved = savedIds.has(opportunity.id);
 
             const card =
                 document.createElement(
@@ -614,9 +703,11 @@ function renderOpportunities() {
 
                     <button
                         class="bookmark-btn"
-                        type="button">
+                        type="button"
+                        title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
+                        onclick="toggleSaveOpportunity(${opportunity.id})">
 
-                        🔖
+                        ${isSaved ? '❤️' : '🔖'}
 
                     </button>
 

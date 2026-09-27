@@ -15,7 +15,7 @@
 
 <nav class="dashboard-navbar">
 
-    <div class="logo">
+    <div class="logo" style="cursor: pointer;" onclick="window.location.href='/'">
         🚀 OpportunityHub
     </div>
 
@@ -38,7 +38,7 @@
             Profile
         </a>
 
-        <div class="user-avatar">
+        <div class="user-avatar" id="userAvatar">
             S
         </div>
 
@@ -142,11 +142,12 @@ function loadSavedOpportunities() {
             <div class="explore-card-top">
 
                 <div class="explore-icon">
-                    🔖
+                    ${opportunity.icon || "🔖"}
                 </div>
 
                 <button
                     class="bookmark-btn"
+                    title="Remove from Saved"
                     onclick="removeSaved(${opportunity.id})">
 
                     🗑️
@@ -218,6 +219,7 @@ function removeSaved(id) {
             localStorage.getItem("savedOpportunities") || "[]"
         );
 
+    const opp = saved.find(item => item.id === id);
 
     saved =
         saved.filter(
@@ -230,11 +232,27 @@ function removeSaved(id) {
         JSON.stringify(saved)
     );
 
+    if (opp) {
+        alert(`Removed "${opp.title}" from saved opportunities.`);
+    }
 
     loadSavedOpportunities();
 
 }
 
+// Avatar init
+const savedProfile = localStorage.getItem("studentProfile");
+if (savedProfile) {
+    try {
+        const profile = JSON.parse(savedProfile);
+        if (profile.name) {
+            const avatar = document.getElementById("userAvatar");
+            if (avatar) avatar.textContent = profile.name.charAt(0).toUpperCase();
+        }
+    } catch(e) {
+        console.error(e);
+    }
+}
 
 loadSavedOpportunities();
 

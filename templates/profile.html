@@ -117,7 +117,7 @@
                             Education
                         </label>
 
-                        <select id="education">
+                        <select id="education" required>
 
                             <option value="">
                                 Select education
@@ -485,75 +485,118 @@
         const form =
             document.getElementById("profileForm");
 
+        // Populate existing profile if available
+        const existingProfileJson = localStorage.getItem("studentProfile");
+        if (existingProfileJson) {
+            try {
+                const ep = JSON.parse(existingProfileJson);
+                if (ep.name) document.getElementById("name").value = ep.name;
+                if (ep.email) document.getElementById("email").value = ep.email;
+                if (ep.education) document.getElementById("education").value = ep.education;
+                if (ep.branch) document.getElementById("branch").value = ep.branch;
+
+                if (Array.isArray(ep.skills)) {
+                    document.querySelectorAll('input[name="skills"]').forEach(input => {
+                        input.checked = ep.skills.includes(input.value);
+                    });
+                }
+                if (Array.isArray(ep.interests)) {
+                    document.querySelectorAll('input[name="interests"]').forEach(input => {
+                        input.checked = ep.interests.includes(input.value);
+                    });
+                }
+                if (Array.isArray(ep.categories)) {
+                    document.querySelectorAll('input[name="categories"]').forEach(input => {
+                        input.checked = ep.categories.includes(input.value);
+                    });
+                }
+            } catch (e) {
+                console.error("Could not parse existing profile", e);
+            }
+        }
 
         form.addEventListener("submit", function(event) {
 
             event.preventDefault();
 
-
             const name =
-                document.getElementById("name").value;
-
+                document.getElementById("name").value.trim();
 
             const email =
-                document.getElementById("email").value;
-
+                document.getElementById("email").value.trim();
 
             const education =
                 document.getElementById("education").value;
 
-
             const branch =
-                document.getElementById("branch").value;
-
+                document.getElementById("branch").value.trim();
 
             const skills =
                 [...document.querySelectorAll(
                     'input[name="skills"]:checked'
                 )].map(item => item.value);
 
-
             const interests =
                 [...document.querySelectorAll(
                     'input[name="interests"]:checked'
                 )].map(item => item.value);
-
 
             const categories =
                 [...document.querySelectorAll(
                     'input[name="categories"]:checked'
                 )].map(item => item.value);
 
+            if (!name) {
+                alert("Please enter your full name.");
+                document.getElementById("name").focus();
+                return;
+            }
+
+            if (!email) {
+                alert("Please enter your email address.");
+                document.getElementById("email").focus();
+                return;
+            }
+
+            if (!education) {
+                alert("Please select your education level.");
+                document.getElementById("education").focus();
+                return;
+            }
+
+            if (skills.length === 0) {
+                alert("Please select at least one skill.");
+                return;
+            }
+
+            if (interests.length === 0) {
+                alert("Please select at least one area of interest.");
+                return;
+            }
+
+            if (categories.length === 0) {
+                alert("Please select at least one type of opportunity you are looking for.");
+                return;
+            }
 
             const profile = {
-
                 name: name,
-
                 email: email,
-
                 education: education,
-
                 branch: branch,
-
                 skills: skills,
-
                 interests: interests,
-
                 categories: categories
-
             };
-
 
             localStorage.setItem(
                 "studentProfile",
                 JSON.stringify(profile)
             );
 
-
             alert(
-                "Profile created successfully! 🎉"
+                "Profile saved successfully! 🎉"
             );
-
 
             window.location.href = "/dashboard";
 

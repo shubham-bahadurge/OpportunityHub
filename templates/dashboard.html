@@ -23,7 +23,7 @@
 
 <nav class="dashboard-navbar">
 
-    <div class="logo">
+    <div class="logo" style="cursor: pointer;" onclick="window.location.href='/'">
         🚀 OpportunityHub
     </div>
 
@@ -35,6 +35,10 @@
 
         <a href="/opportunities">
             Opportunities
+        </a>
+
+        <a href="/saved">
+            Saved
         </a>
 
         <a href="/profile">
@@ -151,7 +155,7 @@
         </div>
 
 
-        <div class="dashboard-stat">
+        <div class="dashboard-stat" onclick="window.location.href='/saved'" style="cursor: pointer;">
 
             <div class="stat-icon green">
                 🔖
@@ -159,7 +163,7 @@
 
             <div>
 
-                <h3>
+                <h3 id="savedCount">
                     0
                 </h3>
 
@@ -315,381 +319,170 @@
 
 <script>
 
+let currentRecommendations = [];
 
-/* ==========================================
-   GET STUDENT PROFILE
-========================================== */
+function updateSavedCount() {
+    const saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
+    const countElem = document.getElementById("savedCount");
+    if (countElem) {
+        countElem.textContent = saved.length;
+    }
+}
 
+function toggleSaveOpportunity(id) {
+    const opp = currentRecommendations.find(item => item.id === id);
+    if (!opp) return;
 
-const savedProfile =
-    localStorage.getItem("studentProfile");
+    let saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
+    const index = saved.findIndex(item => item.id === id);
 
+    if (index >= 0) {
+        saved.splice(index, 1);
+        alert(`Removed "${opp.title}" from saved opportunities.`);
+    } else {
+        saved.push(opp);
+        alert(`Saved "${opp.title}"! 🔖`);
+    }
+
+    localStorage.setItem("savedOpportunities", JSON.stringify(saved));
+    updateSavedCount();
+    displayRecommendations(currentRecommendations);
+}
+
+const savedProfile = localStorage.getItem("studentProfile");
 
 if (!savedProfile) {
-
     window.location.href = "/profile";
+} else {
+    updateSavedCount();
 
-}
+    const profile = JSON.parse(savedProfile);
 
+    document.getElementById("welcomeName").textContent = profile.name || "Student";
+    document.getElementById("profileName").textContent = profile.name || "Student";
+    document.getElementById("profileEducation").textContent =
+        `${profile.education || "Student"}${profile.branch ? " • " + profile.branch : ""}`;
 
-const profile =
-    JSON.parse(savedProfile);
+    if (profile.name) {
+        const firstLetter = profile.name.charAt(0).toUpperCase();
+        const userAvatar = document.getElementById("userAvatar");
+        if (userAvatar) userAvatar.textContent = firstLetter;
+        const profileAvatar = document.getElementById("profileAvatar");
+        if (profileAvatar) profileAvatar.textContent = firstLetter;
+    }
 
-
-
-/* ==========================================
-   DISPLAY PROFILE INFORMATION
-========================================== */
-
-
-document.getElementById("welcomeName")
-    .textContent =
-    profile.name || "Student";
-
-
-document.getElementById("profileName")
-    .textContent =
-    profile.name || "Student";
-
-
-document.getElementById("profileEducation")
-    .textContent =
-    `${profile.education || "Student"} • ${profile.branch || ""}`;
-
-
-
-/* ==========================================
-   AVATAR
-========================================== */
-
-
-if (profile.name) {
-
-    const firstLetter =
-        profile.name
-            .charAt(0)
-            .toUpperCase();
-
-
-    document.getElementById("userAvatar")
-        .textContent =
-        firstLetter;
-
-
-    document.getElementById("profileAvatar")
-        .textContent =
-        firstLetter;
-
-}
-
-
-
-/* ==========================================
-   DISPLAY SKILLS
-========================================== */
-
-
-const skillsList =
-    document.getElementById("skillsList");
-
-
-if (profile.skills &&
-    profile.skills.length > 0) {
-
-
-    profile.skills.forEach(
-        function(skill) {
-
-            const span =
-                document.createElement("span");
-
-            span.textContent =
-                skill;
-
+    const skillsList = document.getElementById("skillsList");
+    if (profile.skills && profile.skills.length > 0) {
+        profile.skills.forEach(function(skill) {
+            const span = document.createElement("span");
+            span.textContent = skill;
             skillsList.appendChild(span);
+        });
+    }
 
-        }
-    );
-
+    fetch("/api/recommendations", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(profile)
+    })
+    .then(response => response.json())
+    .then(data => {
+        currentRecommendations = data;
+        displayRecommendations(data);
+    })
+    .catch(error => {
+        console.error(error);
+        document.getElementById("recommendations").innerHTML = `
+            <p>Unable to load recommendations.</p>
+        `;
+    });
 }
 
-
-
-/* ==========================================
-   SEND PROFILE TO FLASK
-========================================== */
-
-
-fetch("/api/recommendations", {
-
-    method: "POST",
-
-    headers: {
-
-        "Content-Type":
-            "application/json"
-
-    },
-
-    body: JSON.stringify(profile)
-
-})
-
-
-.then(response =>
-    response.json()
-)
-
-
-.then(data => {
-
-
-    console.log(
-        "Recommendations:",
-        data
-    );
-
-
-    displayRecommendations(
-        data
-    );
-
-
-})
-
-
-.catch(error => {
-
-    console.error(error);
-
-    document.getElementById(
-        "recommendations"
-    ).innerHTML = `
-
-        <p>
-            Unable to load recommendations.
-        </p>
-
-    `;
-
-});
-
-
-
-/* ==========================================
-   DISPLAY RECOMMENDATIONS
-========================================== */
-
-
-function displayRecommendations(
-    opportunities
-) {
-
-
-    const container =
-        document.getElementById(
-            "recommendations"
-        );
-
-
+function displayRecommendations(opportunities) {
+    const container = document.getElementById("recommendations");
     container.innerHTML = "";
 
-
-    if (
-        !opportunities ||
-        opportunities.length === 0
-    ) {
-
+    if (!opportunities || opportunities.length === 0) {
         container.innerHTML = `
-
-            <p>
-                No matching opportunities found.
-            </p>
-
+            <p>No matching opportunities found.</p>
         `;
-
         return;
-
     }
 
+    const internships = opportunities.filter(item => item.category === "Internship").length;
+    const hackathons = opportunities.filter(item => item.category === "Hackathon").length;
 
-
-    /*
-     * Statistics
-     */
-
-
-    const internships =
-        opportunities.filter(
-            item =>
-                item.category ===
-                "Internship"
-        ).length;
-
-
-    const hackathons =
-        opportunities.filter(
-            item =>
-                item.category ===
-                "Hackathon"
-        ).length;
-
-
-    document.getElementById(
-        "recommendedCount"
-    ).textContent =
-        opportunities.length;
-
-
-    document.getElementById(
-        "internshipCount"
-    ).textContent =
-        internships;
-
-
-    document.getElementById(
-        "hackathonCount"
-    ).textContent =
-        hackathons;
-
-
-
-    /*
-     * Profile score
-     */
-
+    document.getElementById("recommendedCount").textContent = opportunities.length;
+    document.getElementById("internshipCount").textContent = internships;
+    document.getElementById("hackathonCount").textContent = hackathons;
 
     if (opportunities.length > 0) {
-
-        document.getElementById(
-            "profileScore"
-        ).textContent =
-            opportunities[0].score + "%";
-
+        document.getElementById("profileScore").textContent = (opportunities[0].score || 0) + "%";
     }
 
+    const saved = JSON.parse(localStorage.getItem("savedOpportunities") || "[]");
+    const savedIds = new Set(saved.map(item => item.id));
 
+    opportunities.slice(0, 5).forEach(function(opportunity) {
+        const isSaved = savedIds.has(opportunity.id);
+        const card = document.createElement("div");
+        card.className = "opportunity-card";
 
-    /*
-     * Show top 5
-     */
+        card.innerHTML = `
+            <div class="opportunity-icon">
+                ${opportunity.icon}
+            </div>
 
+            <div class="opportunity-content">
+                <div class="opportunity-top">
+                    <span class="category-badge">
+                        ${opportunity.category}
+                    </span>
+                    <span class="match-badge">
+                        ${opportunity.score}% Match
+                    </span>
+                </div>
 
-    opportunities
-        .slice(0, 5)
-        .forEach(
-            function(opportunity) {
+                <h3>
+                    <a href="/opportunity/${opportunity.id}" style="color: inherit; text-decoration: none;">
+                        ${opportunity.title}
+                    </a>
+                </h3>
 
+                <p>
+                    ${opportunity.description}
+                </p>
 
-                const card =
-                    document.createElement(
-                        "div"
-                    );
+                <div class="opportunity-tags">
+                    ${(opportunity.skills || []).map(skill => `<span>${skill}</span>`).join("")}
+                </div>
 
+                <div class="opportunity-bottom">
+                    <span>📅 ${opportunity.deadline}</span>
+                    <span>🌐 ${opportunity.mode}</span>
+                </div>
 
-                card.className =
-                    "opportunity-card";
+                <div style="margin-top: 14px;">
+                    <a href="/opportunity/${opportunity.id}" class="view-details-btn" style="display: inline-block; width: auto; padding: 7px 16px; font-size: 13px;">
+                        View Details →
+                    </a>
+                </div>
+            </div>
 
+            <button
+                class="bookmark-btn"
+                type="button"
+                title="${isSaved ? 'Remove from Saved' : 'Save Opportunity'}"
+                onclick="toggleSaveOpportunity(${opportunity.id})">
+                ${isSaved ? '❤️' : '🔖'}
+            </button>
+        `;
 
-                card.innerHTML = `
-
-                    <div class="opportunity-icon">
-
-                        ${opportunity.icon}
-
-                    </div>
-
-
-                    <div class="opportunity-content">
-
-
-                        <div class="opportunity-top">
-
-                            <span class="category-badge">
-
-                                ${opportunity.category}
-
-                            </span>
-
-
-                            <span class="match-badge">
-
-                                ${opportunity.score}%
-                                Match
-
-                            </span>
-
-                        </div>
-
-
-                        <h3>
-
-                            ${opportunity.title}
-
-                        </h3>
-
-
-                        <p>
-
-                            ${opportunity.description}
-
-                        </p>
-
-
-                        <div class="opportunity-tags">
-
-                            ${
-                                opportunity.skills
-                                .map(
-                                    skill =>
-                                        `<span>${skill}</span>`
-                                )
-                                .join("")
-                            }
-
-                        </div>
-
-
-                        <div class="opportunity-bottom">
-
-                            <span>
-
-                                📅
-                                ${opportunity.deadline}
-
-                            </span>
-
-
-                            <span>
-
-                                🌐
-                                ${opportunity.mode}
-
-                            </span>
-
-                        </div>
-
-
-                    </div>
-
-
-                    <button
-                        class="bookmark-btn">
-
-                        🔖
-
-                    </button>
-
-                `;
-
-
-                container.appendChild(card);
-
-            }
-        );
-
+        container.appendChild(card);
+    });
 }
-
 </script>
 
 

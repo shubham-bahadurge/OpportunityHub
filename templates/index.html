@@ -17,15 +17,15 @@
 
     <nav class="navbar">
 
-        <div class="logo">
+        <div class="logo" style="cursor: pointer;" onclick="window.location.href='/'">
             🚀 OpportunityHub
         </div>
 
         <div class="nav-links">
             <a href="#features">Features</a>
-            <a href="#categories">Opportunities</a>
+            <a href="/opportunities">Opportunities</a>
             <a href="#about">About</a>
-            <button class="login-btn">Login</button>
+            <button class="login-btn" onclick="handleLoginClick()">Login</button>
         </div>
 
     </nav>
@@ -53,7 +53,7 @@
 
             <div class="hero-buttons">
 
-                <button class="primary-btn">
+                <button class="primary-btn" onclick="window.location.href='/profile'">
                     🚀 Get Started
                 </button>
 
@@ -97,7 +97,7 @@
                 📅 Deadline: 10 October 2026
             </div>
 
-            <button class="apply-btn">
+            <button class="apply-btn" onclick="window.location.href='/opportunity/1'">
                 View Opportunity →
             </button>
 
@@ -229,37 +229,37 @@
 
         <div class="category-grid">
 
-            <div class="category-card">
+            <div class="category-card" onclick="window.location.href='/opportunities?category=Internship'" style="cursor: pointer;">
                 💼
                 <h3>Internships</h3>
                 <p>120+ opportunities</p>
             </div>
 
-            <div class="category-card">
+            <div class="category-card" onclick="window.location.href='/opportunities?category=Hackathon'" style="cursor: pointer;">
                 🏆
                 <h3>Hackathons</h3>
                 <p>80+ opportunities</p>
             </div>
 
-            <div class="category-card">
+            <div class="category-card" onclick="window.location.href='/opportunities?category=Course'" style="cursor: pointer;">
                 📚
                 <h3>Courses</h3>
                 <p>150+ opportunities</p>
             </div>
 
-            <div class="category-card">
+            <div class="category-card" onclick="window.location.href='/opportunities?category=Scholarship'" style="cursor: pointer;">
                 💰
                 <h3>Scholarships</h3>
                 <p>50+ opportunities</p>
             </div>
 
-            <div class="category-card">
+            <div class="category-card" onclick="window.location.href='/opportunities?category=Competition'" style="cursor: pointer;">
                 🥇
                 <h3>Competitions</h3>
                 <p>60+ opportunities</p>
             </div>
 
-            <div class="category-card">
+            <div class="category-card" onclick="window.location.href='/opportunities?category=Certification'" style="cursor: pointer;">
                 📜
                 <h3>Certifications</h3>
                 <p>100+ opportunities</p>
@@ -289,7 +289,7 @@
                 match their goals.
             </p>
 
-            <button class="primary-btn">
+            <button class="primary-btn" onclick="window.location.href='/profile'">
                 Start Your Journey 🚀
             </button>
 
@@ -302,7 +302,7 @@
 
     <footer>
 
-        <h3>🚀 OpportunityHub</h3>
+        <h3 style="cursor: pointer;" onclick="window.location.href='/'">🚀 OpportunityHub</h3>
 
         <p>
             One Platform. Every Opportunity.
@@ -314,6 +314,15 @@
 
     </footer>
 
+    <script>
+        function handleLoginClick() {
+            if (localStorage.getItem("studentProfile")) {
+                window.location.href = "/dashboard";
+            } else {
+                window.location.href = "/profile";
+            }
+        }
+    </script>
 
 </body>
 

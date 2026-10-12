@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - OpportunityHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+
+    <!-- TOP NAVBAR -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span class="logo-text">Opportunity<span class="gradient-text">Hub</span></span>
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/opportunities">Opportunities</a>
+                <a href="/login" class="active">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN LOGIN CONTAINER -->
+    <main class="login-wrapper">
+        <div class="login-card">
+
+            <!-- Card Header -->
+            <div class="login-header">
+                <div class="login-icon-badge">
+                    <span>🔐</span>
+                </div>
+                <h1 class="login-title">Sign In to OpportunityHub</h1>
+                <p class="login-subtitle">
+                    Enter your credentials to access your student or admin portal.
+                </p>
+            </div>
+
+            <!-- Server or Client Error Alert -->
+            {% if error %}
+            <div class="login-alert login-alert-error" id="loginAlert">
+                <span>⚠️</span>
+                <span>{{ error }}</span>
+            </div>
+            {% else %}
+            <div class="login-alert login-alert-error" id="loginAlert" style="display: none;">
+                <span>⚠️</span>
+                <span>{{ error if error else '' }}</span>
+            </div>
+            {% endif %}
+
+            <!-- Login Form -->
+            <form action="/login{% if request.args.get('next') %}?next={{ request.args.get('next') }}{% endif %}" method="POST" id="loginForm" class="login-form">
+                
+                <div class="form-group">
+                    <label for="emailInput" class="form-label">Email or Username</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">✉️</span>
+                        <input
+                            type="text"
+                            id="emailInput"
+                            name="email"
+                            class="form-input"
+                            placeholder="Enter your email or username"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-label-row">
+                        <label for="passwordInput" class="form-label">Password</label>
+                    </div>
+                    <div class="input-with-icon">
+                        <span class="input-icon">🔒</span>
+                        <input
+                            type="password"
+                            id="passwordInput"
+                            name="password"
+                            class="form-input"
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="pw-toggle-btn" id="pwToggleBtn" aria-label="Toggle password visibility" onclick="togglePasswordVisibility()">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <div class="login-options-row">
+                    <label class="remember-checkbox-label">
+                        <input type="checkbox" name="remember" id="rememberMeCheckbox" checked>
+                        <span>Remember me on this device</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="login-submit-btn" id="submitBtn">
+                    <span>Sign In to Account</span>
+                    <span>→</span>
+                </button>
+            </form>
+
+            <!-- Prototype Notice / Security Disclosure -->
+            <div class="login-security-notice">
+                <span class="notice-icon">🛡️</span>
+                <p>
+                    <strong>Hackathon Prototype Notice:</strong> Demo authentication for MVP evaluation.
+                    Production release should use secure password hashing, database-backed users, CSRF protection, session hardening, and proper authorization.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="login-footer">
+        <div class="container">
+            <p>© 2026 OpportunityHub. Designed and built with ❤️ by Team Godlike.</p>
+        </div>
+    </footer>
+
+    <!-- CLIENT SCRIPT -->
+    <script>
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById("passwordInput");
+            const toggleBtn = document.getElementById("pwToggleBtn");
+            if (!pwdInput) return;
+
+            if (pwdInput.type === "password") {
+                pwdInput.type = "text";
+                if (toggleBtn) toggleBtn.textContent = "🙈";
+            } else {
+                pwdInput.type = "password";
+                if (toggleBtn) toggleBtn.textContent = "👁️";
+            }
+        }
+
+        // Handle client-side profile initialization if student logs in
+        document.getElementById("loginForm").addEventListener("submit", function(e) {
+            const email = (document.getElementById("emailInput").value || "").trim().toLowerCase();
+            if (email.includes("student")) {
+                try {
+                    // Check if student profile exists, if not set a clean profile
+                    const existingProfile = localStorage.getItem("studentProfile");
+                    if (!existingProfile || existingProfile === "{}") {
+                        const defaultStudent = {
+                            name: "Student",
+                            email: "",
+                            education: "B.Tech",
+                            branch: "Computer Science",
+                            skills: ["Python", "Machine Learning", "Data Science", "SQL"],
+                            interests: ["Artificial Intelligence", "Web Development"],
+                            bio: "Pre-final year Computer Science student exploring internships and hackathons in AI and software engineering."
+                        };
+                        localStorage.setItem("studentProfile", JSON.stringify(defaultStudent));
+                    }
+                    localStorage.setItem("userRole", "student");
+                } catch (err) {
+                    console.error("Error setting student profile", err);
+                }
+            } else if (email.includes("admin")) {
+                try {
+                    localStorage.setItem("userRole", "admin");
+                } catch (err) {}
+            }
+        });
+    </script>
+</body>
+</html>
